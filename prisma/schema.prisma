@@ -334,6 +334,16 @@ model Enquiry {
   @@index([email, submittedAt])
 }
 
+model EnquiryRateLimit {
+  identifierHash String
+  bucketStart    DateTime
+  attempts       Int      @default(0)
+  updatedAt      DateTime @updatedAt
+
+  @@id([identifierHash, bucketStart])
+  @@index([bucketStart])
+}
+
 model EnquiryItem {
   id                String   @id @default(cuid())
   enquiryId         String
