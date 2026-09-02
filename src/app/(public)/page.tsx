@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import Carousel from 'react-bootstrap/Carousel';
+import CarouselItem from 'react-bootstrap/CarouselItem';
 import Container from 'react-bootstrap/Container';
 
 const materialGroups = [
@@ -23,9 +25,17 @@ export default function HomePage() {
   return (
     <main>
       <section className="hero-section" aria-labelledby="home-title">
-        <Container className="position-relative py-5 py-lg-6">
-          <div className="hero-section__content">
-            <div>
+        <Carousel fade interval={7000} pause="hover">
+          <CarouselItem>
+            {/* This is a project-created image, not a buyer-uploaded product photo. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt="Iron ore material stockyard with port loading equipment"
+              className="hero-slide__image"
+              src="/media/industrial-ore-stockyard.png"
+            />
+            <div className="hero-slide__veil" aria-hidden="true" />
+            <Container className="hero-slide__content py-5 py-lg-6">
               <div className="hero-section__eyebrow">
                 Industrial raw materials · India & export
               </div>
@@ -50,24 +60,45 @@ export default function HomePage() {
                   Explore materials
                 </Link>
               </div>
-            </div>
-            <aside
-              className="hero-section__specimen"
-              aria-label="Material categories"
-            >
-              <span>01 / FERROUS</span>
-              <span>02 / CARBON</span>
-              <span>03 / MINERALS</span>
-              <strong>STL</strong>
-            </aside>
-          </div>
-          <div className="hero-section__grid" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
-        </Container>
+              <p className="hero-slide__index mb-0">01 / FERROUS MATERIALS</p>
+            </Container>
+          </CarouselItem>
+          <CarouselItem>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt="Carbon materials at an industrial processing yard"
+              className="hero-slide__image"
+              src="/media/industrial-carbon-yard.png"
+            />
+            <div className="hero-slide__veil" aria-hidden="true" />
+            <Container className="hero-slide__content py-5 py-lg-6">
+              <div className="hero-section__eyebrow">
+                Built for buyer clarity
+              </div>
+              <h2>
+                Get the grade.
+                <br />
+                Know the route.
+              </h2>
+              <p className="hero-section__lede">
+                Start with the material, volume, destination, and timeline. Our
+                enquiry team keeps every next step direct and practical.
+              </p>
+              <div className="d-flex flex-wrap gap-3">
+                <Link
+                  className="btn btn-primary btn-lg"
+                  href="/request-a-quote"
+                >
+                  Send requirements <span aria-hidden="true">↗</span>
+                </Link>
+                <Link className="btn btn-outline-light btn-lg" href="/contact">
+                  Talk to our team
+                </Link>
+              </div>
+              <p className="hero-slide__index mb-0">02 / CARBON MATERIALS</p>
+            </Container>
+          </CarouselItem>
+        </Carousel>
       </section>
 
       <section

@@ -2,10 +2,10 @@
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 
 :root {
-  --stl-ink: #102d27;
-  --stl-paper: #f1eee6;
-  --stl-oxide: #c8532c;
-  --stl-brass: #d6ab4c;
+  --stl-ink: #111315;
+  --stl-paper: #e8ebee;
+  --stl-oxide: #ff5a1f;
+  --stl-brass: #f1f4f6;
   --stl-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -19,11 +19,12 @@ body {
 
 .public-header {
   background: var(--stl-ink);
-  color: #fffdf7;
+  border-bottom: 1px solid rgba(241, 244, 246, 0.16);
+  color: #f8f9fa;
 }
 
 .public-header a {
-  color: #fffdf7;
+  color: #f8f9fa;
 }
 
 .public-header nav a {
@@ -52,7 +53,7 @@ body {
   line-height: 1.05;
 }
 .brand-mark small {
-  color: #d8b35c;
+  color: var(--stl-oxide);
   font-size: 0.68rem;
   letter-spacing: 0.18em;
   margin-top: 0.22rem;
@@ -60,8 +61,8 @@ body {
 }
 .brand-mark__monogram {
   align-items: center;
-  border: 1px solid #d8b35c;
-  color: #d8b35c;
+  border: 1px solid var(--stl-oxide);
+  color: var(--stl-oxide);
   display: inline-flex;
   font-family: Georgia, serif;
   font-size: 0.78rem;
@@ -73,92 +74,134 @@ body {
 
 .hero-section {
   background: var(--stl-ink);
-  color: #fffdf7;
+  color: #f8f9fa;
   overflow: hidden;
   position: relative;
 }
-.hero-section::before {
-  background-image:
-    linear-gradient(rgba(214, 171, 76, 0.13) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(214, 171, 76, 0.13) 1px, transparent 1px);
-  background-size: 3rem 3rem;
-  content: '';
-  inset: 0;
-  mask-image: linear-gradient(90deg, #000 0%, transparent 76%);
-  pointer-events: none;
-  position: absolute;
-}
 .hero-section h1,
+.hero-section h2,
 h2,
 h3 {
   font-family: Georgia, 'Times New Roman', serif;
 }
-.hero-section h1 {
+.hero-section h1,
+.hero-section h2 {
   font-size: clamp(3.4rem, 7.4vw, 6.75rem);
   letter-spacing: -0.06em;
   line-height: 0.92;
+  margin-bottom: 1.5rem;
   max-width: 11ch;
   position: relative;
   z-index: 1;
 }
-.hero-section__content {
-  align-items: end;
-  display: grid;
-  gap: 3rem;
-  grid-template-columns: minmax(0, 1fr) 13rem;
+.hero-section .carousel,
+.hero-section .carousel-inner,
+.hero-section .carousel-item {
+  min-height: clamp(38rem, 72vh, 50rem);
+}
+.hero-section .carousel-item {
+  overflow: hidden;
+}
+.hero-slide__image,
+.hero-slide__veil {
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  width: 100%;
+}
+.hero-slide__image {
+  filter: saturate(0.76) contrast(1.1);
+  object-fit: cover;
+  pointer-events: none;
+}
+.hero-slide__veil {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(10, 12, 14, 0.96) 0%,
+      rgba(10, 12, 14, 0.78) 43%,
+      rgba(10, 12, 14, 0.22) 78%
+    ),
+    linear-gradient(0deg, rgba(10, 12, 14, 0.54), transparent 44%);
+  pointer-events: none;
+}
+.hero-slide__content {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: clamp(38rem, 72vh, 50rem);
   position: relative;
   z-index: 1;
 }
+.carousel-item.active .hero-slide__content > * {
+  animation: hero-copy-reveal 640ms var(--stl-ease-out) both;
+}
+.carousel-item.active .hero-slide__content > :nth-child(2) {
+  animation-delay: 70ms;
+}
+.carousel-item.active .hero-slide__content > :nth-child(3) {
+  animation-delay: 140ms;
+}
+.carousel-item.active .hero-slide__content > :nth-child(4) {
+  animation-delay: 210ms;
+}
+.carousel-item.active .hero-slide__content > :nth-child(5) {
+  animation-delay: 280ms;
+}
+@keyframes hero-copy-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .hero-section__eyebrow,
 .section-label {
-  color: #c69b43;
+  color: var(--stl-oxide);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 .hero-section__lede {
-  color: #d9e0d7;
+  color: #d9dde1;
   font-size: 1.15rem;
   line-height: 1.6;
   max-width: 38rem;
   position: relative;
   z-index: 1;
 }
-.hero-section__grid {
-  bottom: -8rem;
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(4, 8rem);
-  position: absolute;
-  right: -3rem;
-  transform: rotate(-24deg);
-}
-.hero-section__specimen {
-  border-left: 1px solid rgba(214, 171, 76, 0.55);
-  display: grid;
-  gap: 0.75rem;
-  padding: 1rem 0 1rem 1.25rem;
-}
-.hero-section__specimen span {
-  color: #d6ab4c;
+.hero-slide__index {
+  bottom: 3rem;
+  color: rgba(248, 249, 250, 0.72);
   font-family: ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.12em;
+  margin-top: 4rem;
 }
-.hero-section__specimen strong {
-  color: #fffdf7;
-  font-family: Georgia, serif;
-  font-size: 3.25rem;
-  letter-spacing: -0.1em;
-  line-height: 1;
-  margin-top: 0.75rem;
+.hero-section .carousel-indicators {
+  bottom: 1.75rem;
+  justify-content: flex-end;
+  margin-right: max(2rem, calc((100vw - 1140px) / 2));
 }
-.hero-section__grid span {
-  background: linear-gradient(145deg, #274c43, #102c27);
-  border: 1px solid rgba(216, 179, 92, 0.35);
-  display: block;
-  height: 21rem;
+.hero-section .carousel-indicators [data-bs-target] {
+  background-color: #f8f9fa;
+  height: 2px;
+  opacity: 0.46;
+  width: 2.5rem;
+}
+.hero-section .carousel-indicators .active {
+  background-color: var(--stl-oxide);
+  opacity: 1;
+}
+.hero-section .carousel-control-next,
+.hero-section .carousel-control-prev {
+  opacity: 0.9;
+  width: 8%;
 }
 .py-lg-6 {
   padding-bottom: 6rem !important;
@@ -166,9 +209,9 @@ h3 {
 }
 
 .material-card {
-  background: #fffdf7;
-  border-bottom: 3px solid #d8b35c;
-  box-shadow: 0 10px 30px rgba(25, 49, 43, 0.07);
+  background: #f8f9fa;
+  border-bottom: 3px solid #aeb6bd;
+  box-shadow: 0 10px 30px rgba(17, 19, 21, 0.08);
   transition:
     transform 220ms var(--stl-ease-out),
     box-shadow 220ms var(--stl-ease-out),
@@ -177,7 +220,7 @@ h3 {
 @media (hover: hover) and (pointer: fine) {
   .material-card:hover {
     border-bottom-color: var(--stl-oxide);
-    box-shadow: 0 18px 35px rgba(25, 49, 43, 0.13);
+    box-shadow: 0 18px 35px rgba(17, 19, 21, 0.15);
     transform: translateY(-5px);
   }
 }
@@ -194,12 +237,15 @@ h3 {
 .btn-primary {
   --bs-btn-bg: var(--stl-oxide);
   --bs-btn-border-color: var(--stl-oxide);
-  --bs-btn-hover-bg: #af4123;
-  --bs-btn-hover-border-color: #af4123;
+  --bs-btn-hover-bg: #d63e0b;
+  --bs-btn-hover-border-color: #d63e0b;
 }
 .btn-warning {
   --bs-btn-bg: var(--stl-brass);
   --bs-btn-border-color: var(--stl-brass);
+  --bs-btn-color: var(--stl-ink);
+  --bs-btn-hover-bg: #cfd5da;
+  --bs-btn-hover-border-color: #cfd5da;
 }
 .btn:focus-visible,
 a:focus-visible {
@@ -210,14 +256,14 @@ a:focus-visible {
   font-size: 1.55rem;
 }
 .material-card__number {
-  color: #ba8a31;
+  color: var(--stl-oxide);
   display: block;
   font-family: Georgia, serif;
   font-size: 1.1rem;
   margin-bottom: 3rem;
 }
 .link-arrow {
-  color: #173d37;
+  color: var(--stl-ink);
   font-weight: 700;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.25em;
@@ -225,8 +271,14 @@ a:focus-visible {
 
 .dark-band,
 .public-footer {
-  background: #102c27;
-  color: #fffdf7;
+  background: #111315;
+  color: #f8f9fa;
+}
+.dark-band .text-warning {
+  color: var(--stl-oxide) !important;
+}
+.about-market-border {
+  border-color: var(--stl-oxide) !important;
 }
 .dark-band h2 {
   font-size: clamp(2rem, 4vw, 3.3rem);
@@ -235,29 +287,27 @@ a:focus-visible {
   max-width: 18ch;
 }
 .public-footer {
-  border-top: 1px solid rgba(216, 179, 92, 0.25);
+  border-top: 1px solid rgba(241, 244, 246, 0.18);
 }
 
 @media (max-width: 575.98px) {
   .hero-section h1 {
     font-size: 3.35rem;
   }
-  .hero-section__grid {
-    opacity: 0.45;
-  }
 }
 
 @media (max-width: 767.98px) {
-  .hero-section__content {
-    grid-template-columns: 1fr;
+  .hero-section .carousel-indicators {
+    justify-content: flex-start;
+    margin-left: 1.25rem;
+    margin-right: 1.25rem;
   }
-  .hero-section__specimen {
-    display: flex;
-    flex-wrap: wrap;
+  .hero-section .carousel-control-next,
+  .hero-section .carousel-control-prev {
+    display: none;
   }
-  .hero-section__specimen strong {
-    margin-left: auto;
-    margin-top: 0;
+  .hero-slide__index {
+    margin-top: 2.5rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -266,5 +316,8 @@ a:focus-visible {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 1ms !important;
+  }
+  .carousel-item.active .hero-slide__content > * {
+    animation: none;
   }
 }

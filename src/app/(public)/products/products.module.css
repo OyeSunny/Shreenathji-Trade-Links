@@ -1,10 +1,10 @@
 .catalogueHero {
-  background: #e9e3d6;
-  border-bottom: 1px solid rgba(22, 53, 46, 0.16);
+  background: #dfe4e8;
+  border-bottom: 1px solid rgba(17, 19, 21, 0.15);
 }
 
 .catalogueKicker {
-  color: #8a641e;
+  color: var(--stl-oxide);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -12,7 +12,7 @@
 }
 
 .catalogueTitle {
-  color: #16352e;
+  color: var(--stl-ink);
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(2.7rem, 5vw, 4.8rem);
   letter-spacing: -0.055em;
@@ -22,7 +22,7 @@
 }
 
 .catalogueLede {
-  color: #46605a;
+  color: #53616d;
   font-size: 1.08rem;
   line-height: 1.65;
   margin-bottom: 0;
@@ -30,7 +30,7 @@
 }
 
 .categoryLine {
-  color: #6b786f;
+  color: #66737d;
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -38,9 +38,9 @@
 }
 
 .productCard {
-  background: #fffdf7;
-  border: 1px solid rgba(22, 53, 46, 0.12);
-  box-shadow: 0 12px 28px rgba(22, 53, 46, 0.06);
+  background: #f8f9fa;
+  border: 1px solid rgba(17, 19, 21, 0.12);
+  box-shadow: 0 12px 28px rgba(17, 19, 21, 0.07);
   color: inherit;
   display: flex;
   flex-direction: column;
@@ -52,7 +52,7 @@
 }
 
 .productCard:hover {
-  box-shadow: 0 18px 36px rgba(22, 53, 46, 0.13);
+  box-shadow: 0 18px 36px rgba(17, 19, 21, 0.15);
   color: inherit;
   transform: translateY(-4px);
 }
@@ -60,7 +60,7 @@
 .productImage,
 .productImagePlaceholder {
   aspect-ratio: 16 / 10;
-  background: linear-gradient(135deg, #294d45, #173d37);
+  background: linear-gradient(135deg, #303940, #111315);
   display: block;
   object-fit: cover;
   width: 100%;
@@ -68,7 +68,7 @@
 
 .productImagePlaceholder {
   align-items: center;
-  color: #d8b35c;
+  color: var(--stl-oxide);
   display: flex;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 0.82rem;
@@ -85,7 +85,7 @@
 }
 
 .productName {
-  color: #16352e;
+  color: var(--stl-ink);
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.65rem;
   letter-spacing: -0.035em;
@@ -94,32 +94,32 @@
 }
 
 .productSummary {
-  color: #52675f;
+  color: #5b6872;
   line-height: 1.55;
   margin-bottom: 1.4rem;
 }
 
 .cardArrow {
-  color: #8a641e;
+  color: var(--stl-oxide);
   font-size: 0.88rem;
   font-weight: 700;
   margin-top: auto;
 }
 
 .emptyState {
-  background: #fffdf7;
-  border: 1px dashed rgba(22, 53, 46, 0.32);
+  background: #f8f9fa;
+  border: 1px dashed rgba(17, 19, 21, 0.32);
   max-width: 48rem;
   padding: clamp(2rem, 6vw, 4.5rem);
 }
 
 .detailHero {
-  background: #e9e3d6;
-  border-bottom: 1px solid rgba(22, 53, 46, 0.16);
+  background: #dfe4e8;
+  border-bottom: 1px solid rgba(17, 19, 21, 0.15);
 }
 
 .backLink {
-  color: #173d37;
+  color: var(--stl-ink);
   font-size: 0.9rem;
   font-weight: 700;
   text-decoration-thickness: 1px;
@@ -127,7 +127,7 @@
 }
 
 .detailTitle {
-  color: #16352e;
+  color: var(--stl-ink);
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(2.8rem, 6vw, 5.6rem);
   letter-spacing: -0.06em;
@@ -136,7 +136,7 @@
 }
 
 .detailSummary {
-  color: #46605a;
+  color: #53616d;
   font-size: 1.13rem;
   line-height: 1.65;
   margin-bottom: 0;
@@ -146,7 +146,7 @@
 .detailImage,
 .detailImagePlaceholder {
   aspect-ratio: 4 / 3;
-  background: linear-gradient(135deg, #294d45, #173d37);
+  background: linear-gradient(135deg, #303940, #111315);
   display: block;
   object-fit: cover;
   width: 100%;
@@ -154,7 +154,7 @@
 
 .detailImagePlaceholder {
   align-items: center;
-  color: #d8b35c;
+  color: var(--stl-oxide);
   display: flex;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 0.85rem;
@@ -164,12 +164,12 @@
 }
 
 .specList {
-  border-top: 1px solid rgba(22, 53, 46, 0.18);
+  border-top: 1px solid rgba(17, 19, 21, 0.18);
   margin: 0;
 }
 
 .specList > div {
-  border-bottom: 1px solid rgba(22, 53, 46, 0.18);
+  border-bottom: 1px solid rgba(17, 19, 21, 0.18);
   display: grid;
   gap: 1rem;
   grid-template-columns: minmax(8rem, 0.7fr) 1.3fr;
@@ -177,7 +177,7 @@
 }
 
 .specList dt {
-  color: #6b786f;
+  color: #66737d;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -189,8 +189,8 @@
 }
 
 .enquiryPanel {
-  background: #173d37;
-  color: #fffdf7;
+  background: #111315;
+  color: #f8f9fa;
   padding: clamp(1.5rem, 3vw, 2.25rem);
 }
 
@@ -200,12 +200,12 @@
 }
 
 .enquiryPanel p {
-  color: #d9e0d7;
+  color: #d9dde1;
 }
 
 .tag {
-  background: #e5d5ad;
-  color: #514017;
+  background: #dfe4e8;
+  color: #303940;
   display: inline-block;
   font-size: 0.76rem;
   font-weight: 700;

@@ -28,7 +28,10 @@ export default function ContactPage() {
             </div>
           </div>
           <div className="col-md-5">
-            <div className="h-100 p-4" style={{ background: '#e9e3d6' }}>
+            <div
+              className="h-100 p-4"
+              style={{ background: 'var(--stl-paper)' }}
+            >
               <p className="section-label">Location</p>
               <p className="h4">Gandhidham, Gujarat</p>
               <p className="mb-0 text-secondary">India</p>

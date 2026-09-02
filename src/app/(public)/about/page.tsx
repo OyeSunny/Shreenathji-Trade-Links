@@ -4,7 +4,10 @@ import Container from 'react-bootstrap/Container';
 export default function AboutPage() {
   return (
     <main>
-      <section className="py-5 py-lg-6" style={{ background: '#e9e3d6' }}>
+      <section
+        className="py-5 py-lg-6"
+        style={{ background: 'var(--stl-paper)' }}
+      >
         <Container>
           <p className="section-label">Company profile</p>
           <h1 className="display-4 fw-semibold" style={{ maxWidth: '14ch' }}>
@@ -31,10 +34,7 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="col-lg-5">
-            <div
-              className="border-start border-4 h-100 ps-4"
-              style={{ borderColor: '#d8b35c !important' }}
-            >
+            <div className="about-market-border border-start border-4 h-100 ps-4">
               <p className="section-label">Markets served</p>
               <p className="h4">India and international buyer enquiries</p>
               <p className="mb-0 text-secondary">
