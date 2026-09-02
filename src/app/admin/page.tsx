@@ -1,4 +1,7 @@
 import Card from 'react-bootstrap/Card';
+import CardBody from 'react-bootstrap/CardBody';
+import CardText from 'react-bootstrap/CardText';
+import CardTitle from 'react-bootstrap/CardTitle';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
@@ -28,13 +31,13 @@ export default function AdminDashboardPage() {
         {nextAreas.map(([title, description]) => (
           <Col key={title} lg={4}>
             <Card className="h-100 shadow-sm">
-              <Card.Body>
-                <Card.Title as="h2" className="h5">
+              <CardBody>
+                <CardTitle as="h2" className="h5">
                   {title}
-                </Card.Title>
-                <Card.Text className="text-secondary">{description}</Card.Text>
+                </CardTitle>
+                <CardText className="text-secondary">{description}</CardText>
                 <span className="badge text-bg-light">Coming next</span>
-              </Card.Body>
+              </CardBody>
             </Card>
           </Col>
         ))}
