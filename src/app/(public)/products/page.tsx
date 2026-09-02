@@ -1,0 +1,118 @@
+import Link from 'next/link';
+import Container from 'react-bootstrap/Container';
+
+import {
+  getPublicImageUrl,
+  getPublishedProducts,
+} from '@/features/catalogue/server/public-catalogue';
+
+import styles from './products.module.css';
+
+export default async function ProductsPage() {
+  const products = await getPublishedProducts();
+
+  return (
+    <main>
+      <section className={`${styles.catalogueHero} py-5 py-lg-6`}>
+        <Container>
+          <p className={styles.catalogueKicker}>
+            Industrial materials catalogue
+          </p>
+          <h1 className={styles.catalogueTitle}>Source with clarity.</h1>
+          <p className={styles.catalogueLede}>
+            Browse the materials currently offered by Shreenathji Trade Links.
+            Send us your grade, quantity, and destination requirements for a
+            considered quote.
+          </p>
+        </Container>
+      </section>
+
+      <section className="py-5 py-lg-6" aria-labelledby="product-list-heading">
+        <Container>
+          <div className="d-flex align-items-end justify-content-between gap-4 mb-4 mb-lg-5">
+            <div>
+              <p className="section-label mb-2">Available to enquire</p>
+              <h2 id="product-list-heading" className="mb-0">
+                Materials for industry.
+              </h2>
+            </div>
+            {products.length > 0 ? (
+              <p className="mb-0 text-secondary text-nowrap">
+                {products.length}{' '}
+                {products.length === 1 ? 'material' : 'materials'}
+              </p>
+            ) : null}
+          </div>
+
+          {products.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p className="section-label mb-2">Catalogue updating</p>
+              <h2>Materials will be listed here shortly.</h2>
+              <p className="mb-4 text-secondary">
+                If you have a sourcing requirement now, send us the material
+                details and we will respond directly.
+              </p>
+              <Link className="btn btn-primary" href="/request-a-quote">
+                Request a quote <span aria-hidden="true">↗</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="row g-4">
+              {products.map((product) => {
+                const image = product.media[0];
+                const imageUrl = getPublicImageUrl(image?.media ?? null);
+
+                return (
+                  <div className="col-md-6 col-xl-4" key={product.id}>
+                    <Link
+                      aria-label={`View ${product.name}`}
+                      className={styles.productCard}
+                      href={`/products/${product.slug}`}
+                    >
+                      {imageUrl ? (
+                        // This is a CMS-managed public image URL. Its media record is
+                        // constrained to PUBLISHED + APPROVED in the database query.
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          alt={
+                            image?.altText ??
+                            image.media.altText ??
+                            product.name
+                          }
+                          className={styles.productImage}
+                          src={imageUrl}
+                        />
+                      ) : (
+                        <span
+                          aria-label={`${product.name} image pending`}
+                          className={styles.productImagePlaceholder}
+                          role="img"
+                        >
+                          STL
+                        </span>
+                      )}
+                      <span className={styles.productCardBody}>
+                        <span className={styles.categoryLine}>
+                          {product.category.name}
+                        </span>
+                        <span className={styles.productName}>
+                          {product.name}
+                        </span>
+                        <span className={styles.productSummary}>
+                          {product.summary}
+                        </span>
+                        <span className={styles.cardArrow}>
+                          View material <span aria-hidden="true">→</span>
+                        </span>
+                      </span>
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </Container>
+      </section>
+    </main>
+  );
+}
