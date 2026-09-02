@@ -13,18 +13,29 @@ export const InitialOwnerSetupForm = ({ email }: { email: string }) => {
   const [password, setPassword] = useState('');
   const [confirmation, setConfirmation] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const canSubmit =
-    ownerPasswordSchema.safeParse(password).success &&
-    password === confirmation &&
-    setupToken.length > 0;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!canSubmit || isSubmitting) return;
+    if (isSubmitting) return;
 
-    setHasError(false);
+    if (!setupToken) {
+      setErrorMessage('Enter the private one-time setup code.');
+      return;
+    }
+
+    if (!ownerPasswordSchema.safeParse(password).success) {
+      setErrorMessage('Choose a password with at least 14 characters.');
+      return;
+    }
+
+    if (password !== confirmation) {
+      setErrorMessage('The password confirmation does not match.');
+      return;
+    }
+
+    setErrorMessage(null);
     setIsSubmitting(true);
 
     try {
@@ -36,7 +47,9 @@ export const InitialOwnerSetupForm = ({ email }: { email: string }) => {
       });
 
       if (!response.ok) {
-        setHasError(true);
+        setErrorMessage(
+          'Setup could not be completed. Check the setup code and try again.',
+        );
         return;
       }
 
@@ -45,7 +58,7 @@ export const InitialOwnerSetupForm = ({ email }: { email: string }) => {
       setSetupToken('');
       router.replace('/admin/login?created=1');
     } catch {
-      setHasError(true);
+      setErrorMessage('Setup could not be completed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -53,9 +66,9 @@ export const InitialOwnerSetupForm = ({ email }: { email: string }) => {
 
   return (
     <Form noValidate onSubmit={handleSubmit}>
-      {hasError ? (
+      {errorMessage ? (
         <Alert role="alert" variant="danger">
-          Setup could not be completed. Check the setup code and try again.
+          {errorMessage}
         </Alert>
       ) : null}
       <p className="border rounded bg-light mb-3 p-3 small">
@@ -96,11 +109,7 @@ export const InitialOwnerSetupForm = ({ email }: { email: string }) => {
           value={confirmation}
         />
       </Form.Group>
-      <Button
-        className="w-100"
-        disabled={!canSubmit || isSubmitting}
-        type="submit"
-      >
+      <Button className="w-100" disabled={isSubmitting} type="submit">
         {isSubmitting ? 'Creating owner account…' : 'Create owner account'}
       </Button>
     </Form>

@@ -8,15 +8,20 @@ vi.mock('next/navigation', () => ({
 }));
 
 describe('InitialOwnerSetupForm', () => {
-  it('requires the setup code and a confirmed strong password', async () => {
+  it('explains the setup-code and password requirements before submission', async () => {
     const user = userEvent.setup();
     render(<InitialOwnerSetupForm email="owner@example.com" />);
 
     const button = screen.getByRole('button', {
       name: /create owner account/i,
     });
-    expect(button).toBeDisabled();
+    expect(button).toBeEnabled();
     expect(screen.getByText('owner@example.com')).toBeVisible();
+
+    await user.click(button);
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      /enter the private one-time setup code/i,
+    );
 
     await user.type(
       screen.getByLabelText(/one-time setup code/i),
