@@ -42,9 +42,11 @@ export default function AdminDashboardPage() {
                   {title}
                 </CardTitle>
                 <CardText className="text-secondary">{description}</CardText>
-                {href === '/admin/catalogue' ? (
+                {href === '/admin/catalogue' || href === '/admin/enquiries' ? (
                   <Link className="btn btn-outline-primary btn-sm" href={href}>
-                    Manage catalogue
+                    {href === '/admin/catalogue'
+                      ? 'Manage catalogue'
+                      : 'View enquiries'}
                   </Link>
                 ) : (
                   <span className="badge text-bg-light">Coming next</span>
