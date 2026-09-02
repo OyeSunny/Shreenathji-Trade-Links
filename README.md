@@ -18,7 +18,13 @@ Requirements: Node.js 24, pnpm 10, and Docker with Compose.
    cp .env.example .env
    ```
 
-3. Edit `.env` before continuing. Set a unique `POSTGRES_PASSWORD`, use the same value in `DATABASE_URL`, and set `BETTER_AUTH_SECRET` to a cryptographically random value of at least 32 characters. Do not commit this file.
+3. Edit `.env` before continuing:
+
+   - Set a unique, URL-safe `POSTGRES_PASSWORD` and use the same value in `DATABASE_URL`. If the password contains URL-reserved characters such as `@`, `:`, `/`, or `#`, percent-encode it in `DATABASE_URL`.
+   - Set `BETTER_AUTH_SECRET` to a cryptographically random value of at least 32 characters.
+   - Replace `OWNER_EMAIL` and `MAIL_FROM` with the real owner and sender addresses, and set `BETTER_AUTH_URL` to the local or production site URL as appropriate.
+
+   Do not commit this file.
 
 4. Start the local PostgreSQL database, bound only to your machine:
 
