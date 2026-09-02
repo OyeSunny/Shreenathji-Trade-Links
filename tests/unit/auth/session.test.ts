@@ -12,7 +12,7 @@ vi.mock('@/lib/env', () => ({
   env: { OWNER_EMAIL: 'owner@example.com' },
 }));
 
-import { getOwnerSession } from '@/features/auth/server/session';
+import { getOwnerSession, requireOwnerApiSession } from '@/features/auth/server/session';
 
 const requestHeaders = new Headers();
 const now = new Date();
@@ -30,6 +30,10 @@ describe('getOwnerSession', () => {
 
     await expect(getOwnerSession(requestHeaders)).resolves.toMatchObject({
       user: { email: 'OWNER@example.com' },
+    });
+    expect(authApi.getSession).toHaveBeenCalledWith({
+      headers: requestHeaders,
+      query: { disableCookieCache: true },
     });
   });
 
@@ -60,5 +64,14 @@ describe('getOwnerSession', () => {
       },
     });
     await expect(getOwnerSession(requestHeaders)).resolves.toBeNull();
+  });
+
+  it('provides a typed unauthorized result for API callers', async () => {
+    authApi.getSession.mockResolvedValue(null);
+
+    await expect(requireOwnerApiSession(requestHeaders)).resolves.toEqual({
+      ok: false,
+      status: 401,
+    });
   });
 });

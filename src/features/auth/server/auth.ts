@@ -44,7 +44,9 @@ export const auth = betterAuth({
         durationSeconds: 15 * 60,
       },
       backupCodeOptions: {
-        amount: 10,
+        // Recovery codes are implemented as project-owned hashes in Task 4.
+        // Better Auth's built-in backup-code storage is reversibly encrypted.
+        amount: 0,
         length: 12,
         storeBackupCodes: 'encrypted',
       },
