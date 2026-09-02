@@ -124,34 +124,42 @@ export default async function CataloguePage({
                         }).format(product.updatedAt)}
                       </td>
                       <td>
-                        <form action={changeProductPublication}>
-                          <input
-                            name="productId"
-                            type="hidden"
-                            value={product.id}
-                          />
-                          <input
-                            name="action"
-                            type="hidden"
-                            value={
-                              product.status === 'PUBLISHED'
-                                ? 'DRAFT'
-                                : 'PUBLISH'
-                            }
-                          />
-                          <button
-                            className={`btn btn-sm ${
-                              product.status === 'PUBLISHED'
-                                ? 'btn-outline-secondary'
-                                : 'btn-outline-success'
-                            }`}
-                            type="submit"
+                        <div className="align-items-start d-flex flex-column gap-2">
+                          <Link
+                            className="btn btn-outline-primary btn-sm"
+                            href={`/admin/catalogue/${product.id}/media`}
                           >
-                            {product.status === 'PUBLISHED'
-                              ? 'Move to draft'
-                              : 'Publish'}
-                          </button>
-                        </form>
+                            Manage media
+                          </Link>
+                          <form action={changeProductPublication}>
+                            <input
+                              name="productId"
+                              type="hidden"
+                              value={product.id}
+                            />
+                            <input
+                              name="action"
+                              type="hidden"
+                              value={
+                                product.status === 'PUBLISHED'
+                                  ? 'DRAFT'
+                                  : 'PUBLISH'
+                              }
+                            />
+                            <button
+                              className={`btn btn-sm ${
+                                product.status === 'PUBLISHED'
+                                  ? 'btn-outline-secondary'
+                                  : 'btn-outline-success'
+                              }`}
+                              type="submit"
+                            >
+                              {product.status === 'PUBLISHED'
+                                ? 'Move to draft'
+                                : 'Publish'}
+                            </button>
+                          </form>
+                        </div>
                       </td>
                     </tr>
                   ))}

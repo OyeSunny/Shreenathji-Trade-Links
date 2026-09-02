@@ -1,0 +1,102 @@
+.root {
+  background: #111315;
+  overflow: hidden;
+  position: relative;
+}
+
+.root :global(.carousel),
+.root :global(.carousel-inner),
+.root :global(.carousel-item) {
+  height: 100%;
+}
+
+.image {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.singleImage {
+  height: auto;
+}
+
+.controls {
+  align-items: center;
+  background: rgb(17 19 21 / 82%);
+  bottom: 1rem;
+  display: flex;
+  gap: 0.65rem;
+  left: 1rem;
+  padding: 0.45rem;
+  position: absolute;
+  z-index: 2;
+}
+
+.arrow,
+.indicator {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.arrow {
+  align-items: center;
+  background: transparent;
+  color: #f8f9fa;
+  display: inline-flex;
+  font-size: 1.15rem;
+  height: 2rem;
+  justify-content: center;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+  width: 2rem;
+}
+
+.indicators {
+  display: flex;
+  gap: 0.38rem;
+}
+
+.indicator {
+  background: rgb(248 249 250 / 45%);
+  height: 0.22rem;
+  padding: 0;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+  width: 1.45rem;
+}
+
+.indicator[aria-current='true'] {
+  background: #ff5a1f;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .arrow:hover {
+    background: rgb(248 249 250 / 13%);
+  }
+
+  .indicator:hover {
+    background: rgb(248 249 250 / 78%);
+  }
+}
+
+.arrow:active,
+.indicator:active {
+  transform: scale(0.97);
+}
+
+.arrow:focus-visible,
+.indicator:focus-visible {
+  outline: 2px solid #f8f9fa;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow,
+  .indicator {
+    transition: none;
+  }
+}

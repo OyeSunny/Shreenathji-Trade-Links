@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Container from 'react-bootstrap/Container';
 
+import { ProductImageCarousel } from '@/components/catalogue/product-image-carousel';
 import {
   getPublicImageUrl,
   getPublishedProductBySlug,
@@ -25,8 +26,20 @@ export default async function ProductDetailPage({
 
   if (!product) notFound();
 
-  const primaryImage = product.media[0];
-  const imageUrl = getPublicImageUrl(primaryImage?.media ?? null);
+  const productImages = product.media.reduce<
+    Array<{ alt: string; src: string }>
+  >((images, productMedia) => {
+    const src = getPublicImageUrl(productMedia.media);
+
+    if (src) {
+      images.push({
+        src,
+        alt: productMedia.altText ?? productMedia.media.altText ?? product.name,
+      });
+    }
+
+    return images;
+  }, []);
   const details = [
     product.grade ? { label: 'Grade', value: product.grade } : null,
     product.form ? { label: 'Form', value: product.form } : null,
@@ -61,18 +74,10 @@ export default async function ProductDetailPage({
         <Container>
           <div className="row g-5">
             <div className="col-lg-7">
-              {imageUrl ? (
-                // This is a CMS-managed public image URL. Its media record is
-                // constrained to PUBLISHED + APPROVED in the database query.
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  alt={
-                    primaryImage?.altText ??
-                    primaryImage?.media.altText ??
-                    product.name
-                  }
+              {productImages.length > 0 ? (
+                <ProductImageCarousel
                   className={styles.detailImage}
-                  src={imageUrl}
+                  images={productImages}
                 />
               ) : (
                 <div

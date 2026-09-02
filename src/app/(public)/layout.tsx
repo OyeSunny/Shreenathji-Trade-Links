@@ -2,6 +2,8 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import Container from 'react-bootstrap/Container';
 
+import { PublicNavigation } from '@/components/layout/public-navigation';
+
 export default function PublicLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
@@ -16,17 +18,7 @@ export default function PublicLayout({
               <small>Trade Links</small>
             </span>
           </Link>
-          <nav aria-label="Main navigation" className="d-none d-md-flex gap-4">
-            <Link href="/products">Products</Link>
-            <Link href="/about">Company</Link>
-            <Link href="/contact">Contact</Link>
-          </nav>
-          <Link
-            className="btn btn-sm btn-outline-light"
-            href="/request-a-quote"
-          >
-            Request a quote
-          </Link>
+          <PublicNavigation />
         </Container>
       </header>
       {children}
