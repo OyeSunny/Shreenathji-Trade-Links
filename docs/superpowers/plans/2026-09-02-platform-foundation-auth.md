@@ -472,7 +472,7 @@ export const { GET, POST } = toNextJsHandler(auth);
 Run:
 
 ```bash
-pnpm dlx @better-auth/cli@1.7.2 generate --config src/features/auth/server/auth.ts
+pnpm dlx auth@1.7.2 generate --config src/features/auth/server/auth.ts
 pnpm prisma format
 pnpm prisma migrate dev --name owner-authentication
 ```
