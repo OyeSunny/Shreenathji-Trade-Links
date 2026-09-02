@@ -41,6 +41,22 @@ describe.skipIf(!databaseTestsEnabled)('completeOwnerTwoFactorSetup', () => {
         verified: true,
       },
     });
+    await db.session.createMany({
+      data: [
+        {
+          id: 'pre-setup-session-a',
+          userId: owner.id,
+          token: 'pre-setup-token-a',
+          expiresAt: new Date(Date.now() + 60_000),
+        },
+        {
+          id: 'pre-setup-session-b',
+          userId: owner.id,
+          token: 'pre-setup-token-b',
+          expiresAt: new Date(Date.now() + 60_000),
+        },
+      ],
+    });
 
     const recoveryCodes = await completeOwnerTwoFactorSetup(owner.id);
     const persistedCodes = await db.recoveryCode.findMany({
@@ -60,12 +76,57 @@ describe.skipIf(!databaseTestsEnabled)('completeOwnerTwoFactorSetup', () => {
     );
     await expect(
       db.ownerSecurityPolicy.findUnique({ where: { id: 1 } }),
-    ).resolves.toMatchObject({ requiresTwoFactorSetup: false });
+    ).resolves.toMatchObject({
+      requiresTwoFactorSetup: false,
+      twoFactorEnforcedAt: expect.any(Date),
+    });
+    await expect(
+      db.session.count({ where: { userId: owner.id } }),
+    ).resolves.toBe(0);
     await expect(
       db.securityEvent.findFirst({ where: { type: 'TWO_FACTOR_ENABLED' } }),
     ).resolves.toMatchObject({ userId: owner.id });
     await expect(completeOwnerTwoFactorSetup(owner.id)).rejects.toThrow(
       'TWO_FACTOR_SETUP_NOT_READY',
     );
+  });
+
+  it('atomically allows only one completion to issue recovery codes', async () => {
+    await bootstrapOwner({
+      email: 'owner@example.com',
+      password: strongPassword,
+    });
+    const owner = await db.user.findUniqueOrThrow({
+      where: { email: 'owner@example.com' },
+    });
+
+    await db.user.update({
+      where: { id: owner.id },
+      data: { twoFactorEnabled: true },
+    });
+    await db.twoFactor.create({
+      data: {
+        id: 'parallel-test-two-factor',
+        userId: owner.id,
+        secret: 'encrypted-test-secret',
+        backupCodes: '',
+        verified: true,
+      },
+    });
+
+    const results = await Promise.allSettled([
+      completeOwnerTwoFactorSetup(owner.id),
+      completeOwnerTwoFactorSetup(owner.id),
+    ]);
+
+    expect(
+      results.filter((result) => result.status === 'fulfilled'),
+    ).toHaveLength(1);
+    expect(
+      results.filter((result) => result.status === 'rejected'),
+    ).toHaveLength(1);
+    await expect(
+      db.recoveryCode.count({ where: { userId: owner.id } }),
+    ).resolves.toBe(10);
   });
 });

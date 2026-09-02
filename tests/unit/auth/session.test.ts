@@ -3,6 +3,9 @@ import { vi } from 'vitest';
 const authApi = vi.hoisted(() => ({
   getSession: vi.fn(),
 }));
+const ownerSecurityPolicy = vi.hoisted(() => ({
+  findUnique: vi.fn(),
+}));
 
 vi.mock('@/features/auth/server/auth', () => ({
   auth: { api: authApi },
@@ -10,6 +13,10 @@ vi.mock('@/features/auth/server/auth', () => ({
 
 vi.mock('@/lib/env', () => ({
   env: { OWNER_EMAIL: 'owner@example.com' },
+}));
+
+vi.mock('@/lib/db', () => ({
+  db: { ownerSecurityPolicy },
 }));
 
 import {
@@ -23,6 +30,7 @@ const now = new Date();
 describe('getOwnerSession', () => {
   beforeEach(() => {
     authApi.getSession.mockReset();
+    ownerSecurityPolicy.findUnique.mockResolvedValue(null);
   });
 
   it('returns the current owner session', async () => {
@@ -76,5 +84,20 @@ describe('getOwnerSession', () => {
       ok: false,
       status: 401,
     });
+  });
+
+  it('rejects sessions created before two-factor enforcement', async () => {
+    authApi.getSession.mockResolvedValue({
+      user: { email: 'owner@example.com' },
+      session: {
+        createdAt: new Date(now.getTime() - 10_000),
+        updatedAt: now,
+      },
+    });
+    ownerSecurityPolicy.findUnique.mockResolvedValue({
+      twoFactorEnforcedAt: now,
+    });
+
+    await expect(getOwnerSession(requestHeaders)).resolves.toBeNull();
   });
 });

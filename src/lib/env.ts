@@ -24,6 +24,7 @@ const environmentSchema = z.object({
     ),
   BETTER_AUTH_URL: z.string().url(),
   OWNER_EMAIL: z.string().trim().toLowerCase().email(),
+  OWNER_SETUP_TOKEN: z.string().min(32).optional(),
   MAIL_FROM: z.string().trim().toLowerCase().email(),
 });
 

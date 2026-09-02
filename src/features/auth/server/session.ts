@@ -1,4 +1,5 @@
 import { auth } from '@/features/auth/server/auth';
+import { db } from '@/lib/db';
 import { env } from '@/lib/env';
 import { headers as nextHeaders } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -28,6 +29,18 @@ export const getOwnerSession = async (headers: Headers) => {
     !Number.isFinite(lastActivityAt) ||
     now - createdAt > maximumAbsoluteDurationMs ||
     now - lastActivityAt > maximumIdleDurationMs
+  ) {
+    return null;
+  }
+
+  const policy = await db.ownerSecurityPolicy.findUnique({
+    where: { id: 1 },
+    select: { twoFactorEnforcedAt: true },
+  });
+
+  if (
+    policy?.twoFactorEnforcedAt &&
+    createdAt < policy.twoFactorEnforcedAt.getTime()
   ) {
     return null;
   }

@@ -87,6 +87,11 @@ export const LoginForm = () => {
       <p className="mb-0 mt-3 text-center">
         <Link href="/admin/forgot-password">Forgot password?</Link>
       </p>
+      <p className="mb-0 mt-2 text-center small">
+        <Link href="/admin/first-time-setup">
+          Create the initial owner account
+        </Link>
+      </p>
     </Form>
   );
 };

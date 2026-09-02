@@ -21,6 +21,7 @@ export const createRecoveryCodes = () =>
  */
 export const completeOwnerTwoFactorSetup = async (userId: string) => {
   const recoveryCodes = createRecoveryCodes();
+  const twoFactorEnforcedAt = new Date();
 
   await db.$transaction(async (transaction) => {
     const [owner, twoFactor, policy] = await Promise.all([
@@ -41,6 +42,15 @@ export const completeOwnerTwoFactorSetup = async (userId: string) => {
       throw new Error('TWO_FACTOR_SETUP_NOT_READY');
     }
 
+    const setupClaim = await transaction.ownerSecurityPolicy.updateMany({
+      where: { id: 1, requiresTwoFactorSetup: true },
+      data: { requiresTwoFactorSetup: false, twoFactorEnforcedAt },
+    });
+
+    if (setupClaim.count !== 1) {
+      throw new Error('TWO_FACTOR_SETUP_NOT_READY');
+    }
+
     await transaction.recoveryCode.deleteMany({ where: { userId } });
     await transaction.recoveryCode.createMany({
       data: recoveryCodes.map((code) => ({
@@ -48,10 +58,7 @@ export const completeOwnerTwoFactorSetup = async (userId: string) => {
         codeHash: hashRecoveryCode(code),
       })),
     });
-    await transaction.ownerSecurityPolicy.update({
-      where: { id: 1 },
-      data: { requiresTwoFactorSetup: false },
-    });
+    await transaction.session.deleteMany({ where: { userId } });
     await transaction.securityEvent.create({
       data: {
         type: 'TWO_FACTOR_ENABLED',

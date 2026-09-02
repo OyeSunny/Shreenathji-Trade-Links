@@ -23,6 +23,7 @@ Requirements: Node.js 24, pnpm 10, and Docker with Compose.
    - Set a unique, URL-safe `POSTGRES_PASSWORD` and use the same value in `DATABASE_URL`. If the password contains URL-reserved characters such as `@`, `:`, `/`, or `#`, percent-encode it in `DATABASE_URL`.
    - Set `BETTER_AUTH_SECRET` to a cryptographically random value of at least 32 characters.
    - Replace `OWNER_EMAIL` and `MAIL_FROM` with the real owner and sender addresses, and set `BETTER_AUTH_URL` to the local or production site URL as appropriate.
+   - Set `OWNER_SETUP_TOKEN` to a separate random value of at least 32 characters. This protects the one-time owner-account creation screen; keep it private and remove it from the hosting secret manager after setup is complete if you do not need to recreate the database.
 
    Do not commit this file.
 
@@ -45,6 +46,10 @@ Requirements: Node.js 24, pnpm 10, and Docker with Compose.
    ```
 
 Open [http://localhost:3000](http://localhost:3000). The health endpoint is available at `/api/health` after the database is running.
+
+### Create the first owner account
+
+Only while the database has no users, open `/admin/first-time-setup`. Enter the private `OWNER_SETUP_TOKEN`, choose the owner password, then sign in and complete the required authenticator-app setup. The owner email is the `OWNER_EMAIL` value from `.env`; there is no public registration and a second administrator cannot be created through the website.
 
 ## Quality checks
 

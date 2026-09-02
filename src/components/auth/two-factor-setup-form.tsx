@@ -67,19 +67,11 @@ export const TwoFactorSetupForm = () => {
     setIsSubmitting(true);
 
     try {
-      const verification = await authClient.twoFactor.verifyTotp({
-        code,
-        trustDevice: false,
-      });
-
-      if (verification.error) {
-        setHasError(true);
-        return;
-      }
-
       const completion = await fetch('/api/admin/complete-2fa', {
         method: 'POST',
         credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
       });
       const result = (await completion.json()) as {
         recoveryCodes?: string[];
@@ -104,7 +96,7 @@ export const TwoFactorSetupForm = () => {
       <section aria-labelledby="recovery-codes-heading">
         <Alert variant="success">
           Your authenticator is active. Save these recovery codes somewhere
-          private before continuing.
+          private before signing in again.
         </Alert>
         <h2 className="h5" id="recovery-codes-heading">
           One-time recovery codes
@@ -122,8 +114,11 @@ export const TwoFactorSetupForm = () => {
           They are shown only once. Do not send them by email, WhatsApp, or
           chat.
         </p>
-        <Button className="w-100" onClick={() => router.replace('/admin')}>
-          I have saved my codes
+        <Button
+          className="w-100"
+          onClick={() => router.replace('/admin/login')}
+        >
+          I have saved my codes — sign in again
         </Button>
       </section>
     );

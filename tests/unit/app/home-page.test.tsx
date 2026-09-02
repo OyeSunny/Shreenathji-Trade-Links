@@ -5,7 +5,9 @@ describe('HomePage', () => {
   it('identifies the business and primary enquiry action', () => {
     render(<HomePage />);
     expect(
-      screen.getByRole('heading', { name: /shreenathji trade links/i }),
+      screen.getByRole('heading', {
+        name: /material supply, made dependable/i,
+      }),
     ).toBeVisible();
     expect(
       screen.getByRole('link', { name: /request a quote/i }),

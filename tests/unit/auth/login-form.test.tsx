@@ -24,6 +24,9 @@ describe('LoginForm', () => {
     expect(
       screen.getByRole('link', { name: /forgot password/i }),
     ).toHaveAttribute('href', '/admin/forgot-password');
+    expect(
+      screen.getByRole('link', { name: /create the initial owner account/i }),
+    ).toHaveAttribute('href', '/admin/first-time-setup');
 
     await user.type(screen.getByLabelText(/email/i), 'owner@example.com');
     await user.type(

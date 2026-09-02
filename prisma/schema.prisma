@@ -139,6 +139,234 @@ model PasswordResetChallenge {
 model OwnerSecurityPolicy {
   id                     Int       @id @default(1)
   requiresTwoFactorSetup Boolean   @default(true)
+  twoFactorEnforcedAt    DateTime?
   lastSessionSweepAt     DateTime?
   updatedAt              DateTime  @updatedAt
+}
+
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum MediaKind {
+  IMAGE
+  DOCUMENT
+  VIDEO
+}
+
+enum MediaSource {
+  CLIENT_INDIA_MART
+  SUPPLIER
+  LICENSED_STOCK
+  PROJECT_CREATED
+}
+
+enum MediaRightsStatus {
+  PENDING_VERIFICATION
+  APPROVED
+  RESTRICTED
+}
+
+enum ProductAvailability {
+  IN_STOCK
+  LIMITED_STOCK
+  AVAILABLE_ON_REQUEST
+  OUT_OF_STOCK
+}
+
+enum PriceVisibility {
+  ASK_FOR_PRICE
+  INDICATIVE_PRICE
+}
+
+enum EnquiryType {
+  GENERAL
+  DOMESTIC
+  EXPORT
+}
+
+enum EnquiryStatus {
+  NEW
+  IN_PROGRESS
+  QUOTED
+  WON
+  LOST
+  SPAM
+}
+
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model MediaAsset {
+  id                  String            @id @default(cuid())
+  kind                MediaKind
+  storageKey          String?           @unique
+  sourceUrl           String?
+  fileName            String
+  mimeType            String
+  bytes               Int?
+  width               Int?
+  height              Int?
+  altText             String?
+  caption             String?
+  source              MediaSource
+  sourceName          String?
+  sourceReferenceUrl  String?
+  rightsStatus        MediaRightsStatus @default(PENDING_VERIFICATION)
+  attributionRequired Boolean           @default(false)
+  attributionText     String?
+  status              PublicationStatus @default(DRAFT)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  productMedia        ProductMedia[]
+
+  @@index([kind, status])
+  @@index([rightsStatus, status])
+}
+
+model ProductCategory {
+  id             String            @id @default(cuid())
+  name           String
+  slug           String            @unique
+  introduction   String?
+  seoTitle       String?
+  seoDescription String?
+  status         PublicationStatus @default(DRAFT)
+  featured       Boolean           @default(false)
+  sortOrder      Int               @default(0)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  products       Product[]
+
+  @@index([status, sortOrder])
+}
+
+model Product {
+  id              String                 @id @default(cuid())
+  categoryId      String
+  category        ProductCategory        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  name            String
+  slug            String                 @unique
+  summary         String
+  description     String?
+  grade           String?
+  form            String?
+  applications    String[]
+  packaging       String?
+  minimumOrderQty Decimal?               @db.Decimal(18, 3)
+  orderUnit       String?
+  priceVisibility PriceVisibility        @default(ASK_FOR_PRICE)
+  indicativePrice Decimal?               @db.Decimal(18, 2)
+  currency        String?                @db.Char(3)
+  availability    ProductAvailability    @default(AVAILABLE_ON_REQUEST)
+  featured        Boolean                @default(false)
+  status          PublicationStatus      @default(DRAFT)
+  seoTitle        String?
+  seoDescription  String?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  publishedAt     DateTime?
+  specifications  ProductSpecification[]
+  media           ProductMedia[]
+  enquiryItems    EnquiryItem[]
+  customerReviews CustomerReview[]
+
+  @@index([categoryId, status, featured])
+  @@index([status, publishedAt])
+}
+
+model ProductSpecification {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  label     String
+  value     String
+  unit      String?
+  sortOrder Int     @default(0)
+
+  @@index([productId, sortOrder])
+}
+
+model ProductMedia {
+  productId String
+  mediaId   String
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  media     MediaAsset @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  sortOrder Int        @default(0)
+  isPrimary Boolean    @default(false)
+  altText   String?
+  caption   String?
+  createdAt DateTime   @default(now())
+
+  @@id([productId, mediaId])
+  @@index([mediaId])
+  @@index([productId, sortOrder])
+}
+
+model Enquiry {
+  id                 String        @id @default(cuid())
+  type               EnquiryType   @default(GENERAL)
+  status             EnquiryStatus @default(NEW)
+  contactName        String
+  companyName        String?
+  email              String
+  phone              String?
+  whatsapp           String?
+  countryCode        String?       @db.Char(2)
+  city               String?
+  destinationCountry String?
+  destinationPort    String?
+  incoterm           String?
+  materialRequest    String?
+  requiredBy         DateTime?
+  internalNotes      String?
+  submittedAt        DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  items              EnquiryItem[]
+
+  @@index([status, submittedAt])
+  @@index([type, submittedAt])
+  @@index([email, submittedAt])
+}
+
+model EnquiryItem {
+  id                String   @id @default(cuid())
+  enquiryId         String
+  enquiry           Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  productId         String?
+  product           Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  requestedMaterial String?
+  quantity          Decimal? @db.Decimal(18, 3)
+  unit              String?
+  notes             String?
+
+  @@index([enquiryId])
+  @@index([productId])
+}
+
+model CustomerReview {
+  id           String            @id @default(cuid())
+  reviewerName String
+  companyName  String?
+  location     String?
+  productId    String?
+  product      Product?          @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productName  String?
+  rating       Int
+  comment      String
+  reviewedOn   DateTime?
+  status       PublicationStatus @default(DRAFT)
+  featured     Boolean           @default(false)
+  sortOrder    Int               @default(0)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  publishedAt  DateTime?
+
+  @@index([status, featured, sortOrder])
+  @@index([productId])
 }
