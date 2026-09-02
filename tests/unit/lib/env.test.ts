@@ -39,4 +39,14 @@ describe('parseEnv', () => {
       parseEnv({ ...validEnvironment, BETTER_AUTH_SECRET: 'too-short' }),
     ).toThrow();
   });
+
+  it('rejects the documented placeholder secret', () => {
+    expect(() =>
+      parseEnv({
+        ...validEnvironment,
+        BETTER_AUTH_SECRET:
+          'replace-with-a-random-secret-of-at-least-32-characters',
+      }),
+    ).toThrow();
+  });
 });
