@@ -452,11 +452,11 @@ Configure `src/features/auth/server/auth.ts` with:
 - Prisma adapter using PostgreSQL.
 - `emailAndPassword.enabled: true` and `disableSignUp: true`.
 - Custom `password.hash` and `password.verify` functions from `password.ts`.
-- `resetPasswordTokenExpiresIn: 900` and `revokeSessionsOnPasswordReset: true`.
 - Two-factor plugin using TOTP and single-use backup codes.
 - Session expiry of 12 hours and cookie cache no longer than 5 minutes.
 - A trusted-origin list containing only `BETTER_AUTH_URL`.
-- A mailer callback that never places reset URLs in logs.
+
+Do not enable Better Auth's built-in reset-password email flow. Task 6 owns the only password-recovery flow so it can require both the approved 15-minute hashed reset challenge and TOTP or a recovery code.
 
 Mount it in `src/app/api/auth/[...all]/route.ts`:
 
@@ -762,6 +762,7 @@ git commit -m "feat: add secure password recovery and session controls"
 - Create: `tests/e2e/security-boundaries.spec.ts`
 - Modify: `next.config.ts`
 - Modify: `src/features/auth/server/auth.ts`
+- Modify: `prisma/schema.prisma`
 
 **Interfaces:**
 - Consumes: database, authentication callbacks, and admin actions.
@@ -799,6 +800,8 @@ Use fixed-window records for login and recovery keys so enforcement works across
 - Sensitive owner actions: recent authentication within 10 minutes.
 
 Hash network identifiers with a rotating server-side pepper before storage. Audit metadata uses an allowlist per event type; never accept arbitrary request objects.
+
+Add a `RateLimitWindow` Prisma model and migration before creating the limiter. It stores a hashed rate-limit key, policy name, window start, failure count, and lock expiry; a unique constraint on `(keyHash, policy, windowStart)` makes concurrent updates deterministic.
 
 - [ ] **Step 4: Add headers and safe error boundaries**
 
@@ -877,6 +880,8 @@ The workflow must:
 5. Run format check, lint, typecheck, unit/integration tests, production build, and Playwright tests.
 6. Run a production-dependency licence check that allows MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, and PostgreSQL licences and fails on GPL/AGPL, unknown, or commercial-only licences unless the owner explicitly approves a reviewed exception.
 7. Upload Playwright reports only on failure and never upload `.env` files or database data.
+
+Install `license-checker-rseidelsohn` as a development dependency and add a `licenses:check` package script that applies the stated allowlist to production dependencies.
 
 - [ ] **Step 5: Write operational documentation with exact commands**
 
