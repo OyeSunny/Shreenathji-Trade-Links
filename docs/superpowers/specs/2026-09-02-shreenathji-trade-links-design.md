@@ -157,6 +157,8 @@ Additional established libraries may provide form state and validation, data gri
 
 - Manage pages, reusable blocks, industries, services or capabilities, offers, clients, projects, reviews, FAQs, gallery items, videos, downloads, certifications, and site navigation.
 - Central media library with alt text, captions, type, usage references, and archive controls.
+- Media may originate from approved client/IndiaMART assets, commercially permitted stock or supplier imagery, or project-created visuals. Each record stores its source, rights/permission status, and attribution requirement; unverified third-party images cannot be published.
+- All public images, hero banners, product photographs, certificates, client logos, gallery assets, and social/SEO images remain replaceable by the owner from the media library. Images are selected for authenticity and relevance rather than generic decoration.
 
 ### Settings
 
