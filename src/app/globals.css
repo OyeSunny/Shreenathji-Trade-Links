@@ -1,21 +1,42 @@
 @import '../styles/bootstrap.scss';
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 
+:root {
+  --stl-ink: #102d27;
+  --stl-paper: #f1eee6;
+  --stl-oxide: #c8532c;
+  --stl-brass: #d6ab4c;
+  --stl-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
 body {
   min-height: 100vh;
   margin: 0;
-  background: #f4f1eb;
-  color: #16352e;
-  font-family: 'Trebuchet MS', 'Helvetica Neue', sans-serif;
+  background: var(--stl-paper);
+  color: var(--stl-ink);
+  font-family: 'Aptos', 'Segoe UI', sans-serif;
 }
 
 .public-header {
-  background: #173d37;
+  background: var(--stl-ink);
   color: #fffdf7;
 }
 
 .public-header a {
   color: #fffdf7;
+}
+
+.public-header nav a {
+  font-size: 0.83rem;
+  letter-spacing: 0.08em;
+  opacity: 0.78;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: opacity 160ms var(--stl-ease-out);
+}
+
+.public-header nav a:hover {
+  opacity: 1;
 }
 
 .brand-mark {
@@ -51,10 +72,21 @@ body {
 }
 
 .hero-section {
-  background: #173d37;
+  background: var(--stl-ink);
   color: #fffdf7;
   overflow: hidden;
   position: relative;
+}
+.hero-section::before {
+  background-image:
+    linear-gradient(rgba(214, 171, 76, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(214, 171, 76, 0.13) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+  content: '';
+  inset: 0;
+  mask-image: linear-gradient(90deg, #000 0%, transparent 76%);
+  pointer-events: none;
+  position: absolute;
 }
 .hero-section h1,
 h2,
@@ -62,10 +94,18 @@ h3 {
   font-family: Georgia, 'Times New Roman', serif;
 }
 .hero-section h1 {
-  font-size: clamp(3rem, 7vw, 6.25rem);
+  font-size: clamp(3.4rem, 7.4vw, 6.75rem);
   letter-spacing: -0.06em;
   line-height: 0.92;
   max-width: 11ch;
+  position: relative;
+  z-index: 1;
+}
+.hero-section__content {
+  align-items: end;
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: minmax(0, 1fr) 13rem;
   position: relative;
   z-index: 1;
 }
@@ -94,6 +134,26 @@ h3 {
   right: -3rem;
   transform: rotate(-24deg);
 }
+.hero-section__specimen {
+  border-left: 1px solid rgba(214, 171, 76, 0.55);
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem 0 1rem 1.25rem;
+}
+.hero-section__specimen span {
+  color: #d6ab4c;
+  font-family: ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+}
+.hero-section__specimen strong {
+  color: #fffdf7;
+  font-family: Georgia, serif;
+  font-size: 3.25rem;
+  letter-spacing: -0.1em;
+  line-height: 1;
+  margin-top: 0.75rem;
+}
 .hero-section__grid span {
   background: linear-gradient(145deg, #274c43, #102c27);
   border: 1px solid rgba(216, 179, 92, 0.35);
@@ -110,12 +170,41 @@ h3 {
   border-bottom: 3px solid #d8b35c;
   box-shadow: 0 10px 30px rgba(25, 49, 43, 0.07);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 220ms var(--stl-ease-out),
+    box-shadow 220ms var(--stl-ease-out),
+    border-color 220ms ease;
 }
-.material-card:hover {
-  box-shadow: 0 18px 35px rgba(25, 49, 43, 0.13);
-  transform: translateY(-4px);
+@media (hover: hover) and (pointer: fine) {
+  .material-card:hover {
+    border-bottom-color: var(--stl-oxide);
+    box-shadow: 0 18px 35px rgba(25, 49, 43, 0.13);
+    transform: translateY(-5px);
+  }
+}
+.btn {
+  transition:
+    transform 160ms var(--stl-ease-out),
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-primary {
+  --bs-btn-bg: var(--stl-oxide);
+  --bs-btn-border-color: var(--stl-oxide);
+  --bs-btn-hover-bg: #af4123;
+  --bs-btn-hover-border-color: #af4123;
+}
+.btn-warning {
+  --bs-btn-bg: var(--stl-brass);
+  --bs-btn-border-color: var(--stl-brass);
+}
+.btn:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--stl-brass);
+  outline-offset: 3px;
 }
 .material-card h3 {
   font-size: 1.55rem;
@@ -155,5 +244,27 @@ h3 {
   }
   .hero-section__grid {
     opacity: 0.45;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .hero-section__content {
+    grid-template-columns: 1fr;
+  }
+  .hero-section__specimen {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .hero-section__specimen strong {
+    margin-left: auto;
+    margin-top: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
   }
 }

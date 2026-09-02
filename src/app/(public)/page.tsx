@@ -24,26 +24,42 @@ export default function HomePage() {
     <main>
       <section className="hero-section" aria-labelledby="home-title">
         <Container className="position-relative py-5 py-lg-6">
-          <div className="hero-section__eyebrow">
-            Industrial raw materials · India & export
-          </div>
-          <h1 id="home-title">
-            Material supply,
-            <br />
-            made dependable.
-          </h1>
-          <p className="hero-section__lede">
-            Shreenathji Trade Links connects industrial buyers with bulk iron,
-            carbon, and mineral materials—with clear specifications and direct
-            enquiry support.
-          </p>
-          <div className="d-flex flex-wrap gap-3">
-            <Link className="btn btn-primary btn-lg" href="/request-a-quote">
-              Request a quote <span aria-hidden="true">↗</span>
-            </Link>
-            <Link className="btn btn-outline-light btn-lg" href="/products">
-              Explore materials
-            </Link>
+          <div className="hero-section__content">
+            <div>
+              <div className="hero-section__eyebrow">
+                Industrial raw materials · India & export
+              </div>
+              <h1 id="home-title">
+                Material supply,
+                <br />
+                made dependable.
+              </h1>
+              <p className="hero-section__lede">
+                Shreenathji Trade Links connects industrial buyers with bulk
+                iron, carbon, and mineral materials—with clear specifications
+                and direct enquiry support.
+              </p>
+              <div className="d-flex flex-wrap gap-3">
+                <Link
+                  className="btn btn-primary btn-lg"
+                  href="/request-a-quote"
+                >
+                  Request a quote <span aria-hidden="true">↗</span>
+                </Link>
+                <Link className="btn btn-outline-light btn-lg" href="/products">
+                  Explore materials
+                </Link>
+              </div>
+            </div>
+            <aside
+              className="hero-section__specimen"
+              aria-label="Material categories"
+            >
+              <span>01 / FERROUS</span>
+              <span>02 / CARBON</span>
+              <span>03 / MINERALS</span>
+              <strong>STL</strong>
+            </aside>
           </div>
           <div className="hero-section__grid" aria-hidden="true">
             <span />
@@ -70,7 +86,9 @@ export default function HomePage() {
             <div className="col-md-4">
               <strong>Direct buyer enquiries</strong>
               <br />
-              <span className="text-secondary">Quote, call, or WhatsApp</span>
+              <span className="text-secondary">
+                Clear material specifications
+              </span>
             </div>
             <div className="col-md-4">
               <strong>India & international</strong>
