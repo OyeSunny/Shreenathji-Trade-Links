@@ -36,10 +36,15 @@ export const getOwnerSession = async (headers: Headers) => {
 };
 
 export type OwnerApiSessionResult =
-  | { ok: true; session: NonNullable<Awaited<ReturnType<typeof getOwnerSession>>> }
+  | {
+      ok: true;
+      session: NonNullable<Awaited<ReturnType<typeof getOwnerSession>>>;
+    }
   | { ok: false; status: 401 };
 
-export const requireOwnerApiSession = async (headers: Headers): Promise<OwnerApiSessionResult> => {
+export const requireOwnerApiSession = async (
+  headers: Headers,
+): Promise<OwnerApiSessionResult> => {
   const session = await getOwnerSession(headers);
 
   return session ? { ok: true, session } : { ok: false, status: 401 };

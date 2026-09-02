@@ -12,7 +12,10 @@ vi.mock('@/lib/env', () => ({
   env: { OWNER_EMAIL: 'owner@example.com' },
 }));
 
-import { getOwnerSession, requireOwnerApiSession } from '@/features/auth/server/session';
+import {
+  getOwnerSession,
+  requireOwnerApiSession,
+} from '@/features/auth/server/session';
 
 const requestHeaders = new Headers();
 const now = new Date();
