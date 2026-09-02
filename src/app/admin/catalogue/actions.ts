@@ -16,8 +16,6 @@ export type ProductDraftFormState = {
   message?: string;
 };
 
-export const initialProductDraftFormState: ProductDraftFormState = {};
-
 export const createProductDraft = async (
   _previousState: ProductDraftFormState,
   formData: FormData,

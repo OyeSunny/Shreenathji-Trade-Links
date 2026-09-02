@@ -2,7 +2,7 @@
 
 import {
   createProductDraft,
-  initialProductDraftFormState,
+  type ProductDraftFormState,
 } from '@/app/admin/catalogue/actions';
 import { useActionState } from 'react';
 import Alert from 'react-bootstrap/Alert';
@@ -15,6 +15,8 @@ const errorFor = (
   fieldErrors: Record<string, string[] | undefined> | undefined,
   field: string,
 ) => fieldErrors?.[field]?.[0];
+
+const initialProductDraftFormState: ProductDraftFormState = {};
 
 export const DraftProductForm = () => {
   const [state, formAction, isPending] = useActionState(
