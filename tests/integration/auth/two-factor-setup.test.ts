@@ -1,0 +1,71 @@
+import { bootstrapOwner } from '@/features/auth/server/owner-bootstrap';
+import {
+  completeOwnerTwoFactorSetup,
+  hashRecoveryCode,
+} from '@/features/auth/server/recovery-codes';
+import { db } from '@/lib/db';
+
+const databaseTestsEnabled = process.env.RUN_DATABASE_TESTS === '1';
+const strongPassword = 'Correct-Horse-Battery-Staple-92!';
+
+describe.skipIf(!databaseTestsEnabled)('completeOwnerTwoFactorSetup', () => {
+  beforeEach(async () => {
+    await db.securityEvent.deleteMany();
+    await db.recoveryCode.deleteMany();
+    await db.twoFactor.deleteMany();
+    await db.account.deleteMany();
+    await db.session.deleteMany();
+    await db.user.deleteMany();
+    await db.ownerSecurityPolicy.deleteMany();
+  });
+
+  it('stores only recovery-code hashes after verified TOTP setup', async () => {
+    await bootstrapOwner({
+      email: 'owner@example.com',
+      password: strongPassword,
+    });
+    const owner = await db.user.findUniqueOrThrow({
+      where: { email: 'owner@example.com' },
+    });
+
+    await db.user.update({
+      where: { id: owner.id },
+      data: { twoFactorEnabled: true },
+    });
+    await db.twoFactor.create({
+      data: {
+        id: 'test-two-factor',
+        userId: owner.id,
+        secret: 'encrypted-test-secret',
+        backupCodes: '',
+        verified: true,
+      },
+    });
+
+    const recoveryCodes = await completeOwnerTwoFactorSetup(owner.id);
+    const persistedCodes = await db.recoveryCode.findMany({
+      where: { userId: owner.id },
+      select: { codeHash: true, usedAt: true },
+    });
+
+    expect(recoveryCodes).toHaveLength(10);
+    expect(persistedCodes).toHaveLength(10);
+    expect(persistedCodes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          codeHash: hashRecoveryCode(recoveryCodes[0]),
+          usedAt: null,
+        }),
+      ]),
+    );
+    await expect(
+      db.ownerSecurityPolicy.findUnique({ where: { id: 1 } }),
+    ).resolves.toMatchObject({ requiresTwoFactorSetup: false });
+    await expect(
+      db.securityEvent.findFirst({ where: { type: 'TWO_FACTOR_ENABLED' } }),
+    ).resolves.toMatchObject({ userId: owner.id });
+    await expect(completeOwnerTwoFactorSetup(owner.id)).rejects.toThrow(
+      'TWO_FACTOR_SETUP_NOT_READY',
+    );
+  });
+});
