@@ -1,0 +1,9 @@
+@import '../styles/bootstrap.scss';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: #f4f1eb;
+  color: #263238;
+}

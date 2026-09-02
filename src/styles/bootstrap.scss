@@ -1,0 +1,22 @@
+$primary: #a85b32;
+$secondary: #54656d;
+$body-bg: #f4f1eb;
+$body-color: #263238;
+$font-family-sans-serif: Arial, Helvetica, sans-serif;
+$border-radius: 0.35rem;
+$border-radius-lg: 0.5rem;
+$focus-ring-color: rgba(168, 91, 50, 0.35);
+
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/root';
+@import 'bootstrap/scss/reboot';
+@import 'bootstrap/scss/type';
+@import 'bootstrap/scss/containers';
+@import 'bootstrap/scss/grid';
+@import 'bootstrap/scss/buttons';
+@import 'bootstrap/scss/utilities';
+@import 'bootstrap/scss/utilities/api';
