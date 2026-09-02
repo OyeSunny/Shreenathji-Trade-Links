@@ -6,6 +6,32 @@ $font-family-sans-serif: Arial, Helvetica, sans-serif;
 $border-radius: 0.35rem;
 $border-radius-lg: 0.5rem;
 $focus-ring-color: rgba(168, 91, 50, 0.35);
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3,
+);
+$btn-border-radius: 0.35rem;
+$btn-font-weight: 600;
+$btn-padding-y: 0.65rem;
+$btn-padding-x: 1.1rem;
+$input-border-color: #b7b2aa;
+$input-focus-border-color: $primary;
+$input-focus-box-shadow: 0 0 0 0.2rem $focus-ring-color;
+$input-border-radius: 0.35rem;
+$card-border-color: #d8d2c9;
+$card-border-radius: $border-radius-lg;
+$card-cap-bg: #ebe6dd;
+$alert-border-radius: $border-radius;
+$alert-padding-y: 0.75rem;
+$alert-padding-x: 1rem;
+$navbar-padding-y: 1rem;
+$navbar-brand-font-size: 1.1rem;
+$navbar-light-color: $body-color;
 
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';

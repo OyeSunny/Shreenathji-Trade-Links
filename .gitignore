@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+test-results/
+playwright-report/
 
 # next.js
 /.next/
@@ -29,6 +31,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
+*.sql.gz
+.worktrees/
+.superpowers/
 
 # env files (can opt-in for committing if needed)
 .env*
