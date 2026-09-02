@@ -6,7 +6,7 @@
 
 **Architecture:** Build a modular monolith in one Next.js application. Public routes, authentication routes, and protected admin routes use separate route groups; domain logic lives under focused feature modules and never inside page components. PostgreSQL is the source of truth, Better Auth provides audited session and credential primitives, and project-owned policy wrappers enforce the approved owner-only, Argon2id, two-factor, session-expiry, and recovery rules.
 
-**Tech Stack:** Node.js 24 LTS, pnpm 10, Next.js 16+, React, TypeScript strict mode, Bootstrap 5, React-Bootstrap 2.x, Bootstrap Icons, Sass, PostgreSQL, Prisma ORM, Better Auth 1.7.x, Argon2id, Zod, React Hook Form, Vitest, Testing Library, Playwright, axe-core, ESLint, and Prettier.
+**Tech Stack:** Node.js 24 LTS, pnpm 10, Next.js 16+, React, TypeScript strict mode, Bootstrap 5, React-Bootstrap 2.x, Bootstrap Icons, Sass, PostgreSQL, Prisma ORM 7.10.x with `@prisma/adapter-pg` and `pg`, Better Auth 1.7.x, Argon2id, Zod, React Hook Form, Vitest, Testing Library, Playwright, axe-core, ESLint, and Prettier.
 
 **Spec:** `docs/superpowers/specs/2026-09-02-shreenathji-trade-links-design.md`
 
@@ -253,8 +253,8 @@ Expected: all commands exit successfully and the public-shell test passes.
 Run:
 
 ```bash
-pnpm add @prisma/client@8
-pnpm add -D prisma@8
+pnpm add @prisma/client@7.10.0
+pnpm add -D prisma@7.10.0
 ```
 
 - [ ] **Step 2: Write failing environment validation tests**

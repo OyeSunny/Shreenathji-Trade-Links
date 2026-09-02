@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum SecurityEventType {
+  OWNER_BOOTSTRAPPED
+  LOGIN_SUCCEEDED
+  LOGIN_FAILED
+  TWO_FACTOR_ENABLED
+  PASSWORD_CHANGED
+  PASSWORD_RESET_REQUESTED
+  PASSWORD_RESET_COMPLETED
+  SESSION_REVOKED
+}
+
+model SecurityEvent {
+  id        String            @id @default(cuid())
+  type      SecurityEventType
+  userId    String?
+  ipHash    String?
+  metadata  Json?
+  createdAt DateTime          @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+}
+
+model PasswordResetChallenge {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, expiresAt])
+}
+
+model OwnerSecurityPolicy {
+  id                     Int      @id @default(1)
+  requiresTwoFactorSetup Boolean  @default(true)
+  lastSessionSweepAt      DateTime?
+  updatedAt               DateTime @updatedAt
+}
