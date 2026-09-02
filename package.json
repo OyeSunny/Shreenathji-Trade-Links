@@ -41,6 +41,7 @@
   "private": true,
   "packageManager": "pnpm@10.34.5",
   "scripts": {
+    "predev": "pnpm prisma:generate",
     "dev": "next dev",
     "prebuild": "pnpm prisma:generate",
     "build": "next build",
