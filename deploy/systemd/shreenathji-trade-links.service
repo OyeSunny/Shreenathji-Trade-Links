@@ -11,7 +11,7 @@ WorkingDirectory=/var/www/shreenathji-trade-links
 Environment=NODE_ENV=production
 Environment=PORT=3000
 EnvironmentFile=/var/www/shreenathji-trade-links/.env
-ExecStart=/usr/bin/pnpm start -- --hostname 127.0.0.1
+ExecStart=/usr/bin/pnpm exec next start --hostname 127.0.0.1
 Restart=always
 RestartSec=5
 NoNewPrivileges=true
