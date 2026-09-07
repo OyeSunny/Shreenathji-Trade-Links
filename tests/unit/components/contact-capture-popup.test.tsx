@@ -2,6 +2,10 @@ import { ContactCapturePopup } from '@/components/leads/contact-capture-popup';
 import { act, render, screen } from '@testing-library/react';
 import { beforeEach, vi } from 'vitest';
 
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/',
+}));
+
 describe('ContactCapturePopup', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -11,7 +15,7 @@ describe('ContactCapturePopup', () => {
   it('makes consent explicit before a buyer can join updates', () => {
     render(<ContactCapturePopup />);
 
-    act(() => vi.advanceTimersByTime(1800));
+    act(() => vi.advanceTimersByTime(20_000));
 
     expect(
       screen.getByRole('dialog', { name: /keep your supply desk informed/i }),

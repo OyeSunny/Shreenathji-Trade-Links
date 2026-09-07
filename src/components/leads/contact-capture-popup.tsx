@@ -1,10 +1,13 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useEffect, useId, useState } from 'react';
 
 import styles from './contact-capture-popup.module.css';
 
 const storageKey = 'stl-contact-capture-dismissed';
+const desktopDisplayDelayMs = 20_000;
+const compactDisplayDelayMs = 25_000;
 
 const initialValues = {
   email: '',
@@ -19,6 +22,7 @@ export function ContactCapturePopup() {
   const [state, setState] = useState<
     'idle' | 'sending' | 'success' | 'error' | 'limited'
   >('idle');
+  const pathname = usePathname();
   const titleId = useId();
 
   const close = () => {
@@ -27,19 +31,22 @@ export function ContactCapturePopup() {
   };
 
   useEffect(() => {
+    // Buyers on a product, contact, or quote page already have a clear task.
+    // Reserve the optional update invitation for the homepage only.
+    if (pathname !== '/') return;
     if (window.sessionStorage.getItem(storageKey)) return;
 
-    // Give compact-screen buyers time to access the menu and read the page before
-    // presenting a full-screen form. The desktop prompt remains intentionally quick.
+    // This is an optional follow-up, not a page gate. Let buyers read the page,
+    // access navigation, and decide whether they need the catalogue first.
     const isCompactScreen =
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(max-width: 991.98px)').matches;
     const timeout = window.setTimeout(
       () => setIsOpen(true),
-      isCompactScreen ? 9000 : 1800,
+      isCompactScreen ? compactDisplayDelayMs : desktopDisplayDelayMs,
     );
     return () => window.clearTimeout(timeout);
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
