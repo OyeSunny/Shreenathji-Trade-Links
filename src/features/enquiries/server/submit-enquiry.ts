@@ -1,3 +1,5 @@
+import { notifyNewEnquiry } from '@/features/notifications/contact-notifications';
+import { PublicationStatus } from '@/generated/prisma/client';
 import { db } from '@/lib/db';
 import { env } from '@/lib/env';
 import { createHmac } from 'node:crypto';
@@ -47,7 +49,7 @@ export const submitEnquiry = async ({
   const bucketStart = getWindowStart(now);
   const identifierHash = hashRateLimitIdentifier(input.email, headers);
 
-  return db.$transaction(async (transaction) => {
+  const result = await db.$transaction(async (transaction) => {
     const rateLimit = await transaction.enquiryRateLimit.upsert({
       where: {
         identifierHash_bucketStart: { identifierHash, bucketStart },
@@ -59,6 +61,43 @@ export const submitEnquiry = async ({
     if (rateLimit.attempts > maximumAttemptsPerWindow) {
       throw new EnquiryRateLimitError();
     }
+
+    const [product, offer] = await Promise.all([
+      input.productSlug
+        ? transaction.product.findFirst({
+            where: {
+              slug: input.productSlug,
+              status: PublicationStatus.PUBLISHED,
+              category: { is: { status: PublicationStatus.PUBLISHED } },
+            },
+            select: { id: true },
+          })
+        : null,
+      input.offerSlug
+        ? transaction.offer.findFirst({
+            where: {
+              slug: input.offerSlug,
+              status: PublicationStatus.PUBLISHED,
+              AND: [
+                { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
+                { OR: [{ endsAt: null }, { endsAt: { gt: now } }] },
+              ],
+              product: {
+                is: {
+                  status: PublicationStatus.PUBLISHED,
+                  category: { is: { status: PublicationStatus.PUBLISHED } },
+                },
+              },
+            },
+            select: { id: true, productId: true },
+          })
+        : null,
+    ]);
+
+    // Never allow a forged product parameter to change the product attached
+    // to an offer. The database relation is the source of truth.
+    const productId = offer?.productId ?? product?.id;
+    const shouldCreateItem = Boolean(productId || input.quantity);
 
     const enquiry = await transaction.enquiry.create({
       data: {
@@ -74,9 +113,11 @@ export const submitEnquiry = async ({
         destinationPort: input.destinationPort,
         incoterm: input.incoterm,
         materialRequest: input.materialRequest,
-        items: input.quantity
+        items: shouldCreateItem
           ? {
               create: {
+                productId,
+                offerId: offer?.id,
                 requestedMaterial: input.materialRequest,
                 quantity: input.quantity,
                 unit: input.unit,
@@ -89,4 +130,21 @@ export const submitEnquiry = async ({
 
     return { accepted: true, isSpam: false, enquiryId: enquiry.id } as const;
   });
+
+  try {
+    await notifyNewEnquiry({
+      companyName: input.companyName,
+      contactName: input.contactName,
+      email: input.email,
+      materialRequest: input.materialRequest,
+      phone: input.whatsapp ?? input.phone,
+      type: input.type,
+    });
+  } catch {
+    // The saved enquiry stays available in Admin → Enquiries even if SMTP is
+    // temporarily unavailable, so a buyer is never asked to submit again.
+    console.error('Unable to send owner notification for a saved enquiry.');
+  }
+
+  return result;
 };

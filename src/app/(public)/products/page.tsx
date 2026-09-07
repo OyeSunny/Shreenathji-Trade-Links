@@ -29,7 +29,7 @@ export default async function ProductsPage() {
 
       <section className="py-5 py-lg-6" aria-labelledby="product-list-heading">
         <Container>
-          <div className="d-flex align-items-end justify-content-between gap-4 mb-4 mb-lg-5">
+          <div className="align-items-sm-end d-flex flex-column flex-sm-row gap-2 gap-sm-4 justify-content-between mb-4 mb-lg-5">
             <div>
               <p className="section-label mb-2">Available to enquire</p>
               <h2 id="product-list-heading" className="mb-0">

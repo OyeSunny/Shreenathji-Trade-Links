@@ -23,7 +23,7 @@ export function ProductMediaForm({ productId }: { productId: string }) {
   );
 
   return (
-    <form action={formAction} noValidate>
+    <form action={formAction} encType="multipart/form-data" noValidate>
       <input name="productId" type="hidden" value={productId} />
 
       {state.message ? (
@@ -36,24 +36,22 @@ export function ProductMediaForm({ productId }: { productId: string }) {
         </Alert>
       ) : null}
 
-      <Form.Group className="mb-3" controlId="product-image-url">
-        <Form.Label>Image URL</Form.Label>
+      <Form.Group className="mb-3" controlId="product-image-file">
+        <Form.Label>Choose image</Form.Label>
         <Form.Control
-          autoComplete="url"
-          isInvalid={Boolean(errorFor(state.fieldErrors, 'imageUrl'))}
-          maxLength={2048}
-          name="imageUrl"
-          placeholder="/media/product-image.png or https://…"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          isInvalid={Boolean(errorFor(state.fieldErrors, 'image'))}
+          name="image"
           required
-          type="url"
+          type="file"
         />
         <Form.Text>
-          Project images under <code>/media/</code> can be shown publicly at
-          once. HTTPS images are stored as private drafts until image rights are
-          verified.
+          Upload a JPG, PNG, WebP, or AVIF image up to 10 MB. Uploaded files are
+          stored with a private generated filename and become public only as
+          this product&apos;s image.
         </Form.Text>
         <Form.Control.Feedback type="invalid">
-          {errorFor(state.fieldErrors, 'imageUrl')}
+          {errorFor(state.fieldErrors, 'image')}
         </Form.Control.Feedback>
       </Form.Group>
 

@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const links = [
   { href: '/products', label: 'Products' },
+  { href: '/offers', label: 'Offers' },
   { href: '/about', label: 'Company' },
   { href: '/contact', label: 'Contact' },
 ] as const;
@@ -13,6 +14,22 @@ export function PublicNavigation() {
   const [isOpen, setIsOpen] = useState(false);
 
   const closeMenu = () => setIsOpen(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeMenu();
+    };
+
+    document.body.classList.add('public-menu-open');
+    window.addEventListener('keydown', closeOnEscape);
+
+    return () => {
+      document.body.classList.remove('public-menu-open');
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [isOpen]);
 
   return (
     <div className="public-navigation">
@@ -35,7 +52,7 @@ export function PublicNavigation() {
         aria-controls="mobile-site-navigation"
         aria-expanded={isOpen}
         aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
-        className="public-navigation__toggle"
+        className={`public-navigation__toggle${isOpen ? ' is-open' : ''}`}
         onClick={() => setIsOpen((open) => !open)}
         type="button"
       >

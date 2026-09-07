@@ -5,7 +5,13 @@ import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
-const initialForm = {
+const createInitialForm = ({
+  offerSlug,
+  productSlug,
+}: {
+  offerSlug?: string;
+  productSlug?: string;
+} = {}) => ({
   type: 'DOMESTIC',
   contactName: '',
   companyName: '',
@@ -20,18 +26,33 @@ const initialForm = {
   materialRequest: '',
   quantity: '',
   unit: 'MT',
+  productSlug: productSlug ?? '',
+  offerSlug: offerSlug ?? '',
   website: '',
+});
+
+type RequestQuoteFormProps = {
+  offer?: { slug: string; title: string };
+  product?: { slug: string; name: string };
 };
 
-export const RequestQuoteForm = () => {
-  const [values, setValues] = useState(initialForm);
+export const RequestQuoteForm = ({ offer, product }: RequestQuoteFormProps) => {
+  const contextualValues = {
+    offerSlug: offer?.slug,
+    productSlug: product?.slug,
+  };
+  const [values, setValues] = useState(() =>
+    createInitialForm(contextualValues),
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [state, setState] = useState<'idle' | 'success' | 'error' | 'limited'>(
     'idle',
   );
 
-  const update = (field: keyof typeof initialForm, value: string) =>
-    setValues((current) => ({ ...current, [field]: value }));
+  const update = (
+    field: keyof ReturnType<typeof createInitialForm>,
+    value: string,
+  ) => setValues((current) => ({ ...current, [field]: value }));
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -55,7 +76,7 @@ export const RequestQuoteForm = () => {
         return;
       }
 
-      setValues(initialForm);
+      setValues(createInitialForm(contextualValues));
       setState('success');
     } catch {
       setState('error');
@@ -65,7 +86,7 @@ export const RequestQuoteForm = () => {
   };
 
   return (
-    <Form noValidate onSubmit={handleSubmit}>
+    <Form className="quote-form" noValidate onSubmit={handleSubmit}>
       {state === 'success' ? (
         <Alert variant="success">
           Your enquiry has been received. We’ll get back to you with the next
@@ -91,6 +112,17 @@ export const RequestQuoteForm = () => {
         type="text"
         value={values.website}
       />
+      {product ? (
+        <div className="border mb-4 p-3">
+          <p className="section-label mb-1">
+            {offer ? 'Offer selected' : 'Material selected'}
+          </p>
+          <p className="mb-0 fw-semibold">
+            {offer ? `${offer.title} / ` : ''}
+            {product.name}
+          </p>
+        </div>
+      ) : null}
       <div className="row g-3">
         <Form.Group className="col-md-6" controlId="enquiry-name">
           <Form.Label>Your name *</Form.Label>

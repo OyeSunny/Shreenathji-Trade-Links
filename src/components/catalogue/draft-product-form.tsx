@@ -3,6 +3,7 @@
 import {
   createProductDraft,
   type ProductDraftFormState,
+  updateProduct,
 } from '@/app/admin/catalogue/actions';
 import { useActionState } from 'react';
 import Alert from 'react-bootstrap/Alert';
@@ -18,14 +19,37 @@ const errorFor = (
 
 const initialProductDraftFormState: ProductDraftFormState = {};
 
-export const DraftProductForm = () => {
+export type ProductFormValues = {
+  applications: string[];
+  availability:
+    'AVAILABLE_ON_REQUEST' | 'IN_STOCK' | 'LIMITED_STOCK' | 'OUT_OF_STOCK';
+  categoryName: string;
+  description: string | null;
+  form: string | null;
+  grade: string | null;
+  id: string;
+  minimumOrderQty: string | null;
+  name: string;
+  orderUnit: string | null;
+  summary: string;
+};
+
+export const DraftProductForm = ({
+  product,
+}: {
+  product?: ProductFormValues;
+}) => {
+  const action = product ? updateProduct : createProductDraft;
   const [state, formAction, isPending] = useActionState(
-    createProductDraft,
+    action,
     initialProductDraftFormState,
   );
 
   return (
     <form action={formAction} noValidate>
+      {product ? (
+        <input name="productId" type="hidden" value={product.id} />
+      ) : null}
       {state.message ? (
         <Alert role="alert" variant="danger">
           {state.message}
@@ -40,7 +64,7 @@ export const DraftProductForm = () => {
           <Form.Label>Category name</Form.Label>
           <Form.Control
             aria-describedby="category-name-help"
-            defaultValue=""
+            defaultValue={product?.categoryName ?? ''}
             isInvalid={Boolean(errorFor(state.fieldErrors, 'categoryName'))}
             maxLength={100}
             name="categoryName"
@@ -67,6 +91,7 @@ export const DraftProductForm = () => {
             isInvalid={Boolean(errorFor(state.fieldErrors, 'productName'))}
             maxLength={140}
             name="productName"
+            defaultValue={product?.name ?? ''}
             placeholder="e.g. Iron Ore Fines"
             required
           />
@@ -78,6 +103,7 @@ export const DraftProductForm = () => {
           <Form.Label>Short summary</Form.Label>
           <Form.Control
             as="textarea"
+            defaultValue={product?.summary ?? ''}
             isInvalid={Boolean(errorFor(state.fieldErrors, 'summary'))}
             maxLength={500}
             name="summary"
@@ -99,6 +125,7 @@ export const DraftProductForm = () => {
           </Form.Label>
           <Form.Control
             as="textarea"
+            defaultValue={product?.description ?? ''}
             isInvalid={Boolean(errorFor(state.fieldErrors, 'description'))}
             maxLength={4000}
             name="description"
@@ -123,6 +150,7 @@ export const DraftProductForm = () => {
               <Form.Control
                 maxLength={100}
                 name="grade"
+                defaultValue={product?.grade ?? ''}
                 placeholder="e.g. 60% Fe"
               />
             </Form.Group>
@@ -135,6 +163,7 @@ export const DraftProductForm = () => {
               <Form.Control
                 maxLength={100}
                 name="form"
+                defaultValue={product?.form ?? ''}
                 placeholder="e.g. Fines"
               />
             </Form.Group>
@@ -152,6 +181,7 @@ export const DraftProductForm = () => {
                 )}
                 maxLength={20}
                 name="minimumOrderQty"
+                defaultValue={product?.minimumOrderQty ?? ''}
                 placeholder="e.g. 25"
               />
               <Form.Control.Feedback type="invalid">
@@ -168,6 +198,7 @@ export const DraftProductForm = () => {
                 isInvalid={Boolean(errorFor(state.fieldErrors, 'orderUnit'))}
                 maxLength={25}
                 name="orderUnit"
+                defaultValue={product?.orderUnit ?? ''}
                 placeholder="e.g. MT"
               />
               <Form.Control.Feedback type="invalid">
@@ -179,7 +210,7 @@ export const DraftProductForm = () => {
             <Form.Group controlId="availability">
               <Form.Label>Availability</Form.Label>
               <Form.Select
-                defaultValue="AVAILABLE_ON_REQUEST"
+                defaultValue={product?.availability ?? 'AVAILABLE_ON_REQUEST'}
                 name="availability"
               >
                 <option value="AVAILABLE_ON_REQUEST">
@@ -200,6 +231,7 @@ export const DraftProductForm = () => {
         </Form.Label>
         <Form.Control
           as="textarea"
+          defaultValue={product?.applications.join('\n') ?? ''}
           isInvalid={Boolean(errorFor(state.fieldErrors, 'applications'))}
           maxLength={1200}
           name="applications"
@@ -214,10 +246,16 @@ export const DraftProductForm = () => {
 
       <div className="align-items-center d-flex gap-3 justify-content-between">
         <p className="mb-0 small text-secondary">
-          This saves as a draft. It will not appear on the public website.
+          {product
+            ? 'Changes are saved to this product. Publication stays under your control.'
+            : 'This saves as a draft. It will not appear on the public website.'}
         </p>
         <Button disabled={isPending} type="submit">
-          {isPending ? 'Saving draft…' : 'Save draft product'}
+          {isPending
+            ? 'Saving product…'
+            : product
+              ? 'Save product changes'
+              : 'Save draft product'}
         </Button>
       </div>
     </form>

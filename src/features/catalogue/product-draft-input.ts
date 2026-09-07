@@ -76,6 +76,12 @@ export const createProductDraftSchema = z
 
 export type CreateProductDraftInput = z.infer<typeof createProductDraftSchema>;
 
+export const updateProductSchema = z
+  .object({ productId: z.string().cuid() })
+  .and(createProductDraftSchema);
+
+export type UpdateProductInput = z.infer<typeof updateProductSchema>;
+
 export const slugifyCatalogueValue = (value: string, fallback: string) => {
   const slug = value
     .normalize('NFKD')
@@ -96,6 +102,21 @@ const getTextField = (formData: FormData, field: string) => {
 
 export const parseCreateProductDraftForm = (formData: FormData) =>
   createProductDraftSchema.safeParse({
+    categoryName: getTextField(formData, 'categoryName'),
+    productName: getTextField(formData, 'productName'),
+    summary: getTextField(formData, 'summary'),
+    description: getTextField(formData, 'description'),
+    grade: getTextField(formData, 'grade'),
+    form: getTextField(formData, 'form'),
+    applications: getTextField(formData, 'applications'),
+    minimumOrderQty: getTextField(formData, 'minimumOrderQty'),
+    orderUnit: getTextField(formData, 'orderUnit'),
+    availability: getTextField(formData, 'availability'),
+  });
+
+export const parseUpdateProductForm = (formData: FormData) =>
+  updateProductSchema.safeParse({
+    productId: getTextField(formData, 'productId'),
     categoryName: getTextField(formData, 'categoryName'),
     productName: getTextField(formData, 'productName'),
     summary: getTextField(formData, 'summary'),

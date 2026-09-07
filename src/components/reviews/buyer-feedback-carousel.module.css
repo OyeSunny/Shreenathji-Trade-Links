@@ -1,0 +1,264 @@
+.section {
+  background: #14181b;
+  color: #f2f4f5;
+  overflow: hidden;
+  padding: clamp(2.5rem, 6vw, 5.5rem) clamp(1.25rem, 5vw, 4.5rem);
+  position: relative;
+}
+
+.section::before {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 2.25rem 2.25rem;
+  content: '';
+  inset: 0;
+  mask-image: linear-gradient(90deg, #000, transparent 80%);
+  opacity: 0.55;
+  pointer-events: none;
+  position: absolute;
+}
+
+.inner {
+  margin: 0 auto;
+  max-width: 76rem;
+  position: relative;
+}
+
+.heading {
+  align-items: end;
+  border-bottom: 1px solid rgba(242, 244, 245, 0.24);
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+  padding-bottom: 1.25rem;
+}
+
+.kicker,
+.notice,
+.approval,
+.index,
+.hint,
+.material,
+.attribution {
+  font-family: 'Aptos Mono', 'Cascadia Mono', ui-monospace, monospace;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.kicker {
+  color: #ff5a1f;
+  font-size: 0.69rem;
+  font-weight: 700;
+  margin: 0 0 0.6rem;
+}
+
+.heading h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.25rem, 4.5vw, 4.25rem);
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+  margin: 0;
+  max-width: 11ch;
+}
+
+.notice,
+.approval {
+  font-size: 0.64rem;
+  font-weight: 750;
+  line-height: 1.4;
+  margin: 0;
+  max-width: 17rem;
+  padding: 0.5rem 0.6rem;
+}
+
+.notice {
+  background: rgba(255, 90, 31, 0.15);
+  border: 1px solid rgba(255, 90, 31, 0.74);
+  color: #ffb191;
+}
+
+.approval {
+  border-left: 2px solid #ff5a1f;
+  color: #c7d0d6;
+}
+
+.stage {
+  min-height: clamp(23rem, 37vw, 30rem);
+  padding: clamp(1.5rem, 4vw, 3.5rem) 0 1.25rem;
+}
+
+.review {
+  background: #f2f4f5;
+  color: #14181b;
+  display: flex;
+  flex-direction: column;
+  min-height: clamp(20rem, 31vw, 25rem);
+  opacity: 1;
+  padding: clamp(1.4rem, 3.5vw, 3rem);
+  position: relative;
+  transform: translateY(0);
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease;
+}
+
+.review::after {
+  background: #ff5a1f;
+  bottom: 0;
+  content: '';
+  height: 0.6rem;
+  position: absolute;
+  right: 0;
+  width: clamp(5rem, 14vw, 11rem);
+}
+
+.reviewLeaving {
+  opacity: 0;
+  transform: translateY(0.7rem);
+}
+
+.reviewTopline,
+.footer,
+.controls {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.index,
+.stars,
+.hint,
+.material,
+.attribution,
+.reviewer {
+  margin: 0;
+}
+
+.index,
+.hint,
+.material,
+.attribution {
+  font-size: 0.67rem;
+  font-weight: 750;
+}
+
+.index,
+.material {
+  color: #d64b19;
+}
+
+.stars {
+  color: #d64b19;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+}
+
+.emptyStars {
+  color: #b7c0c6;
+}
+
+.quote {
+  border-left: 3px solid #ff5a1f;
+  margin: auto 0;
+  max-width: 58rem;
+  padding-left: clamp(1rem, 3vw, 2rem);
+}
+
+.quote p {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.55rem, 3vw, 3.2rem);
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+  margin: 0;
+}
+
+.footer {
+  align-items: end;
+  border-top: 1px solid rgba(20, 24, 27, 0.16);
+  padding-top: 1rem;
+}
+
+.reviewer {
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+.attribution {
+  color: #65717a;
+  margin-top: 0.35rem;
+}
+
+.controls {
+  border-top: 1px solid rgba(242, 244, 245, 0.24);
+  padding-top: 1rem;
+}
+
+.hint {
+  color: #c7d0d6;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.55rem;
+}
+
+.button {
+  align-items: center;
+  background: transparent;
+  border: 1px solid rgba(242, 244, 245, 0.48);
+  color: #f2f4f5;
+  display: inline-flex;
+  font-size: 1.2rem;
+  height: 2.45rem;
+  justify-content: center;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+  width: 2.45rem;
+}
+
+.button:hover {
+  background: #ff5a1f;
+  border-color: #ff5a1f;
+  color: #14181b;
+}
+
+.button:focus-visible {
+  outline: 3px solid #f1f4f6;
+  outline-offset: 3px;
+}
+
+.button:active {
+  transform: scale(0.94);
+}
+
+@media (max-width: 575.98px) {
+  .heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .stage {
+    min-height: 27rem;
+  }
+
+  .review {
+    min-height: 24rem;
+  }
+
+  .footer {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review,
+  .button {
+    transition: none;
+  }
+}

@@ -275,6 +275,7 @@ model Product {
   media           ProductMedia[]
   enquiryItems    EnquiryItem[]
   customerReviews CustomerReview[]
+  offers          Offer[]
 
   @@index([categoryId, status, featured])
   @@index([status, publishedAt])
@@ -344,12 +345,36 @@ model EnquiryRateLimit {
   @@index([bucketStart])
 }
 
+model ContactLead {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  phone       String?
+  consentedAt DateTime
+  source      String   @default("SITE_POPUP")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([consentedAt])
+}
+
+model ContactLeadRateLimit {
+  identifierHash String
+  bucketStart    DateTime
+  attempts       Int      @default(0)
+  updatedAt      DateTime @updatedAt
+
+  @@id([identifierHash, bucketStart])
+  @@index([bucketStart])
+}
+
 model EnquiryItem {
   id                String   @id @default(cuid())
   enquiryId         String
   enquiry           Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
   productId         String?
   product           Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  offerId           String?
+  offer             Offer?   @relation(fields: [offerId], references: [id], onDelete: SetNull)
   requestedMaterial String?
   quantity          Decimal? @db.Decimal(18, 3)
   unit              String?
@@ -357,6 +382,28 @@ model EnquiryItem {
 
   @@index([enquiryId])
   @@index([productId])
+  @@index([offerId])
+}
+
+model Offer {
+  id          String            @id @default(cuid())
+  productId   String
+  product     Product           @relation(fields: [productId], references: [id], onDelete: Restrict)
+  title       String
+  slug        String            @unique
+  summary     String
+  details     String?
+  startsAt    DateTime?
+  endsAt      DateTime?
+  status      PublicationStatus @default(DRAFT)
+  sortOrder   Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  publishedAt DateTime?
+  enquiryItems EnquiryItem[]
+
+  @@index([status, startsAt, endsAt, sortOrder])
+  @@index([productId, status])
 }
 
 model CustomerReview {

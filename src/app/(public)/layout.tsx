@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import Container from 'react-bootstrap/Container';
 
 import { PublicNavigation } from '@/components/layout/public-navigation';
+import { ContactCapturePopup } from '@/components/leads/contact-capture-popup';
 
 export default function PublicLayout({
   children,
@@ -22,6 +23,7 @@ export default function PublicLayout({
         </Container>
       </header>
       {children}
+      <ContactCapturePopup />
       <footer className="public-footer py-5">
         <Container className="d-md-flex justify-content-between">
           <div>

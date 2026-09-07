@@ -217,6 +217,14 @@
 }
 
 @media (max-width: 575.98px) {
+  .productCardBody {
+    padding: 1.15rem;
+  }
+
+  .productName {
+    font-size: 1.5rem;
+  }
+
   .specList > div {
     grid-template-columns: 1fr;
     gap: 0.25rem;

@@ -1,9 +1,10 @@
+import { AdminNavigation } from '@/components/admin/admin-navigation';
 import { SignOutButton } from '@/components/auth/sign-out-button';
 import { getOwnerSecurityState } from '@/features/auth/server/owner-security';
 import { requireOwnerPageSession } from '@/features/auth/server/session';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
-import Container from 'react-bootstrap/Container';
 
 export default async function AdminLayout({
   children,
@@ -16,19 +17,36 @@ export default async function AdminLayout({
   }
 
   return (
-    <main className="py-4 py-md-5">
-      <Container>
-        <header className="align-items-center border-bottom d-flex justify-content-between mb-4 pb-3">
-          <div>
-            <p className="mb-1 text-secondary text-uppercase small">
-              Owner dashboard
-            </p>
-            <p className="mb-0 fw-semibold">Shreenathji Trade Links</p>
+    <main className="admin-workspace">
+      <aside className="admin-rail">
+        <Link
+          aria-label="Shreenathji Trade Links — admin overview"
+          className="admin-brand"
+          href="/admin"
+        >
+          <span className="admin-brand__mark">STL</span>
+          <span>
+            <strong>Shreenathji</strong>
+            <small>Trade Links</small>
+          </span>
+        </Link>
+        <AdminNavigation />
+        <p className="admin-rail__footnote">
+          Owner workspace
+          <br />
+          <span>Secure session active</span>
+        </p>
+      </aside>
+      <section className="admin-main">
+        <header className="admin-topbar">
+          <div className="admin-topbar__context">
+            <span className="admin-topbar__signal" aria-hidden="true" />
+            <span>Owner control room</span>
           </div>
           <SignOutButton />
         </header>
-        {children}
-      </Container>
+        <div className="admin-content">{children}</div>
+      </section>
     </main>
   );
 }

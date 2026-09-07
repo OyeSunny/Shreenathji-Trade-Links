@@ -1,4 +1,9 @@
-import { changeProductPublication } from '@/app/admin/catalogue/actions';
+import {
+  archiveProduct,
+  changeProductPublication,
+  permanentlyDeleteUnusedDraft,
+  restoreProduct,
+} from '@/app/admin/catalogue/actions';
 import { db } from '@/lib/db';
 import Link from 'next/link';
 import Alert from 'react-bootstrap/Alert';
@@ -24,7 +29,12 @@ export default async function CataloguePage({
 }) {
   const [products, parameters] = await Promise.all([
     db.product.findMany({
-      include: { category: { select: { name: true } } },
+      include: {
+        category: { select: { name: true } },
+        _count: {
+          select: { customerReviews: true, enquiryItems: true, offers: true },
+        },
+      },
       orderBy: [{ updatedAt: 'desc' }, { name: 'asc' }],
     }),
     searchParams,
@@ -127,38 +137,98 @@ export default async function CataloguePage({
                         <div className="align-items-start d-flex flex-column gap-2">
                           <Link
                             className="btn btn-outline-primary btn-sm"
+                            href={`/admin/catalogue/${product.id}/edit`}
+                          >
+                            Edit details
+                          </Link>
+                          <Link
+                            className="btn btn-outline-primary btn-sm"
                             href={`/admin/catalogue/${product.id}/media`}
                           >
                             Manage media
                           </Link>
-                          <form action={changeProductPublication}>
-                            <input
-                              name="productId"
-                              type="hidden"
-                              value={product.id}
-                            />
-                            <input
-                              name="action"
-                              type="hidden"
-                              value={
-                                product.status === 'PUBLISHED'
-                                  ? 'DRAFT'
-                                  : 'PUBLISH'
-                              }
-                            />
-                            <button
-                              className={`btn btn-sm ${
-                                product.status === 'PUBLISHED'
-                                  ? 'btn-outline-secondary'
-                                  : 'btn-outline-success'
-                              }`}
-                              type="submit"
+                          {product.status === 'PUBLISHED' ? (
+                            <Link
+                              className="btn btn-outline-secondary btn-sm"
+                              href={`/products/${product.slug}`}
+                              target="_blank"
                             >
-                              {product.status === 'PUBLISHED'
-                                ? 'Move to draft'
-                                : 'Publish'}
-                            </button>
-                          </form>
+                              View on website ↗
+                            </Link>
+                          ) : null}
+                          {product.status === 'ARCHIVED' ? (
+                            <form action={restoreProduct}>
+                              <input
+                                name="productId"
+                                type="hidden"
+                                value={product.id}
+                              />
+                              <button
+                                className="btn btn-outline-secondary btn-sm"
+                                type="submit"
+                              >
+                                Restore as draft
+                              </button>
+                            </form>
+                          ) : (
+                            <>
+                              <form action={changeProductPublication}>
+                                <input
+                                  name="productId"
+                                  type="hidden"
+                                  value={product.id}
+                                />
+                                <input
+                                  name="action"
+                                  type="hidden"
+                                  value={
+                                    product.status === 'PUBLISHED'
+                                      ? 'DRAFT'
+                                      : 'PUBLISH'
+                                  }
+                                />
+                                <button
+                                  className={`btn btn-sm ${product.status === 'PUBLISHED' ? 'btn-outline-secondary' : 'btn-outline-success'}`}
+                                  type="submit"
+                                >
+                                  {product.status === 'PUBLISHED'
+                                    ? 'Move to draft'
+                                    : 'Publish'}
+                                </button>
+                              </form>
+                              <form action={archiveProduct}>
+                                <input
+                                  name="productId"
+                                  type="hidden"
+                                  value={product.id}
+                                />
+                                <button
+                                  className="btn btn-outline-danger btn-sm"
+                                  type="submit"
+                                >
+                                  Archive / remove
+                                </button>
+                              </form>
+                              {product.status === 'DRAFT' &&
+                              product._count.enquiryItems === 0 &&
+                              product._count.customerReviews === 0 &&
+                              product._count.offers === 0 ? (
+                                <form action={permanentlyDeleteUnusedDraft}>
+                                  <input
+                                    name="productId"
+                                    type="hidden"
+                                    value={product.id}
+                                  />
+                                  <button
+                                    className="btn btn-link btn-sm p-0 text-danger"
+                                    type="submit"
+                                  >
+                                    Delete unused draft
+                                  </button>
+                                </form>
+                              ) : null}
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>

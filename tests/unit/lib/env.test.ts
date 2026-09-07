@@ -49,4 +49,35 @@ describe('parseEnv', () => {
       }),
     ).toThrow();
   });
+
+  it('requires complete private SMTP settings when email delivery is configured', () => {
+    expect(() =>
+      parseEnv({
+        ...validEnvironment,
+        SMTP_HOST: 'smtp.gmail.com',
+        SMTP_PORT: '465',
+        SMTP_USER: 'sunnybunny966@gmail.com',
+      }),
+    ).toThrow();
+
+    expect(
+      parseEnv({
+        ...validEnvironment,
+        SMTP_HOST: 'smtp.gmail.com',
+        SMTP_PORT: '465',
+        SMTP_USER: 'sunnybunny966@gmail.com',
+        SMTP_PASSWORD: 'a-private-app-password',
+      }),
+    ).toMatchObject({
+      SMTP_HOST: 'smtp.gmail.com',
+      SMTP_PORT: 465,
+      SMTP_USER: 'sunnybunny966@gmail.com',
+    });
+  });
+
+  it('allows the optional contact-notification inbox to be left blank', () => {
+    expect(
+      parseEnv({ ...validEnvironment, CONTACT_NOTIFICATION_TO: '' }),
+    ).toMatchObject({ CONTACT_NOTIFICATION_TO: undefined });
+  });
 });

@@ -21,7 +21,16 @@ const statusLabel = (status: keyof typeof statusVariant) =>
 
 export default async function AdminEnquiriesPage() {
   const enquiries = await db.enquiry.findMany({
-    include: { items: { select: { quantity: true, unit: true } } },
+    include: {
+      items: {
+        select: {
+          quantity: true,
+          unit: true,
+          product: { select: { name: true } },
+          offer: { select: { title: true } },
+        },
+      },
+    },
     orderBy: { submittedAt: 'desc' },
     take: 100,
   });
@@ -66,6 +75,8 @@ export default async function AdminEnquiriesPage() {
                   {enquiries.map((enquiry) => {
                     const quantity = enquiry.items[0]?.quantity;
                     const unit = enquiry.items[0]?.unit;
+                    const product = enquiry.items[0]?.product;
+                    const offer = enquiry.items[0]?.offer;
 
                     return (
                       <tr key={enquiry.id}>
@@ -92,6 +103,12 @@ export default async function AdminEnquiriesPage() {
                           {quantity ? (
                             <span className="small text-secondary">
                               {quantity.toString()} {unit ?? ''}
+                            </span>
+                          ) : null}
+                          {product ? (
+                            <span className="d-block small text-secondary">
+                              Product: {product.name}
+                              {offer ? ` / Offer: ${offer.title}` : ''}
                             </span>
                           ) : null}
                         </td>

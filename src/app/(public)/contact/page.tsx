@@ -1,44 +1,92 @@
+import {
+  makeTelephoneLink,
+  makeWhatsAppLink,
+} from '@/features/content/contact-channels';
+import { getWebsiteContent } from '@/features/content/server/site-content';
 import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const { businessIdentity } = await getWebsiteContent();
+  const telephoneLink = makeTelephoneLink(businessIdentity.phone);
+  const whatsAppLink = makeWhatsAppLink(businessIdentity.whatsApp);
+
   return (
-    <main className="py-5 py-lg-6">
-      <Container style={{ maxWidth: '54rem' }}>
-        <p className="section-label">Contact</p>
-        <h1 className="display-5 fw-semibold">Start with your requirement.</h1>
-        <p
-          className="fs-5 lh-lg mb-5 text-secondary"
-          style={{ maxWidth: '42rem' }}
-        >
-          The fastest way to reach the team is to send a quote request with the
-          material, specifications, quantity, and destination.
-        </p>
-        <div className="row g-4">
-          <div className="col-md-7">
-            <div className="border h-100 p-4 p-md-5">
-              <h2 className="h3">Buyer enquiry</h2>
-              <p className="text-secondary">
-                For domestic supply or export discussions, submit the details
-                needed for a considered response.
+    <main className="page-shell contact-page">
+      <section className="page-hero">
+        <Container>
+          <div className="page-hero__grid">
+            <div>
+              <p className="section-label">Contact / 03</p>
+              <h1 className="page-hero__title">Start with your requirement.</h1>
+            </div>
+            <p className="page-hero__lede">
+              The fastest route is a quote request with the material,
+              specifications, quantity, and destination.
+            </p>
+          </div>
+        </Container>
+      </section>
+      <section className="contact-page__body">
+        <Container>
+          <div className="row g-4 g-lg-0 contact-page__grid">
+            <div className="col-lg-8 contact-page__enquiry">
+              <p className="section-label">Buyer enquiry</p>
+              <h2>Domestic supply or export discussion.</h2>
+              <p>
+                Submit the details needed for a considered response. It gives
+                the team a clear starting point before the call or WhatsApp
+                conversation.
               </p>
               <Link className="btn btn-primary" href="/request-a-quote">
-                Request a quote
+                Request a quote <span aria-hidden="true">→</span>
               </Link>
+              {businessIdentity.email || telephoneLink || whatsAppLink ? (
+                <div className="d-flex flex-wrap gap-2 mt-3">
+                  {telephoneLink ? (
+                    <a className="btn btn-outline-dark" href={telephoneLink}>
+                      Call us
+                    </a>
+                  ) : null}
+                  {whatsAppLink ? (
+                    <a
+                      className="btn btn-outline-dark"
+                      href={whatsAppLink}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      WhatsApp
+                    </a>
+                  ) : null}
+                  {businessIdentity.email ? (
+                    <a
+                      className="btn btn-outline-dark"
+                      href={`mailto:${businessIdentity.email}`}
+                    >
+                      Email us
+                    </a>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
-          </div>
-          <div className="col-md-5">
-            <div
-              className="h-100 p-4"
-              style={{ background: 'var(--stl-paper)' }}
-            >
+            <div className="col-lg-4 contact-page__location">
               <p className="section-label">Location</p>
-              <p className="h4">Gandhidham, Gujarat</p>
-              <p className="mb-0 text-secondary">India</p>
+              <p className="contact-page__location-title">
+                {businessIdentity.city}
+              </p>
+              {businessIdentity.address ? (
+                <p>{businessIdentity.address}</p>
+              ) : (
+                <p>India</p>
+              )}
+              <div className="contact-page__coordinates">
+                <span>Domestic</span>
+                <span>Export</span>
+              </div>
             </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      </section>
     </main>
   );
 }

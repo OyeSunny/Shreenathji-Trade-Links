@@ -8,6 +8,15 @@ const optionalText = (maximumLength: number) =>
     .transform((value) => value || undefined)
     .optional();
 
+const optionalSlug = z
+  .string()
+  .trim()
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Invalid reference.')
+  .max(180)
+  .optional()
+  .or(z.literal(''))
+  .transform((value) => value || undefined);
+
 export const enquirySchema = z.object({
   type: z.enum(['DOMESTIC', 'EXPORT']),
   contactName: z.string().trim().min(2).max(100),
@@ -23,6 +32,8 @@ export const enquirySchema = z.object({
   materialRequest: z.string().trim().min(5).max(2000),
   quantity: optionalText(30),
   unit: optionalText(20),
+  productSlug: optionalSlug,
+  offerSlug: optionalSlug,
   website: z.string().max(0).optional(),
 });
 

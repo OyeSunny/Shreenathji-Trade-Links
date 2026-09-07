@@ -2,51 +2,52 @@ import { parseAddProductMediaForm } from '@/features/catalogue/product-media-inp
 
 const validProductId = 'clx9d4g4s0000s8v3hvjs2x1a';
 
-const createFormData = (imageUrl: string) => {
+const createFormData = (file?: File) => {
   const formData = new FormData();
   formData.set('productId', validProductId);
-  formData.set('imageUrl', imageUrl);
   formData.set('altText', 'Mill scale ready for a bulk buyer enquiry');
+  if (file) formData.set('image', file);
   return formData;
 };
 
 describe('product media input', () => {
-  it('accepts a project-owned public media path and marks it as safe to publish', () => {
-    const result = parseAddProductMediaForm(
-      createFormData('/media/product-mill-scale.png'),
-    );
+  it('accepts an owner-uploaded supported image', () => {
+    const image = new File(['image'], 'mill-scale.png', { type: 'image/png' });
+    const result = parseAddProductMediaForm(createFormData(image));
 
     expect(result.success).toBe(true);
     if (!result.success) return;
 
-    expect(result.data).toMatchObject({
-      imageUrl: '/media/product-mill-scale.png',
-      mediaOrigin: 'LOCAL_PROJECT_MEDIA',
-      fileName: 'product-mill-scale.png',
+    expect(result.data.file).toBe(image);
+  });
+
+  it('requires an image file', () => {
+    const result = parseAddProductMediaForm(createFormData());
+
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    expect(
+      (result.error.flatten().fieldErrors as { image?: string[] }).image,
+    ).toEqual(['Choose an image to upload.']);
+  });
+
+  it('rejects unsupported uploads and oversized images', () => {
+    const unsupported = new File(['pdf'], 'spec.pdf', {
+      type: 'application/pdf',
     });
-  });
-
-  it('keeps an HTTPS image pending rights verification instead of publishing it', () => {
-    const result = parseAddProductMediaForm(
-      createFormData('https://supplier.example.com/images/mill-scale.webp'),
+    const oversized = new File(
+      [new Uint8Array(10 * 1024 * 1024 + 1)],
+      'large.jpg',
+      {
+        type: 'image/jpeg',
+      },
     );
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    expect(result.data.mediaOrigin).toBe('EXTERNAL_HTTPS');
-    expect(result.data.fileName).toBe('mill-scale.webp');
-  });
-
-  it('rejects unsafe image URLs and non-media local paths', () => {
-    for (const imageUrl of [
-      'http://supplier.example.com/mill-scale.jpg',
-      'javascript:alert(1)',
-      '/private/mill-scale.png',
-      '//cdn.example.com/mill-scale.png',
-    ]) {
-      const result = parseAddProductMediaForm(createFormData(imageUrl));
-      expect(result.success).toBe(false);
-    }
+    expect(parseAddProductMediaForm(createFormData(unsupported)).success).toBe(
+      false,
+    );
+    expect(parseAddProductMediaForm(createFormData(oversized)).success).toBe(
+      false,
+    );
   });
 });

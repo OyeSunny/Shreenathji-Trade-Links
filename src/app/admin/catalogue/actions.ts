@@ -3,6 +3,7 @@
 import { requireOwnerPageSession } from '@/features/auth/server/session';
 import {
   parseCreateProductDraftForm,
+  parseUpdateProductForm,
   slugifyCatalogueValue,
 } from '@/features/catalogue/product-draft-input';
 import {
@@ -10,6 +11,11 @@ import {
   parseProductMediaReferenceForm,
   parseProductMediaSortOrderForm,
 } from '@/features/catalogue/product-media-input';
+import {
+  InvalidUploadedImageError,
+  removeLocalUpload,
+  storeLocalProductImage,
+} from '@/features/catalogue/server/local-image-upload';
 import {
   MediaRightsStatus,
   MediaSource,
@@ -115,10 +121,80 @@ export const createProductDraft = async (
   redirect('/admin/catalogue?created=1');
 };
 
+export const updateProduct = async (
+  _previousState: ProductDraftFormState,
+  formData: FormData,
+): Promise<ProductDraftFormState> => {
+  await requireOwnerPageSession();
+
+  const result = parseUpdateProductForm(formData);
+  if (!result.success) {
+    return {
+      fieldErrors: result.error.flatten().fieldErrors,
+      message: 'Review the highlighted fields and try again.',
+    };
+  }
+
+  const existing = await db.product.findUnique({
+    where: { id: result.data.productId },
+    select: { id: true, slug: true, status: true },
+  });
+  if (!existing) return { message: 'This product is no longer available.' };
+
+  const categorySlug = slugifyCatalogueValue(
+    result.data.categoryName,
+    'category',
+  );
+
+  try {
+    await db.$transaction(async (transaction) => {
+      const category = await transaction.productCategory.upsert({
+        where: { slug: categorySlug },
+        create: {
+          name: result.data.categoryName,
+          slug: categorySlug,
+          status:
+            existing.status === 'PUBLISHED'
+              ? PublicationStatus.PUBLISHED
+              : PublicationStatus.DRAFT,
+        },
+        update: { name: result.data.categoryName },
+      });
+
+      await transaction.product.update({
+        where: { id: existing.id },
+        data: {
+          categoryId: category.id,
+          name: result.data.productName,
+          summary: result.data.summary,
+          description: result.data.description,
+          grade: result.data.grade,
+          form: result.data.form,
+          applications: result.data.applications,
+          minimumOrderQty: result.data.minimumOrderQty,
+          orderUnit: result.data.orderUnit,
+          availability: result.data.availability,
+        },
+      });
+    });
+  } catch {
+    return { message: 'We could not update this product. Please try again.' };
+  }
+
+  revalidatePath('/');
+  revalidatePath('/products');
+  revalidatePath(`/products/${existing.slug}`);
+  revalidatePath('/admin/catalogue');
+  revalidatePath(`/admin/catalogue/${existing.id}/edit`);
+  return { message: 'Product details have been saved.' };
+};
+
 const publicationChangeSchema = z.object({
   productId: z.string().cuid(),
   action: z.enum(['PUBLISH', 'DRAFT']),
 });
+
+const productReferenceSchema = z.object({ productId: z.string().cuid() });
 
 export const changeProductPublication = async (formData: FormData) => {
   await requireOwnerPageSession();
@@ -161,6 +237,95 @@ export const changeProductPublication = async (formData: FormData) => {
   revalidatePath('/products');
 };
 
+export const archiveProduct = async (formData: FormData) => {
+  await requireOwnerPageSession();
+  const result = productReferenceSchema.safeParse({
+    productId: formData.get('productId'),
+  });
+  if (!result.success) return;
+
+  const product = await db.product.findUnique({
+    where: { id: result.data.productId },
+    select: { id: true, slug: true },
+  });
+  if (!product) return;
+
+  await db.product.update({
+    where: { id: product.id },
+    data: { status: PublicationStatus.ARCHIVED, publishedAt: null },
+  });
+  revalidateProductMediaPaths(product);
+};
+
+export const restoreProduct = async (formData: FormData) => {
+  await requireOwnerPageSession();
+  const result = productReferenceSchema.safeParse({
+    productId: formData.get('productId'),
+  });
+  if (!result.success) return;
+
+  const product = await db.product.findUnique({
+    where: { id: result.data.productId },
+    select: { id: true, slug: true },
+  });
+  if (!product) return;
+
+  await db.product.update({
+    where: { id: product.id },
+    data: { status: PublicationStatus.DRAFT, publishedAt: null },
+  });
+  revalidateProductMediaPaths(product);
+};
+
+export const permanentlyDeleteUnusedDraft = async (formData: FormData) => {
+  await requireOwnerPageSession();
+  const result = productReferenceSchema.safeParse({
+    productId: formData.get('productId'),
+  });
+  if (!result.success) return;
+
+  const product = await db.product.findUnique({
+    where: { id: result.data.productId },
+    include: {
+      media: { include: { media: { select: { storageKey: true } } } },
+      _count: {
+        select: { customerReviews: true, enquiryItems: true, offers: true },
+      },
+    },
+  });
+  if (
+    !product ||
+    product.status !== PublicationStatus.DRAFT ||
+    product._count.enquiryItems > 0 ||
+    product._count.customerReviews > 0 ||
+    product._count.offers > 0
+  ) {
+    return;
+  }
+
+  const orphanedStorageKeys = await db.$transaction(async (transaction) => {
+    await transaction.product.delete({ where: { id: product.id } });
+    const removable = [] as string[];
+
+    for (const media of product.media) {
+      const references = await transaction.productMedia.count({
+        where: { mediaId: media.mediaId },
+      });
+      if (references === 0) {
+        await transaction.mediaAsset.delete({ where: { id: media.mediaId } });
+        if (media.media.storageKey) removable.push(media.media.storageKey);
+      }
+    }
+
+    return removable;
+  });
+
+  await Promise.all(orphanedStorageKeys.map((key) => removeLocalUpload(key)));
+  revalidatePath('/');
+  revalidatePath('/products');
+  revalidatePath('/admin/catalogue');
+};
+
 const getProductForMediaAction = async (productId: string) =>
   db.product.findUnique({
     where: { id: productId },
@@ -200,7 +365,19 @@ export const addProductMedia = async (
     };
   }
 
-  const isProjectMedia = result.data.mediaOrigin === 'LOCAL_PROJECT_MEDIA';
+  let upload: Awaited<ReturnType<typeof storeLocalProductImage>>;
+
+  try {
+    upload = await storeLocalProductImage(result.data.file);
+  } catch (error) {
+    return {
+      message:
+        error instanceof InvalidUploadedImageError
+          ? 'That file does not match a supported image format.'
+          : 'We could not store this image. Please try again.',
+      status: 'error',
+    };
+  }
 
   try {
     await db.$transaction(async (transaction) => {
@@ -215,23 +392,16 @@ export const addProductMedia = async (
       const media = await transaction.mediaAsset.create({
         data: {
           kind: 'IMAGE',
-          sourceUrl: result.data.imageUrl,
-          fileName: result.data.fileName,
-          mimeType: 'image/*',
+          storageKey: upload.storageKey,
+          sourceUrl: upload.publicUrl,
+          fileName: upload.fileName,
+          mimeType: result.data.file.type,
           altText: result.data.altText,
-          source: isProjectMedia
-            ? MediaSource.PROJECT_CREATED
-            : MediaSource.SUPPLIER,
-          sourceName: isProjectMedia
-            ? 'Shreenathji Trade Links project media'
-            : 'External URL supplied by owner — rights pending',
-          sourceReferenceUrl: isProjectMedia ? null : result.data.imageUrl,
-          rightsStatus: isProjectMedia
-            ? MediaRightsStatus.APPROVED
-            : MediaRightsStatus.PENDING_VERIFICATION,
-          status: isProjectMedia
-            ? PublicationStatus.PUBLISHED
-            : PublicationStatus.DRAFT,
+          source: MediaSource.PROJECT_CREATED,
+          sourceName: 'Owner upload',
+          sourceReferenceUrl: null,
+          rightsStatus: MediaRightsStatus.APPROVED,
+          status: PublicationStatus.PUBLISHED,
         },
       });
 
@@ -246,6 +416,7 @@ export const addProductMedia = async (
       });
     });
   } catch {
+    await removeLocalUpload(upload.storageKey);
     return {
       message: 'We could not save this image. Please try again.',
       status: 'error',
@@ -255,9 +426,7 @@ export const addProductMedia = async (
   revalidateProductMediaPaths(product);
 
   return {
-    message: isProjectMedia
-      ? 'Image added and ready for the public product carousel.'
-      : 'Image added as a private draft until its rights are verified.',
+    message: 'Image uploaded and ready for the public product carousel.',
     status: 'success',
   };
 };
@@ -339,9 +508,9 @@ export const removeProductMedia = async (formData: FormData) => {
           mediaId: result.data.mediaId,
         },
       },
-      select: { mediaId: true },
+      select: { mediaId: true, media: { select: { storageKey: true } } },
     });
-    if (!association) return false;
+    if (!association) return null;
 
     await transaction.productMedia.delete({
       where: {
@@ -361,8 +530,11 @@ export const removeProductMedia = async (formData: FormData) => {
       });
     }
 
-    return true;
+    return association.media.storageKey;
   });
 
-  if (removed) revalidateProductMediaPaths(product);
+  if (removed !== null) {
+    await removeLocalUpload(removed);
+    revalidateProductMediaPaths(product);
+  }
 };

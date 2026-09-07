@@ -29,4 +29,20 @@ describe('enquirySchema', () => {
       }),
     ).toThrow();
   });
+
+  it('keeps valid product and offer references for server-side verification', () => {
+    expect(
+      enquirySchema.parse({
+        type: 'DOMESTIC',
+        contactName: 'Aisha Khan',
+        email: 'buyer@example.com',
+        materialRequest: 'Please share the available grade and packaging.',
+        productSlug: 'mill-scale',
+        offerSlug: 'limited-stock-mill-scale',
+      }),
+    ).toMatchObject({
+      productSlug: 'mill-scale',
+      offerSlug: 'limited-stock-mill-scale',
+    });
+  });
 });

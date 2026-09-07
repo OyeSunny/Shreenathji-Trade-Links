@@ -15,8 +15,8 @@ export default function NewCatalogueProductPage() {
         </p>
         <h1 className="display-6 fw-semibold mb-2">Add a product</h1>
         <p className="mb-0 text-secondary">
-          Capture the essentials now. Images, technical specifications, and
-          publishing controls will be added in the next catalogue step.
+          Capture the essentials now. You can add images and control public
+          visibility from the catalogue after saving.
         </p>
       </section>
       <Card className="shadow-sm">

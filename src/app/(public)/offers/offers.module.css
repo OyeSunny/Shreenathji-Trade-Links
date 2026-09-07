@@ -1,0 +1,126 @@
+.hero {
+  background:
+    linear-gradient(110deg, rgba(221, 86, 36, 0.16), transparent 48%), #16191d;
+  color: #f5f1ea;
+}
+
+.kicker {
+  color: #f3aa78;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(3rem, 7vw, 5.8rem);
+  letter-spacing: -0.055em;
+  line-height: 0.9;
+  margin: 0;
+  max-width: 11ch;
+}
+
+.lede {
+  color: rgba(245, 241, 234, 0.78);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin: 1.5rem 0 0;
+  max-width: 39rem;
+}
+
+.offerCard {
+  background: #fff;
+  border: 1px solid #d7d1c6;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.offerCard:hover {
+  box-shadow: 8px 8px 0 #dd5624;
+  color: inherit;
+  transform: translate(-3px, -3px);
+}
+
+.offerImage,
+.offerImagePlaceholder {
+  aspect-ratio: 16 / 9;
+  background: #30373d;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.offerImagePlaceholder {
+  align-items: center;
+  color: #f5f1ea;
+  display: flex;
+  font-size: 0.75rem;
+  font-weight: 700;
+  justify-content: center;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.offerCardBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.4rem;
+}
+
+.productLine {
+  color: #a83c16;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.offerName {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.75rem;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  margin: 0.55rem 0 0.85rem;
+}
+
+.summary {
+  color: #555d63;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.cardAction {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.detailPanel {
+  background: #171a1d;
+  color: #f5f1ea;
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.detailPanel h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  letter-spacing: -0.035em;
+}
+
+@media (max-width: 575.98px) {
+  .offerCardBody {
+    padding: 1.15rem;
+  }
+
+  .offerName {
+    font-size: 1.5rem;
+  }
+}

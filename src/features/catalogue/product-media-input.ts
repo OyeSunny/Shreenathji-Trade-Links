@@ -1,66 +1,20 @@
 import { z } from 'zod';
 
-export const productMediaOriginSchema = z.enum([
-  'LOCAL_PROJECT_MEDIA',
-  'EXTERNAL_HTTPS',
+const acceptedImageTypes = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/avif',
 ]);
 
-const imageUrlSchema = z
-  .string()
-  .trim()
-  .min(1, 'Add an image URL.')
-  .max(2_048, 'Image URLs must be 2,048 characters or fewer.')
-  .superRefine((value, context) => {
-    if (value.startsWith('/media/') && !value.startsWith('//')) return;
-
-    try {
-      const url = new URL(value);
-
-      if (
-        url.protocol === 'https:' &&
-        url.hostname.length > 0 &&
-        !url.username &&
-        !url.password
-      ) {
-        return;
-      }
-    } catch {
-      // The validation message below covers malformed absolute URLs.
-    }
-
-    context.addIssue({
-      code: 'custom',
-      message:
-        'Use a public HTTPS URL or a project path beginning with /media/.',
-    });
-  });
-
-const fileNameFromUrl = (imageUrl: string) => {
-  const path = imageUrl.startsWith('/') ? imageUrl : new URL(imageUrl).pathname;
-  const possibleFileName = decodeURIComponent(path.split('/').pop() ?? '')
-    .replace(/[^a-zA-Z0-9._-]/g, '-')
-    .slice(0, 180);
-
-  return possibleFileName || 'product-image';
-};
-
-export const addProductMediaSchema = z
-  .object({
-    productId: z.string().cuid(),
-    imageUrl: imageUrlSchema,
-    altText: z
-      .string()
-      .trim()
-      .min(8, 'Describe the image in at least 8 characters.')
-      .max(220, 'Keep the image description under 220 characters.'),
-  })
-  .transform((value) => ({
-    ...value,
-    fileName: fileNameFromUrl(value.imageUrl),
-    mediaOrigin: value.imageUrl.startsWith('/media/')
-      ? ('LOCAL_PROJECT_MEDIA' as const)
-      : ('EXTERNAL_HTTPS' as const),
-  }));
+const addProductMediaSchema = z.object({
+  productId: z.string().cuid(),
+  altText: z
+    .string()
+    .trim()
+    .min(8, 'Describe the image in at least 8 characters.')
+    .max(220, 'Keep the image description under 220 characters.'),
+});
 
 export const productMediaReferenceSchema = z.object({
   mediaId: z.string().cuid(),
@@ -80,12 +34,56 @@ const getTextField = (formData: FormData, field: string) => {
   return typeof value === 'string' ? value : '';
 };
 
-export const parseAddProductMediaForm = (formData: FormData) =>
-  addProductMediaSchema.safeParse({
+export const parseAddProductMediaForm = (formData: FormData) => {
+  const result = addProductMediaSchema.safeParse({
     productId: getTextField(formData, 'productId'),
-    imageUrl: getTextField(formData, 'imageUrl'),
     altText: getTextField(formData, 'altText'),
   });
+  const image = formData.get('image');
+  const file = image instanceof File ? image : null;
+
+  if (!result.success) return result;
+
+  if (!file || file.size === 0) {
+    return {
+      success: false as const,
+      error: {
+        flatten: () => ({
+          fieldErrors: { image: ['Choose an image to upload.'] },
+        }),
+      },
+    };
+  }
+
+  if (!acceptedImageTypes.has(file.type)) {
+    return {
+      success: false as const,
+      error: {
+        flatten: () => ({
+          fieldErrors: {
+            image: ['Use a JPG, PNG, WebP, or AVIF image.'],
+          },
+        }),
+      },
+    };
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    return {
+      success: false as const,
+      error: {
+        flatten: () => ({
+          fieldErrors: { image: ['Keep each image under 10 MB.'] },
+        }),
+      },
+    };
+  }
+
+  return {
+    success: true as const,
+    data: { ...result.data, file },
+  };
+};
 
 export const parseProductMediaReferenceForm = (formData: FormData) =>
   productMediaReferenceSchema.safeParse({

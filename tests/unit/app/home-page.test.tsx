@@ -1,12 +1,23 @@
 import HomePage from '@/app/(public)/page';
+import { defaultHomePageContent } from '@/features/content/site-content';
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
 const getPublishedProducts = vi.hoisted(() => vi.fn());
+const getPublishedCustomerReviews = vi.hoisted(() => vi.fn());
+const getWebsiteContent = vi.hoisted(() => vi.fn());
 
 vi.mock('@/features/catalogue/server/public-catalogue', () => ({
   getPublishedProducts,
   getPublicImageUrl: () => '/media/test-product.png',
+}));
+
+vi.mock('@/features/reviews/server/public-reviews', () => ({
+  getPublishedCustomerReviews,
+}));
+
+vi.mock('@/features/content/server/site-content', () => ({
+  getWebsiteContent,
 }));
 
 const product = {
@@ -30,6 +41,10 @@ const product = {
 describe('HomePage', () => {
   beforeEach(() => {
     getPublishedProducts.mockResolvedValue([product]);
+    getPublishedCustomerReviews.mockResolvedValue([]);
+    getWebsiteContent.mockResolvedValue({
+      homePageContent: defaultHomePageContent,
+    });
   });
 
   it('identifies the business and primary enquiry action', async () => {
