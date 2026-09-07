@@ -1,0 +1,24 @@
+[Unit]
+Description=Shreenathji Trade Links web application
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=shreenathji
+Group=shreenathji
+WorkingDirectory=/var/www/shreenathji-trade-links
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=/var/www/shreenathji-trade-links/.env
+ExecStart=/usr/bin/pnpm start -- --hostname 127.0.0.1
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/var/www/shreenathji-trade-links/public/media/uploads
+
+[Install]
+WantedBy=multi-user.target
