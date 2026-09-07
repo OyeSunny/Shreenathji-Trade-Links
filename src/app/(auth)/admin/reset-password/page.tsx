@@ -1,7 +1,6 @@
+import { OwnerAccessShell } from '@/components/auth/owner-access-shell';
 import { ResetPasswordForm } from '@/components/auth/reset-password-form';
 import Link from 'next/link';
-import Card from 'react-bootstrap/Card';
-import Container from 'react-bootstrap/Container';
 
 export default async function ResetPasswordPage({
   searchParams,
@@ -12,34 +11,26 @@ export default async function ResetPasswordPage({
 
   if (!token) {
     return (
-      <main className="py-5">
-        <Container className="py-md-5" style={{ maxWidth: '30rem' }}>
-          <Card body className="shadow-sm">
-            <h1 className="h2">Reset link required</h1>
-            <p className="text-secondary">
-              Request a new password reset link to continue.
-            </p>
-            <Link className="btn btn-primary" href="/admin/forgot-password">
-              Request a reset link
-            </Link>
-          </Card>
-        </Container>
-      </main>
+      <OwnerAccessShell
+        description="Password links are single-use. Request a new one and we will send it to the owner email."
+        eyebrow="Password recovery"
+        title="A fresh reset link is needed."
+      >
+        <Link className="btn btn-primary w-100" href="/admin/forgot-password">
+          Request a reset link{' '}
+          <i aria-hidden="true" className="bi bi-arrow-right" />
+        </Link>
+      </OwnerAccessShell>
     );
   }
 
   return (
-    <main className="py-5">
-      <Container className="py-md-5" style={{ maxWidth: '30rem' }}>
-        <Card body className="shadow-sm">
-          <p className="mb-2 text-uppercase text-secondary">Owner access</p>
-          <h1 className="h2">Choose a new password</h1>
-          <p className="mb-4 text-secondary">
-            This link can be used once and expires shortly.
-          </p>
-          <ResetPasswordForm token={token} />
-        </Card>
-      </Container>
-    </main>
+    <OwnerAccessShell
+      description="Choose a strong new password. This link is single-use and expires shortly."
+      eyebrow="Password recovery"
+      title="Set a new owner password."
+    >
+      <ResetPasswordForm token={token} />
+    </OwnerAccessShell>
   );
 }
