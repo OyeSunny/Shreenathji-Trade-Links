@@ -4,6 +4,7 @@ import {
   setProductMediaCaption,
   setProductMediaSortOrder,
 } from '@/app/admin/catalogue/actions';
+import { AdminMediaImageViewer } from '@/components/admin/admin-media-image-viewer';
 import { ProductMediaForm } from '@/components/catalogue/product-media-form';
 import { requireOwnerPageSession } from '@/features/auth/server/session';
 import { db } from '@/lib/db';
@@ -14,9 +15,6 @@ import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import CardBody from 'react-bootstrap/CardBody';
 import CardHeader from 'react-bootstrap/CardHeader';
-
-/* The owner can review arbitrary HTTPS image hosts before public publication. */
-/* eslint-disable @next/next/no-img-element */
 
 const rightsVariant = {
   APPROVED: 'success',
@@ -111,17 +109,23 @@ export default async function ProductMediaPage({
                         key={productMedia.mediaId}
                       >
                         <div className="d-flex flex-column flex-sm-row gap-3">
-                          <img
-                            alt={
-                              productMedia.altText ??
-                              productMedia.media.altText ??
-                              `${product.name} product image`
-                            }
-                            className="bg-light border rounded-2 flex-shrink-0 object-fit-cover"
-                            height={108}
-                            src={productMedia.media.sourceUrl ?? undefined}
-                            width={144}
-                          />
+                          {productMedia.media.sourceUrl ? (
+                            <AdminMediaImageViewer
+                              alt={
+                                productMedia.altText ??
+                                productMedia.media.altText ??
+                                `${product.name} product image`
+                              }
+                              src={productMedia.media.sourceUrl}
+                            />
+                          ) : (
+                            <div
+                              className="align-items-center bg-light border d-flex flex-shrink-0 justify-content-center rounded-2 small text-secondary"
+                              style={{ height: 108, width: 144 }}
+                            >
+                              Image unavailable
+                            </div>
+                          )}
                           <div className="flex-grow-1">
                             <div className="align-items-start d-flex flex-wrap gap-2 justify-content-between">
                               <p className="fw-semibold mb-1 text-break">

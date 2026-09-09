@@ -1,0 +1,99 @@
+.preview {
+  align-self: flex-start;
+  background: #f2f4f5;
+  border: 1px solid rgb(17 19 21 / 15%);
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.4rem;
+  width: 9.5rem;
+}
+
+.thumbnail {
+  aspect-ratio: 4 / 3;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.viewButton {
+  border-radius: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.45rem 0.35rem;
+}
+
+.panel {
+  background: #111315;
+  border: 1px solid rgb(248 249 250 / 16%);
+  border-radius: 0;
+  color: #f8f9fa;
+}
+
+.panel :global(.modal-header),
+.panel :global(.modal-footer) {
+  border-color: rgb(248 249 250 / 14%);
+}
+
+.panel :global(.modal-header) {
+  align-items: start;
+  padding: 1.1rem 1.35rem;
+}
+
+.panel :global(.btn-close) {
+  filter: invert(1) grayscale(1) brightness(2);
+}
+
+.panel :global(.modal-footer) {
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding: 0.85rem 1.35rem;
+}
+
+.eyebrow {
+  color: #ff5a1f;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  margin: 0 0 0.3rem;
+  text-transform: uppercase;
+}
+
+.body {
+  padding: 0;
+}
+
+.canvas {
+  align-items: center;
+  background:
+    linear-gradient(45deg, #171c20 25%, transparent 25%) 0 0 / 1.5rem 1.5rem,
+    linear-gradient(-45deg, #171c20 25%, transparent 25%) 0 0 / 1.5rem 1.5rem,
+    #111315;
+  cursor: zoom-in;
+  display: flex;
+  height: min(68vh, 44rem);
+  justify-content: center;
+  overflow: auto;
+  padding: 2rem;
+}
+
+.fullImage {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  transform-origin: center;
+  transition: transform 160ms ease;
+}
+
+.zoomReadout {
+  color: #bfc8ce;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  margin-right: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fullImage {
+    transition: none;
+  }
+}
