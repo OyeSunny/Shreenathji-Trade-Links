@@ -30,7 +30,14 @@ import { z } from 'zod';
 export type ProductDraftFormState = {
   fieldErrors?: Record<string, string[] | undefined>;
   message?: string;
+  priceVisibility?: 'ASK_FOR_PRICE' | 'INDICATIVE_PRICE';
+  status?: 'error' | 'success';
 };
+
+const getSubmittedPriceVisibility = (formData: FormData) =>
+  formData.get('priceVisibility') === 'INDICATIVE_PRICE'
+    ? 'INDICATIVE_PRICE'
+    : 'ASK_FOR_PRICE';
 
 export type ProductMediaFormState = {
   fieldErrors?: Record<string, string[] | undefined>;
@@ -50,6 +57,8 @@ export const createProductDraft = async (
     return {
       fieldErrors: result.error.flatten().fieldErrors,
       message: 'Review the highlighted fields and try again.',
+      priceVisibility: getSubmittedPriceVisibility(formData),
+      status: 'error',
     };
   }
 
@@ -145,6 +154,8 @@ export const updateProduct = async (
     return {
       fieldErrors: result.error.flatten().fieldErrors,
       message: 'Review the highlighted fields and try again.',
+      priceVisibility: getSubmittedPriceVisibility(formData),
+      status: 'error',
     };
   }
 
@@ -152,7 +163,9 @@ export const updateProduct = async (
     where: { id: result.data.productId },
     select: { id: true, slug: true, status: true },
   });
-  if (!existing) return { message: 'This product is no longer available.' };
+  if (!existing) {
+    return { message: 'This product is no longer available.', status: 'error' };
+  }
 
   const categorySlug = slugifyCatalogueValue(
     result.data.categoryName,
@@ -204,7 +217,11 @@ export const updateProduct = async (
       });
     });
   } catch {
-    return { message: 'We could not update this product. Please try again.' };
+    return {
+      message: 'We could not update this product. Please try again.',
+      priceVisibility: getSubmittedPriceVisibility(formData),
+      status: 'error',
+    };
   }
 
   revalidatePath('/');
@@ -212,7 +229,11 @@ export const updateProduct = async (
   revalidatePath(`/products/${existing.slug}`);
   revalidatePath('/admin/catalogue');
   revalidatePath(`/admin/catalogue/${existing.id}/edit`);
-  return { message: 'Product details have been saved.' };
+  return {
+    message: 'Product details have been saved.',
+    priceVisibility: result.data.priceVisibility,
+    status: 'success',
+  };
 };
 
 const publicationChangeSchema = z.object({

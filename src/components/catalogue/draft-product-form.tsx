@@ -11,6 +11,8 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import Toast from 'react-bootstrap/Toast';
+import ToastContainer from 'react-bootstrap/ToastContainer';
 
 const errorFor = (
   fieldErrors: Record<string, string[] | undefined> | undefined,
@@ -51,14 +53,41 @@ export const DraftProductForm = ({
   const [priceVisibility, setPriceVisibility] = useState(
     product?.priceVisibility ?? 'ASK_FOR_PRICE',
   );
+  const [isPriceVisibilityDirty, setIsPriceVisibilityDirty] = useState(false);
+  const [validationMessage, setValidationMessage] = useState<string | null>(
+    null,
+  );
+  const displayedPriceVisibility = isPriceVisibilityDirty
+    ? priceVisibility
+    : (state.priceVisibility ?? priceVisibility);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const form = event.currentTarget;
+
+    if (form.checkValidity()) {
+      setValidationMessage(null);
+      return;
+    }
+
+    event.preventDefault();
+    const invalidField = form.querySelector<HTMLElement>(':invalid');
+    const fieldLabel = invalidField?.id
+      ? document.querySelector(`label[for="${invalidField.id}"]`)?.textContent
+      : null;
+
+    setValidationMessage(
+      `${fieldLabel?.trim() || 'A required field'} is empty. Please complete it before saving.`,
+    );
+    invalidField?.focus();
+  };
 
   return (
-    <form action={formAction} noValidate>
+    <form action={formAction} noValidate onSubmit={handleSubmit}>
       {product ? (
         <input name="productId" type="hidden" value={product.id} />
       ) : null}
       {state.message ? (
-        <Alert role="alert" variant="danger">
+        <Alert role="alert" variant={state.status ?? 'error'}>
           {state.message}
         </Alert>
       ) : null}
@@ -240,12 +269,13 @@ export const DraftProductForm = ({
           <Form.Label>Display price on the public catalogue</Form.Label>
           <Form.Select
             name="priceVisibility"
-            onChange={(event) =>
+            onChange={(event) => {
+              setIsPriceVisibilityDirty(true);
               setPriceVisibility(
                 event.target.value as 'ASK_FOR_PRICE' | 'INDICATIVE_PRICE',
-              )
-            }
-            value={priceVisibility}
+              );
+            }}
+            value={displayedPriceVisibility}
           >
             <option value="ASK_FOR_PRICE">Keep price on request</option>
             <option value="INDICATIVE_PRICE">
@@ -263,7 +293,7 @@ export const DraftProductForm = ({
               <Form.Label>Indicative price</Form.Label>
               <Form.Control
                 defaultValue={product?.indicativePrice ?? ''}
-                disabled={priceVisibility !== 'INDICATIVE_PRICE'}
+                disabled={displayedPriceVisibility !== 'INDICATIVE_PRICE'}
                 inputMode="decimal"
                 isInvalid={Boolean(
                   errorFor(state.fieldErrors, 'indicativePrice'),
@@ -271,6 +301,7 @@ export const DraftProductForm = ({
                 maxLength={24}
                 name="indicativePrice"
                 placeholder="e.g. 4250"
+                required={displayedPriceVisibility === 'INDICATIVE_PRICE'}
               />
               <Form.Control.Feedback type="invalid">
                 {errorFor(state.fieldErrors, 'indicativePrice')}
@@ -282,7 +313,7 @@ export const DraftProductForm = ({
               <Form.Label>Currency</Form.Label>
               <Form.Select
                 defaultValue={product?.currency ?? 'INR'}
-                disabled={priceVisibility !== 'INDICATIVE_PRICE'}
+                disabled={displayedPriceVisibility !== 'INDICATIVE_PRICE'}
                 isInvalid={Boolean(errorFor(state.fieldErrors, 'currency'))}
                 name="currency"
               >
@@ -300,13 +331,14 @@ export const DraftProductForm = ({
             <Form.Group controlId="price-unit">
               <Form.Label>Price per</Form.Label>
               <Form.Control
-                defaultValue={product?.priceUnit ?? ''}
-                disabled={priceVisibility !== 'INDICATIVE_PRICE'}
+                defaultValue={product?.priceUnit ?? 'MT'}
+                disabled={displayedPriceVisibility !== 'INDICATIVE_PRICE'}
                 isInvalid={Boolean(errorFor(state.fieldErrors, 'priceUnit'))}
                 list="price-unit-options"
                 maxLength={25}
                 name="priceUnit"
                 placeholder="e.g. MT"
+                required={displayedPriceVisibility === 'INDICATIVE_PRICE'}
               />
               <datalist id="price-unit-options">
                 <option value="MT" />
@@ -355,6 +387,23 @@ export const DraftProductForm = ({
               : 'Save draft product'}
         </Button>
       </div>
+
+      {validationMessage ? (
+        <ToastContainer className="p-3" position="top-end">
+          <Toast
+            autohide
+            bg="danger"
+            delay={6000}
+            onClose={() => setValidationMessage(null)}
+            role="alert"
+          >
+            <Toast.Header closeButton>
+              <strong className="me-auto">Cannot save product</strong>
+            </Toast.Header>
+            <Toast.Body className="text-white">{validationMessage}</Toast.Body>
+          </Toast>
+        </ToastContainer>
+      ) : null}
     </form>
   );
 };
