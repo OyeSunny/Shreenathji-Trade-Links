@@ -3,6 +3,8 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useId, useState } from 'react';
 
+import { trackUmamiEvent } from '@/components/analytics/track-umami-event';
+
 import styles from './contact-capture-popup.module.css';
 
 const storageKey = 'stl-contact-capture-dismissed';
@@ -78,6 +80,7 @@ export function ContactCapturePopup() {
         return;
       }
 
+      trackUmamiEvent('contact_lead_submitted');
       setState('success');
       window.sessionStorage.setItem(storageKey, '1');
     } catch {

@@ -93,6 +93,17 @@ export const AdminNavigation = () => {
               </Link>
             );
           })}
+          <a
+            className="admin-navigation__link"
+            href="https://analytics.shreenathjitradelinks.com"
+            onClick={closeMenu}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <span className="admin-navigation__index">08</span>
+            <i aria-hidden="true" className="bi bi-bar-chart-line" />
+            <span>Analytics ↗</span>
+          </a>
         </div>
       </nav>
     </>

@@ -5,6 +5,8 @@ import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
+import { trackUmamiEvent } from '@/components/analytics/track-umami-event';
+
 const createInitialForm = ({
   offerSlug,
   productSlug,
@@ -76,6 +78,10 @@ export const RequestQuoteForm = ({ offer, product }: RequestQuoteFormProps) => {
         return;
       }
 
+      trackUmamiEvent('quote_submitted', {
+        ...(product ? { product: product.slug } : {}),
+        ...(offer ? { offer: offer.slug } : {}),
+      });
       setValues(createInitialForm(contextualValues));
       setState('success');
     } catch {

@@ -25,6 +25,10 @@ describe('AdminNavigation', () => {
     expect(
       screen.getByRole('link', { name: /contact leads/i }),
     ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /analytics/i })).toHaveAttribute(
+      'href',
+      'https://analytics.shreenathjitradelinks.com',
+    );
     expect(document.body).toHaveClass('admin-menu-open');
 
     fireEvent.keyDown(window, { key: 'Escape' });
