@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { PasswordInput } from './password-input';
 
 export function ResetPasswordForm({ token }: { token: string }) {
   const [password, setPassword] = useState('');
@@ -61,31 +62,31 @@ export function ResetPasswordForm({ token }: { token: string }) {
           {error}
         </Alert>
       ) : null}
-      <Form.Group className="mb-3" controlId="new-password">
-        <Form.Label>New password</Form.Label>
-        <Form.Control
+      <div className="mb-3">
+        <PasswordInput
           autoComplete="new-password"
+          controlId="new-password"
           disabled={isSubmitting}
+          hint="Use at least 14 characters."
+          label="New password"
           minLength={14}
           onChange={(event) => setPassword(event.target.value)}
           required
-          type="password"
           value={password}
         />
-        <Form.Text>Use at least 14 characters.</Form.Text>
-      </Form.Group>
-      <Form.Group className="mb-4" controlId="confirm-new-password">
-        <Form.Label>Confirm new password</Form.Label>
-        <Form.Control
+      </div>
+      <div className="mb-4">
+        <PasswordInput
           autoComplete="new-password"
+          controlId="confirm-new-password"
           disabled={isSubmitting}
+          label="Confirm new password"
           minLength={14}
           onChange={(event) => setConfirmPassword(event.target.value)}
           required
-          type="password"
           value={confirmPassword}
         />
-      </Form.Group>
+      </div>
       <Button className="w-100" disabled={isSubmitting} type="submit">
         {isSubmitting ? 'Updating password…' : 'Set new password'}
       </Button>

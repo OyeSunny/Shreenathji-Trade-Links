@@ -8,6 +8,7 @@ import { useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { PasswordInput } from './password-input';
 
 export const LoginForm = () => {
   const router = useRouter();
@@ -34,6 +35,17 @@ export const LoginForm = () => {
         setHasError(true);
         return;
       }
+
+      // The two-factor client redirects to its verification screen itself.
+      // Navigating to /admin here would race that redirect after the normal
+      // session cookie has intentionally been removed.
+      const requiresTwoFactor =
+        typeof response.data === 'object' &&
+        response.data !== null &&
+        'twoFactorRedirect' in response.data &&
+        response.data.twoFactorRedirect === true;
+
+      if (requiresTwoFactor) return;
 
       router.replace('/admin');
     } catch {
@@ -64,17 +76,17 @@ export const LoginForm = () => {
         />
       </Form.Group>
 
-      <Form.Group className="mb-4" controlId="owner-password">
-        <Form.Label>Password</Form.Label>
-        <Form.Control
+      <div className="mb-4">
+        <PasswordInput
           autoComplete="current-password"
+          controlId="owner-password"
           disabled={isSubmitting}
+          label="Password"
           onChange={(event) => setPassword(event.target.value)}
           required
-          type="password"
           value={password}
         />
-      </Form.Group>
+      </div>
 
       <Button
         className="w-100"

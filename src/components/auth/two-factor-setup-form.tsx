@@ -7,6 +7,7 @@ import { useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { PasswordInput } from './password-input';
 
 type SetupStep = 'password' | 'verify' | 'recovery';
 
@@ -137,17 +138,17 @@ export const TwoFactorSetupForm = () => {
           <p className="text-secondary">
             First, confirm your password to protect this security change.
           </p>
-          <Form.Group className="mb-4" controlId="two-factor-password">
-            <Form.Label>Current password</Form.Label>
-            <Form.Control
+          <div className="mb-4">
+            <PasswordInput
               autoComplete="current-password"
+              controlId="two-factor-password"
               disabled={isSubmitting}
+              label="Current password"
               onChange={(event) => setPassword(event.target.value)}
               required
-              type="password"
               value={password}
             />
-          </Form.Group>
+          </div>
           <Button
             className="w-100"
             disabled={!password || isSubmitting}

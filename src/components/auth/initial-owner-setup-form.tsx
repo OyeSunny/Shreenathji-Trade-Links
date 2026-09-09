@@ -6,6 +6,7 @@ import { useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { PasswordInput } from './password-input';
 
 export const InitialOwnerSetupForm = ({ email }: { email: string }) => {
   const router = useRouter();
@@ -86,29 +87,29 @@ export const InitialOwnerSetupForm = ({ email }: { email: string }) => {
           value={setupToken}
         />
       </Form.Group>
-      <Form.Group className="mb-3" controlId="owner-new-password">
-        <Form.Label>Choose a password</Form.Label>
-        <Form.Control
+      <div className="mb-3">
+        <PasswordInput
           autoComplete="new-password"
+          controlId="owner-new-password"
           disabled={isSubmitting}
+          hint="Use at least 14 characters."
+          label="Choose a password"
           onChange={(event) => setPassword(event.target.value)}
           required
-          type="password"
           value={password}
         />
-        <Form.Text>Use at least 14 characters.</Form.Text>
-      </Form.Group>
-      <Form.Group className="mb-4" controlId="owner-password-confirmation">
-        <Form.Label>Confirm password</Form.Label>
-        <Form.Control
+      </div>
+      <div className="mb-4">
+        <PasswordInput
           autoComplete="new-password"
+          controlId="owner-password-confirmation"
           disabled={isSubmitting}
+          label="Confirm password"
           onChange={(event) => setConfirmation(event.target.value)}
           required
-          type="password"
           value={confirmation}
         />
-      </Form.Group>
+      </div>
       <Button className="w-100" disabled={isSubmitting} type="submit">
         {isSubmitting ? 'Creating owner account…' : 'Create owner account'}
       </Button>

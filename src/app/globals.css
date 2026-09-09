@@ -285,6 +285,47 @@ body {
   border-bottom-color: var(--stl-oxide);
   box-shadow: 0 5px 0 -4px var(--stl-oxide);
 }
+.owner-access .password-input {
+  align-items: stretch;
+  border-bottom: 1px solid #aab2b5;
+  display: flex;
+  transition: border-color 160ms var(--stl-ease-out);
+}
+.owner-access .password-input:focus-within {
+  border-bottom-color: var(--stl-oxide);
+  box-shadow: 0 5px 0 -4px var(--stl-oxide);
+}
+.owner-access .password-input .form-control,
+.owner-access .password-input .form-control:focus {
+  border-bottom: 0;
+  box-shadow: none;
+  min-width: 0;
+}
+.owner-access .password-input__toggle {
+  align-items: center;
+  border: 0;
+  border-radius: 0;
+  color: #53636b;
+  display: inline-flex;
+  font-size: 1rem;
+  justify-content: center;
+  min-height: 3.3rem;
+  padding: 0;
+  text-decoration: none;
+  transition:
+    background-color 160ms var(--stl-ease-out),
+    color 160ms var(--stl-ease-out);
+  width: 3.25rem;
+}
+.owner-access .password-input__toggle:hover,
+.owner-access .password-input__toggle:focus-visible {
+  background: rgba(255, 90, 31, 0.1);
+  color: var(--stl-oxide);
+  outline: none;
+}
+.owner-access .password-input__toggle:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--stl-oxide);
+}
 .owner-access .form-text {
   color: #68757a;
 }
@@ -341,6 +382,10 @@ body {
   .owner-access__frame {
     grid-template-columns: 1fr;
   }
+  .owner-access__entry {
+    min-height: auto;
+    order: -1;
+  }
   .owner-access__manifesto {
     border-bottom: 1px solid rgba(238, 235, 225, 0.15);
     border-right: 0;
@@ -353,9 +398,6 @@ body {
   }
   .owner-access__manifesto h2 {
     font-size: clamp(2.9rem, 10vw, 4.5rem);
-  }
-  .owner-access__entry {
-    min-height: 48rem;
   }
 }
 @media (max-width: 540px) {
@@ -384,7 +426,7 @@ body {
     margin: 0;
   }
   .owner-access__entry {
-    min-height: calc(100svh - 4rem);
+    min-height: auto;
     padding: 1.4rem;
   }
   .owner-access__card {

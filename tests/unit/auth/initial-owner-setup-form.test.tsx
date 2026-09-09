@@ -32,7 +32,7 @@ describe('InitialOwnerSetupForm', () => {
       'Correct-Horse-Battery-Staple-92!',
     );
     await user.type(
-      screen.getByLabelText(/confirm password/i),
+      screen.getByLabelText(/^confirm password$/i),
       'Correct-Horse-Battery-Staple-92!',
     );
 
