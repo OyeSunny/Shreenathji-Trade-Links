@@ -9,6 +9,11 @@ const acceptedImageTypes = new Set([
 
 const addProductMediaSchema = z.object({
   productId: z.string().cuid(),
+  caption: z
+    .string()
+    .trim()
+    .min(2, 'Add a variant title with at least 2 characters.')
+    .max(100, 'Keep the variant title under 100 characters.'),
   altText: z
     .string()
     .trim()
@@ -29,6 +34,14 @@ export const productMediaSortOrderSchema = productMediaReferenceSchema.extend({
     .max(9_999, 'Use a number below 10,000.'),
 });
 
+export const productMediaCaptionSchema = productMediaReferenceSchema.extend({
+  caption: z
+    .string()
+    .trim()
+    .min(2, 'Add a variant title with at least 2 characters.')
+    .max(100, 'Keep the variant title under 100 characters.'),
+});
+
 const getTextField = (formData: FormData, field: string) => {
   const value = formData.get(field);
   return typeof value === 'string' ? value : '';
@@ -37,6 +50,7 @@ const getTextField = (formData: FormData, field: string) => {
 export const parseAddProductMediaForm = (formData: FormData) => {
   const result = addProductMediaSchema.safeParse({
     productId: getTextField(formData, 'productId'),
+    caption: getTextField(formData, 'caption'),
     altText: getTextField(formData, 'altText'),
   });
   const image = formData.get('image');
@@ -96,4 +110,11 @@ export const parseProductMediaSortOrderForm = (formData: FormData) =>
     productId: getTextField(formData, 'productId'),
     mediaId: getTextField(formData, 'mediaId'),
     sortOrder: getTextField(formData, 'sortOrder'),
+  });
+
+export const parseProductMediaCaptionForm = (formData: FormData) =>
+  productMediaCaptionSchema.safeParse({
+    productId: getTextField(formData, 'productId'),
+    mediaId: getTextField(formData, 'mediaId'),
+    caption: getTextField(formData, 'caption'),
   });

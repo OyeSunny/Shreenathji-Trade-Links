@@ -1,6 +1,7 @@
 import {
   removeProductMedia,
   setPrimaryProductMedia,
+  setProductMediaCaption,
   setProductMediaSortOrder,
 } from '@/app/admin/catalogue/actions';
 import { ProductMediaForm } from '@/components/catalogue/product-media-form';
@@ -135,6 +136,36 @@ export default async function ProductMediaPage({
                                 productMedia.media.altText ??
                                 'No image description'}
                             </p>
+                            <form action={setProductMediaCaption}>
+                              <input
+                                name="productId"
+                                type="hidden"
+                                value={product.id}
+                              />
+                              <input
+                                name="mediaId"
+                                type="hidden"
+                                value={productMedia.mediaId}
+                              />
+                              <label className="d-block mb-2 small text-secondary">
+                                Buyer-facing variant title
+                                <input
+                                  className="form-control form-control-sm mt-1"
+                                  defaultValue={productMedia.caption ?? ''}
+                                  maxLength={100}
+                                  name="caption"
+                                  placeholder="e.g. Mill Scale Fe 70"
+                                  required
+                                  type="text"
+                                />
+                              </label>
+                              <button
+                                className="btn btn-outline-secondary btn-sm"
+                                type="submit"
+                              >
+                                Save title
+                              </button>
+                            </form>
                             <div className="d-flex flex-wrap gap-2">
                               <Badge
                                 bg={

@@ -10,6 +10,7 @@ export const PRODUCT_IMAGE_CAROUSEL_INTERVAL = 5500;
 
 export type ProductCarouselImage = {
   alt: string;
+  caption?: string | null;
   src: string;
 };
 
@@ -56,6 +57,9 @@ export function ProductImageCarousel({
         <span aria-hidden="true" className={styles.watermark}>
           Shreenathji Trade Links
         </span>
+        {image.caption ? (
+          <p className={styles.caption}>{image.caption}</p>
+        ) : null}
       </div>
     );
   }
@@ -90,6 +94,9 @@ export function ProductImageCarousel({
             <span aria-hidden="true" className={styles.watermark}>
               Shreenathji Trade Links
             </span>
+            {image.caption ? (
+              <p className={styles.caption}>{image.caption}</p>
+            ) : null}
           </CarouselItem>
         ))}
       </Carousel>

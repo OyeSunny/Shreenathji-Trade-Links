@@ -30,7 +30,7 @@ export default async function ProductDetailPage({
   const publicPrice = formatPublicProductPrice(product);
 
   const productImages = product.media.reduce<
-    Array<{ alt: string; src: string }>
+    Array<{ alt: string; caption: string | null; src: string }>
   >((images, productMedia) => {
     const src = getPublicImageUrl(productMedia.media);
 
@@ -38,6 +38,7 @@ export default async function ProductDetailPage({
       images.push({
         src,
         alt: productMedia.altText ?? productMedia.media.altText ?? product.name,
+        caption: productMedia.caption,
       });
     }
 

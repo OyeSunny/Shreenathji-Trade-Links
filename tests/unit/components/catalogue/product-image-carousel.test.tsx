@@ -4,7 +4,11 @@ import { act } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const images = [
-  { src: '/media/mill-scale-a.png', alt: 'Mill scale in a bulk yard' },
+  {
+    src: '/media/mill-scale-a.png',
+    alt: 'Mill scale in a bulk yard',
+    caption: 'Mill Scale Fe 70',
+  },
   { src: '/media/mill-scale-b.png', alt: 'Mill scale close-up' },
   { src: '/media/mill-scale-c.png', alt: 'Mill scale ready for dispatch' },
 ];
@@ -21,6 +25,7 @@ describe('ProductImageCarousel', () => {
       screen.getByRole('img', { name: /mill scale in a bulk yard/i }),
     ).toHaveAttribute('src', images[0].src);
     expect(screen.getByText('Shreenathji Trade Links')).toBeInTheDocument();
+    expect(screen.getByText('Mill Scale Fe 70')).toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 

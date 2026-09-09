@@ -56,6 +56,24 @@ export function ProductMediaForm({ productId }: { productId: string }) {
         </Form.Control.Feedback>
       </Form.Group>
 
+      <Form.Group className="mb-4" controlId="product-image-caption">
+        <Form.Label>Variant title shown to buyers</Form.Label>
+        <Form.Control
+          isInvalid={Boolean(errorFor(state.fieldErrors, 'caption'))}
+          maxLength={100}
+          name="caption"
+          placeholder="e.g. Mill Scale Fe 70"
+          required
+        />
+        <Form.Text>
+          Use the specific grade, form, or type in this image. This appears as
+          the carousel caption for buyers.
+        </Form.Text>
+        <Form.Control.Feedback type="invalid">
+          {errorFor(state.fieldErrors, 'caption')}
+        </Form.Control.Feedback>
+      </Form.Group>
+
       <Form.Group className="mb-4" controlId="product-image-alt-text">
         <Form.Label>Image description</Form.Label>
         <Form.Control

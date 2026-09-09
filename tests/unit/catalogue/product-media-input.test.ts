@@ -5,6 +5,7 @@ const validProductId = 'clx9d4g4s0000s8v3hvjs2x1a';
 const createFormData = (file?: File) => {
   const formData = new FormData();
   formData.set('productId', validProductId);
+  formData.set('caption', 'Mill Scale Fe 70');
   formData.set('altText', 'Mill scale ready for a bulk buyer enquiry');
   if (file) formData.set('image', file);
   return formData;
@@ -19,6 +20,7 @@ describe('product media input', () => {
     if (!result.success) return;
 
     expect(result.data.file).toBe(image);
+    expect(result.data.caption).toBe('Mill Scale Fe 70');
   });
 
   it('requires an image file', () => {

@@ -8,6 +8,7 @@ import {
 } from '@/features/catalogue/product-draft-input';
 import {
   parseAddProductMediaForm,
+  parseProductMediaCaptionForm,
   parseProductMediaReferenceForm,
   parseProductMediaSortOrderForm,
 } from '@/features/catalogue/product-media-input';
@@ -459,6 +460,7 @@ export const addProductMedia = async (
           sortOrder: (highestSortOrder._max.sortOrder ?? -1) + 1,
           isPrimary: !primaryImage,
           altText: result.data.altText,
+          caption: result.data.caption,
         },
       });
     });
@@ -476,6 +478,26 @@ export const addProductMedia = async (
     message: 'Image uploaded and ready for the public product carousel.',
     status: 'success',
   };
+};
+
+export const setProductMediaCaption = async (formData: FormData) => {
+  await requireOwnerPageSession();
+
+  const result = parseProductMediaCaptionForm(formData);
+  if (!result.success) return;
+
+  const product = await getProductForMediaAction(result.data.productId);
+  if (!product) return;
+
+  await db.productMedia.updateMany({
+    where: {
+      productId: product.id,
+      mediaId: result.data.mediaId,
+    },
+    data: { caption: result.data.caption },
+  });
+
+  revalidateProductMediaPaths(product);
 };
 
 export const setPrimaryProductMedia = async (formData: FormData) => {
