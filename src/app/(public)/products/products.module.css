@@ -78,9 +78,9 @@
 }
 
 .productCardBody {
-  display: flex;
+  display: grid;
   flex: 1;
-  flex-direction: column;
+  grid-template-rows: auto auto minmax(5.25rem, 1fr) auto auto;
   padding: 1.35rem;
 }
 
@@ -96,21 +96,40 @@
 .productSummary {
   color: #5b6872;
   line-height: 1.55;
-  margin-bottom: 1.4rem;
 }
 
 .productPrice {
-  color: #182027;
-  font-size: 0.92rem;
+  background: #182027;
+  border-left: 4px solid var(--stl-oxide);
+  color: #f8f9fa;
+  display: grid;
+  gap: 0.16rem;
+  margin: 1.35rem 0 1rem;
+  min-height: 4.35rem;
+  padding: 0.68rem 0.8rem 0.72rem;
+}
+
+.productPriceLabel {
+  color: #cfd5d9;
+  font-size: 0.65rem;
   font-weight: 700;
-  margin-bottom: 1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.productPriceValue {
+  align-self: end;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.18rem, 2vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
 }
 
 .cardArrow {
   color: var(--stl-oxide);
   font-size: 0.88rem;
   font-weight: 700;
-  margin-top: auto;
 }
 
 .emptyState {

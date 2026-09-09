@@ -104,7 +104,12 @@ export default async function ProductsPage() {
                           {product.summary}
                         </span>
                         <span className={styles.productPrice}>
-                          {publicPrice ?? 'Price on request'}
+                          <span className={styles.productPriceLabel}>
+                            {publicPrice ? 'Indicative price' : 'Pricing'}
+                          </span>
+                          <span className={styles.productPriceValue}>
+                            {publicPrice ?? 'Price on request'}
+                          </span>
                         </span>
                         <span className={styles.cardArrow}>
                           View material <span aria-hidden="true">→</span>

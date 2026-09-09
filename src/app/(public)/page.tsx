@@ -164,7 +164,12 @@ export default async function HomePage() {
                             {product.summary}
                           </span>
                           <span className="home-product-card__price">
-                            {publicPrice ?? 'Price on request'}
+                            <span className="home-product-card__price-label">
+                              {publicPrice ? 'Indicative price' : 'Pricing'}
+                            </span>
+                            <span className="home-product-card__price-value">
+                              {publicPrice ?? 'Price on request'}
+                            </span>
                           </span>
                           <span className="home-product-card__link">
                             View material <span aria-hidden="true">→</span>
