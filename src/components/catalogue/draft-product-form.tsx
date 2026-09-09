@@ -5,7 +5,7 @@ import {
   type ProductDraftFormState,
   updateProduct,
 } from '@/app/admin/catalogue/actions';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -31,6 +31,10 @@ export type ProductFormValues = {
   minimumOrderQty: string | null;
   name: string;
   orderUnit: string | null;
+  priceVisibility: 'ASK_FOR_PRICE' | 'INDICATIVE_PRICE';
+  indicativePrice: string | null;
+  currency: string | null;
+  priceUnit: string | null;
   summary: string;
 };
 
@@ -43,6 +47,9 @@ export const DraftProductForm = ({
   const [state, formAction, isPending] = useActionState(
     action,
     initialProductDraftFormState,
+  );
+  const [priceVisibility, setPriceVisibility] = useState(
+    product?.priceVisibility ?? 'ASK_FOR_PRICE',
   );
 
   return (
@@ -220,6 +227,96 @@ export const DraftProductForm = ({
                 <option value="LIMITED_STOCK">Limited stock</option>
                 <option value="OUT_OF_STOCK">Out of stock</option>
               </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
+      </section>
+
+      <section className="border-bottom mb-4 pb-4">
+        <p className="fw-semibold mb-3 text-uppercase small text-secondary">
+          Buyer price display
+        </p>
+        <Form.Group className="mb-3" controlId="price-visibility">
+          <Form.Label>Display price on the public catalogue</Form.Label>
+          <Form.Select
+            name="priceVisibility"
+            onChange={(event) =>
+              setPriceVisibility(
+                event.target.value as 'ASK_FOR_PRICE' | 'INDICATIVE_PRICE',
+              )
+            }
+            value={priceVisibility}
+          >
+            <option value="ASK_FOR_PRICE">Keep price on request</option>
+            <option value="INDICATIVE_PRICE">
+              Show an indicative price to buyers
+            </option>
+          </Form.Select>
+          <Form.Text>
+            Use an indicative price only when it is commercially approved. The
+            final quote can still vary by grade, quantity, delivery, and taxes.
+          </Form.Text>
+        </Form.Group>
+        <Row className="g-3">
+          <Col md={4}>
+            <Form.Group controlId="indicative-price">
+              <Form.Label>Indicative price</Form.Label>
+              <Form.Control
+                defaultValue={product?.indicativePrice ?? ''}
+                disabled={priceVisibility !== 'INDICATIVE_PRICE'}
+                inputMode="decimal"
+                isInvalid={Boolean(
+                  errorFor(state.fieldErrors, 'indicativePrice'),
+                )}
+                maxLength={24}
+                name="indicativePrice"
+                placeholder="e.g. 4250"
+              />
+              <Form.Control.Feedback type="invalid">
+                {errorFor(state.fieldErrors, 'indicativePrice')}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col md={4}>
+            <Form.Group controlId="price-currency">
+              <Form.Label>Currency</Form.Label>
+              <Form.Select
+                defaultValue={product?.currency ?? 'INR'}
+                disabled={priceVisibility !== 'INDICATIVE_PRICE'}
+                isInvalid={Boolean(errorFor(state.fieldErrors, 'currency'))}
+                name="currency"
+              >
+                <option value="INR">INR — Indian rupee</option>
+                <option value="USD">USD — US dollar</option>
+                <option value="EUR">EUR — Euro</option>
+                <option value="AED">AED — UAE dirham</option>
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errorFor(state.fieldErrors, 'currency')}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col md={4}>
+            <Form.Group controlId="price-unit">
+              <Form.Label>Price per</Form.Label>
+              <Form.Control
+                defaultValue={product?.priceUnit ?? ''}
+                disabled={priceVisibility !== 'INDICATIVE_PRICE'}
+                isInvalid={Boolean(errorFor(state.fieldErrors, 'priceUnit'))}
+                list="price-unit-options"
+                maxLength={25}
+                name="priceUnit"
+                placeholder="e.g. MT"
+              />
+              <datalist id="price-unit-options">
+                <option value="MT" />
+                <option value="kg" />
+                <option value="tonne" />
+                <option value="bag" />
+              </datalist>
+              <Form.Control.Feedback type="invalid">
+                {errorFor(state.fieldErrors, 'priceUnit')}
+              </Form.Control.Feedback>
             </Form.Group>
           </Col>
         </Row>

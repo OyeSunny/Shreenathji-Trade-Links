@@ -903,6 +903,13 @@ a:focus-visible {
   color: #5b6872;
   line-height: 1.55;
 }
+
+.home-product-card__price {
+  color: var(--stl-ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 1.05rem;
+}
 .home-product-card__link {
   margin-top: auto;
   padding-top: 1.5rem;

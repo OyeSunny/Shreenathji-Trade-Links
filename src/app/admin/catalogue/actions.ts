@@ -98,6 +98,19 @@ export const createProductDraft = async (
           applications: input.applications,
           minimumOrderQty: input.minimumOrderQty,
           orderUnit: input.orderUnit,
+          priceVisibility: input.priceVisibility,
+          indicativePrice:
+            input.priceVisibility === 'INDICATIVE_PRICE'
+              ? input.indicativePrice
+              : null,
+          currency:
+            input.priceVisibility === 'INDICATIVE_PRICE'
+              ? input.currency
+              : null,
+          priceUnit:
+            input.priceVisibility === 'INDICATIVE_PRICE'
+              ? input.priceUnit
+              : null,
           availability: input.availability,
           status: 'DRAFT',
         },
@@ -173,6 +186,19 @@ export const updateProduct = async (
           applications: result.data.applications,
           minimumOrderQty: result.data.minimumOrderQty,
           orderUnit: result.data.orderUnit,
+          priceVisibility: result.data.priceVisibility,
+          indicativePrice:
+            result.data.priceVisibility === 'INDICATIVE_PRICE'
+              ? result.data.indicativePrice
+              : null,
+          currency:
+            result.data.priceVisibility === 'INDICATIVE_PRICE'
+              ? result.data.currency
+              : null,
+          priceUnit:
+            result.data.priceVisibility === 'INDICATIVE_PRICE'
+              ? result.data.priceUnit
+              : null,
           availability: result.data.availability,
         },
       });

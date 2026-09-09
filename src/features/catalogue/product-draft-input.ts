@@ -46,6 +46,16 @@ const quantitySchema = z
   )
   .transform((value) => value || undefined);
 
+const priceSchema = z
+  .string()
+  .trim()
+  .max(24)
+  .refine(
+    (value) => value === '' || /^\d{1,15}(?:\.\d{1,2})?$/.test(value),
+    'Enter a price with up to two decimal places.',
+  )
+  .transform((value) => value || undefined);
+
 export const createProductDraftSchema = z
   .object({
     categoryName: z.string().trim().min(2).max(100),
@@ -57,6 +67,17 @@ export const createProductDraftSchema = z
     applications: productApplicationsSchema,
     minimumOrderQty: quantitySchema,
     orderUnit: optionalText(25),
+    priceVisibility: z.enum(['ASK_FOR_PRICE', 'INDICATIVE_PRICE']),
+    indicativePrice: priceSchema,
+    currency: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .refine((value) => value === '' || /^[A-Z]{3}$/.test(value), {
+        message: 'Use a three-letter currency code, e.g. INR or USD.',
+      })
+      .transform((value) => value || undefined),
+    priceUnit: optionalText(25),
     availability: z.enum([
       'IN_STOCK',
       'LIMITED_STOCK',
@@ -71,6 +92,32 @@ export const createProductDraftSchema = z
         message: 'Add a unit when entering a minimum order quantity.',
         path: ['orderUnit'],
       });
+    }
+
+    if (value.priceVisibility === 'INDICATIVE_PRICE') {
+      if (!value.indicativePrice) {
+        context.addIssue({
+          code: 'custom',
+          message: 'Enter the indicative price buyers should see.',
+          path: ['indicativePrice'],
+        });
+      }
+
+      if (!value.currency) {
+        context.addIssue({
+          code: 'custom',
+          message: 'Add the currency for this price.',
+          path: ['currency'],
+        });
+      }
+
+      if (!value.priceUnit) {
+        context.addIssue({
+          code: 'custom',
+          message: 'Add the unit buyers will use to understand this price.',
+          path: ['priceUnit'],
+        });
+      }
     }
   });
 
@@ -111,6 +158,10 @@ export const parseCreateProductDraftForm = (formData: FormData) =>
     applications: getTextField(formData, 'applications'),
     minimumOrderQty: getTextField(formData, 'minimumOrderQty'),
     orderUnit: getTextField(formData, 'orderUnit'),
+    priceVisibility: getTextField(formData, 'priceVisibility'),
+    indicativePrice: getTextField(formData, 'indicativePrice'),
+    currency: getTextField(formData, 'currency'),
+    priceUnit: getTextField(formData, 'priceUnit'),
     availability: getTextField(formData, 'availability'),
   });
 
@@ -126,5 +177,9 @@ export const parseUpdateProductForm = (formData: FormData) =>
     applications: getTextField(formData, 'applications'),
     minimumOrderQty: getTextField(formData, 'minimumOrderQty'),
     orderUnit: getTextField(formData, 'orderUnit'),
+    priceVisibility: getTextField(formData, 'priceVisibility'),
+    indicativePrice: getTextField(formData, 'indicativePrice'),
+    currency: getTextField(formData, 'currency'),
+    priceUnit: getTextField(formData, 'priceUnit'),
     availability: getTextField(formData, 'availability'),
   });

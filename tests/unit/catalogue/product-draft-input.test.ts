@@ -17,6 +17,10 @@ const createValidFormData = () => {
   formData.set('applications', 'Steel making\nFoundry use\nSteel making');
   formData.set('minimumOrderQty', '25.000');
   formData.set('orderUnit', 'MT');
+  formData.set('priceVisibility', 'INDICATIVE_PRICE');
+  formData.set('indicativePrice', '4250.50');
+  formData.set('currency', 'INR');
+  formData.set('priceUnit', 'MT');
   formData.set('availability', 'AVAILABLE_ON_REQUEST');
 
   return formData;
@@ -35,7 +39,24 @@ describe('product draft form input', () => {
       applications: ['Steel making', 'Foundry use'],
       minimumOrderQty: '25.000',
       orderUnit: 'MT',
+      priceVisibility: 'INDICATIVE_PRICE',
+      indicativePrice: '4250.50',
+      currency: 'INR',
+      priceUnit: 'MT',
     });
+  });
+
+  it('requires a price, currency, and unit when publishing an indicative price', () => {
+    const formData = createValidFormData();
+    formData.set('priceUnit', '');
+
+    const result = parseCreateProductDraftForm(formData);
+
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    expect(result.error.flatten().fieldErrors.priceUnit).toEqual([
+      'Add the unit buyers will use to understand this price.',
+    ]);
   });
 
   it('requires an order unit when a minimum quantity is entered', () => {

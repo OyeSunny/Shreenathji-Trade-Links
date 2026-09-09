@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 
 import { SectionReveal } from '@/components/layout/section-reveal';
 import { BuyerFeedbackCarousel } from '@/components/reviews/buyer-feedback-carousel';
+import { formatPublicProductPrice } from '@/features/catalogue/product-price';
 import {
   getPublicImageUrl,
   getPublishedProducts,
@@ -123,6 +124,7 @@ export default async function HomePage() {
                   const imageUrl = getPublicImageUrl(
                     primaryImage?.media ?? null,
                   );
+                  const publicPrice = formatPublicProductPrice(product);
 
                   return (
                     <div className="col-md-6 col-xl-4" key={product.id}>
@@ -160,6 +162,9 @@ export default async function HomePage() {
                           </span>
                           <span className="home-product-card__summary">
                             {product.summary}
+                          </span>
+                          <span className="home-product-card__price">
+                            {publicPrice ?? 'Price on request'}
                           </span>
                           <span className="home-product-card__link">
                             View material <span aria-hidden="true">→</span>

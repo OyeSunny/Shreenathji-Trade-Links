@@ -263,6 +263,7 @@ model Product {
   priceVisibility PriceVisibility        @default(ASK_FOR_PRICE)
   indicativePrice Decimal?               @db.Decimal(18, 2)
   currency        String?                @db.Char(3)
+  priceUnit       String?
   availability    ProductAvailability    @default(AVAILABLE_ON_REQUEST)
   featured        Boolean                @default(false)
   status          PublicationStatus      @default(DRAFT)

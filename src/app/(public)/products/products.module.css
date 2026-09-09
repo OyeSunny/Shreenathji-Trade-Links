@@ -99,6 +99,13 @@
   margin-bottom: 1.4rem;
 }
 
+.productPrice {
+  color: #182027;
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
 .cardArrow {
   color: var(--stl-oxide);
   font-size: 0.88rem;
@@ -202,6 +209,15 @@
 
 .enquiryPanel p {
   color: #d9dde1;
+}
+
+.enquiryPanel .enquiryPrice {
+  border-bottom: 1px solid rgba(248, 249, 250, 0.24);
+  border-top: 1px solid rgba(248, 249, 250, 0.24);
+  color: #f8f9fa;
+  font-size: 0.95rem;
+  margin: 1.35rem 0;
+  padding: 0.9rem 0;
 }
 
 .tag {

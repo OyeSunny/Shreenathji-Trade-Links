@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Container from 'react-bootstrap/Container';
 
 import { ProductImageCarousel } from '@/components/catalogue/product-image-carousel';
+import { formatPublicProductPrice } from '@/features/catalogue/product-price';
 import {
   getPublicImageUrl,
   getPublishedProductBySlug,
@@ -25,6 +26,8 @@ export default async function ProductDetailPage({
   const product = await getPublishedProductBySlug(slug);
 
   if (!product) notFound();
+
+  const publicPrice = formatPublicProductPrice(product);
 
   const productImages = product.media.reduce<
     Array<{ alt: string; src: string }>
@@ -50,6 +53,7 @@ export default async function ProductDetailPage({
           value: `${product.minimumOrderQty.toString()}${product.orderUnit ? ` ${product.orderUnit}` : ''}`,
         }
       : null,
+    publicPrice ? { label: 'Indicative price', value: publicPrice } : null,
     { label: 'Availability', value: formatAvailability(product.availability) },
   ].filter(
     (detail): detail is { label: string; value: string } => detail !== null,
@@ -146,6 +150,11 @@ export default async function ProductDetailPage({
                   Share the grade, quantity, destination and timeline. Our team
                   will respond with the next practical step.
                 </p>
+                {publicPrice ? (
+                  <p className={styles.enquiryPrice}>
+                    Indicative: <strong>{publicPrice}</strong>
+                  </p>
+                ) : null}
                 <Link
                   className="btn btn-warning w-100"
                   href={`/request-a-quote?product=${encodeURIComponent(product.slug)}`}

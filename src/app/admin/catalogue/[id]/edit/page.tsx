@@ -48,6 +48,10 @@ export default async function EditCatalogueProductPage({
               applications: product.applications,
               minimumOrderQty: product.minimumOrderQty?.toString() ?? null,
               orderUnit: product.orderUnit,
+              priceVisibility: product.priceVisibility,
+              indicativePrice: product.indicativePrice?.toString() ?? null,
+              currency: product.currency,
+              priceUnit: product.priceUnit,
               availability: product.availability,
             }}
           />

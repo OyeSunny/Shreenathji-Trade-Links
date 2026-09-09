@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
 
+import { formatPublicProductPrice } from '@/features/catalogue/product-price';
 import {
   getPublicImageUrl,
   getPublishedProducts,
@@ -61,6 +62,7 @@ export default async function ProductsPage() {
               {products.map((product) => {
                 const image = product.media[0];
                 const imageUrl = getPublicImageUrl(image?.media ?? null);
+                const publicPrice = formatPublicProductPrice(product);
 
                 return (
                   <div className="col-md-6 col-xl-4" key={product.id}>
@@ -100,6 +102,9 @@ export default async function ProductsPage() {
                         </span>
                         <span className={styles.productSummary}>
                           {product.summary}
+                        </span>
+                        <span className={styles.productPrice}>
+                          {publicPrice ?? 'Price on request'}
                         </span>
                         <span className={styles.cardArrow}>
                           View material <span aria-hidden="true">→</span>
