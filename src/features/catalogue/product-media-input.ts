@@ -7,6 +7,21 @@ const acceptedImageTypes = new Set([
   'image/avif',
 ]);
 
+const mimeTypeByExtension: Record<string, string> = {
+  avif: 'image/avif',
+  jpeg: 'image/jpeg',
+  jpg: 'image/jpeg',
+  png: 'image/png',
+  webp: 'image/webp',
+};
+
+const resolveImageMimeType = (file: File) => {
+  if (acceptedImageTypes.has(file.type)) return file.type;
+
+  const extension = file.name.split('.').at(-1)?.toLowerCase();
+  return extension ? mimeTypeByExtension[extension] : undefined;
+};
+
 const addProductMediaSchema = z.object({
   productId: z.string().cuid(),
   caption: z
@@ -69,7 +84,9 @@ export const parseAddProductMediaForm = (formData: FormData) => {
     };
   }
 
-  if (!acceptedImageTypes.has(file.type)) {
+  const mimeType = resolveImageMimeType(file);
+
+  if (!mimeType) {
     return {
       success: false as const,
       error: {
@@ -95,7 +112,7 @@ export const parseAddProductMediaForm = (formData: FormData) => {
 
   return {
     success: true as const,
-    data: { ...result.data, file },
+    data: { ...result.data, file, mimeType },
   };
 };
 

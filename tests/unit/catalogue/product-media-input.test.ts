@@ -23,6 +23,18 @@ describe('product media input', () => {
     expect(result.data.caption).toBe('Mill Scale Fe 70');
   });
 
+  it('accepts a JPEG from WhatsApp when the browser omits its file type', () => {
+    const image = new File(['image'], 'mill-scale-from-whatsapp.jpeg', {
+      type: '',
+    });
+    const result = parseAddProductMediaForm(createFormData(image));
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    expect(result.data.mimeType).toBe('image/jpeg');
+  });
+
   it('requires an image file', () => {
     const result = parseAddProductMediaForm(createFormData());
 

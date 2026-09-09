@@ -13,6 +13,19 @@ const extensionForType: Record<string, string> = {
   'image/webp': '.webp',
 };
 
+const mimeTypeByExtension: Record<string, string> = {
+  '.avif': 'image/avif',
+  '.jpeg': 'image/jpeg',
+  '.jpg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+};
+
+const resolveImageMimeType = (file: File) =>
+  extensionForType[file.type]
+    ? file.type
+    : mimeTypeByExtension[extname(file.name).toLowerCase()];
+
 const hasValidImageSignature = (bytes: Uint8Array, mimeType: string) => {
   if (mimeType === 'image/jpeg') {
     return bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
@@ -47,9 +60,10 @@ export async function storeLocalImage(
     throw new InvalidUploadedImageError('Image exceeds the 10 MB limit.');
   }
   const buffer = Buffer.from(await file.arrayBuffer());
-  const extension = extensionForType[file.type];
+  const mimeType = resolveImageMimeType(file);
+  const extension = mimeType ? extensionForType[mimeType] : undefined;
 
-  if (!extension || !hasValidImageSignature(buffer, file.type)) {
+  if (!extension || !mimeType || !hasValidImageSignature(buffer, mimeType)) {
     throw new InvalidUploadedImageError(
       'The uploaded file is not a valid image.',
     );

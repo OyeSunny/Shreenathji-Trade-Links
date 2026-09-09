@@ -1,4 +1,5 @@
 import { AdminNavigation } from '@/components/admin/admin-navigation';
+import { AdminUnsavedChangesGuard } from '@/components/admin/admin-unsaved-changes-guard';
 import { SignOutButton } from '@/components/auth/sign-out-button';
 import { getOwnerSecurityState } from '@/features/auth/server/owner-security';
 import { requireOwnerPageSession } from '@/features/auth/server/session';
@@ -18,6 +19,7 @@ export default async function AdminLayout({
 
   return (
     <main className="admin-workspace">
+      <AdminUnsavedChangesGuard />
       <aside className="admin-rail">
         <Link
           aria-label="Shreenathji Trade Links — admin overview"

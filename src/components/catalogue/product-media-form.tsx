@@ -39,7 +39,7 @@ export function ProductMediaForm({ productId }: { productId: string }) {
       <Form.Group className="mb-3" controlId="product-image-file">
         <Form.Label>Choose image</Form.Label>
         <Form.Control
-          accept="image/jpeg,image/png,image/webp,image/avif"
+          accept="image/jpeg,image/png,image/webp,image/avif,.jpg,.jpeg,.png,.webp,.avif"
           isInvalid={Boolean(errorFor(state.fieldErrors, 'image'))}
           name="image"
           required
