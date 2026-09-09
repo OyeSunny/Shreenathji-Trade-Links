@@ -66,6 +66,12 @@
   width: 100%;
 }
 
+.productMedia {
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+
 .productImagePlaceholder {
   align-items: center;
   color: var(--stl-oxide);
@@ -74,6 +80,20 @@
   font-size: 0.82rem;
   justify-content: center;
   letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.watermark {
+  background: rgb(17 19 21 / 28%);
+  bottom: 0.75rem;
+  color: rgb(255 255 255 / 67%);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.42rem 0.52rem;
+  pointer-events: none;
+  position: absolute;
+  right: 0.75rem;
   text-transform: uppercase;
 }
 

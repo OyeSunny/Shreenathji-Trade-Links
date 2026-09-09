@@ -134,16 +134,24 @@ export default async function HomePage() {
                         href={`/products/${product.slug}`}
                       >
                         {imageUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            alt={
-                              primaryImage?.altText ??
-                              primaryImage?.media.altText ??
-                              product.name
-                            }
-                            className="home-product-card__image"
-                            src={imageUrl}
-                          />
+                          <span className="home-product-card__media">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              alt={
+                                primaryImage?.altText ??
+                                primaryImage?.media.altText ??
+                                product.name
+                              }
+                              className="home-product-card__image"
+                              src={imageUrl}
+                            />
+                            <span
+                              aria-hidden="true"
+                              className="home-product-card__watermark"
+                            >
+                              Shreenathji Trade Links
+                            </span>
+                          </span>
                         ) : (
                           <span
                             aria-label={`${product.name} image pending`}

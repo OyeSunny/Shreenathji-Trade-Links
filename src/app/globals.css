@@ -884,6 +884,24 @@ a:focus-visible {
   grid-template-rows: auto auto minmax(5.25rem, 1fr) auto auto;
   padding: 1.35rem;
 }
+.home-product-card__media {
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+.home-product-card__watermark {
+  background: rgb(17 19 21 / 28%);
+  bottom: 0.75rem;
+  color: rgb(255 255 255 / 67%);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.42rem 0.52rem;
+  pointer-events: none;
+  position: absolute;
+  right: 0.75rem;
+  text-transform: uppercase;
+}
 .home-product-card__category,
 .home-product-card__link {
   color: var(--stl-oxide);

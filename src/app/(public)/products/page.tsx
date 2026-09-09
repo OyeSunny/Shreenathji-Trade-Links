@@ -72,18 +72,23 @@ export default async function ProductsPage() {
                       href={`/products/${product.slug}`}
                     >
                       {imageUrl ? (
-                        // This is a CMS-managed public image URL. Its media record is
-                        // constrained to PUBLISHED + APPROVED in the database query.
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          alt={
-                            image?.altText ??
-                            image.media.altText ??
-                            product.name
-                          }
-                          className={styles.productImage}
-                          src={imageUrl}
-                        />
+                        <span className={styles.productMedia}>
+                          {/* This is a CMS-managed public image URL. Its media record is
+                              constrained to PUBLISHED + APPROVED in the database query. */}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            alt={
+                              image?.altText ??
+                              image.media.altText ??
+                              product.name
+                            }
+                            className={styles.productImage}
+                            src={imageUrl}
+                          />
+                          <span aria-hidden="true" className={styles.watermark}>
+                            Shreenathji Trade Links
+                          </span>
+                        </span>
                       ) : (
                         <span
                           aria-label={`${product.name} image pending`}

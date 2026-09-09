@@ -4,6 +4,10 @@
   position: relative;
 }
 
+.singleRoot {
+  height: auto;
+}
+
 .root :global(.carousel),
 .root :global(.carousel-inner),
 .root :global(.carousel-item) {
@@ -17,8 +21,19 @@
   width: 100%;
 }
 
-.singleImage {
-  height: auto;
+.watermark {
+  background: rgb(17 19 21 / 28%);
+  bottom: 1rem;
+  color: rgb(255 255 255 / 67%);
+  font-size: clamp(0.58rem, 1.3vw, 0.76rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  padding: 0.5rem 0.62rem;
+  pointer-events: none;
+  position: absolute;
+  right: 1rem;
+  text-transform: uppercase;
+  z-index: 2;
 }
 
 .controls {

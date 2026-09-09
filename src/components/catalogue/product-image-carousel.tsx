@@ -48,12 +48,15 @@ export function ProductImageCarousel({
     // Product imagery is managed by the owner CMS and constrained before it
     // reaches this display component.
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        alt={image.alt}
-        className={joinClassNames(styles.image, styles.singleImage, className)}
-        src={image.src}
-      />
+      <div
+        className={joinClassNames(styles.root, styles.singleRoot, className)}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img alt={image.alt} className={styles.image} src={image.src} />
+        <span aria-hidden="true" className={styles.watermark}>
+          Shreenathji Trade Links
+        </span>
+      </div>
     );
   }
 
@@ -84,6 +87,9 @@ export function ProductImageCarousel({
           <CarouselItem key={image.src}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt={image.alt} className={styles.image} src={image.src} />
+            <span aria-hidden="true" className={styles.watermark}>
+              Shreenathji Trade Links
+            </span>
           </CarouselItem>
         ))}
       </Carousel>

@@ -20,6 +20,7 @@ describe('ProductImageCarousel', () => {
     expect(
       screen.getByRole('img', { name: /mill scale in a bulk yard/i }),
     ).toHaveAttribute('src', images[0].src);
+    expect(screen.getByText('Shreenathji Trade Links')).toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
