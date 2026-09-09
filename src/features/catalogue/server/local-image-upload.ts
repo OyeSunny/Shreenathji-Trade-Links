@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import 'server-only';
+import { watermarkProductImage } from './product-image-watermark';
 
 const uploadDirectory = join(process.cwd(), 'public', 'media', 'uploads');
 
@@ -38,7 +39,10 @@ const hasValidImageSignature = (bytes: Uint8Array, mimeType: string) => {
 
 export class InvalidUploadedImageError extends Error {}
 
-export async function storeLocalImage(file: File) {
+export async function storeLocalImage(
+  file: File,
+  { watermark = false }: { watermark?: boolean } = {},
+) {
   if (file.size > 10 * 1024 * 1024) {
     throw new InvalidUploadedImageError('Image exceeds the 10 MB limit.');
   }
@@ -51,9 +55,23 @@ export async function storeLocalImage(file: File) {
     );
   }
 
+  let storedBuffer: Uint8Array = buffer;
+
+  if (watermark) {
+    try {
+      storedBuffer = await watermarkProductImage(buffer);
+    } catch {
+      throw new InvalidUploadedImageError(
+        'The uploaded image could not be processed safely.',
+      );
+    }
+  }
+
   await mkdir(uploadDirectory, { recursive: true });
   const fileName = `${randomUUID()}${extension}`;
-  await writeFile(join(uploadDirectory, fileName), buffer, { flag: 'wx' });
+  await writeFile(join(uploadDirectory, fileName), storedBuffer, {
+    flag: 'wx',
+  });
 
   return {
     fileName: file.name.slice(0, 180) || `product-image${extension}`,
@@ -62,7 +80,8 @@ export async function storeLocalImage(file: File) {
   };
 }
 
-export const storeLocalProductImage = storeLocalImage;
+export const storeLocalProductImage = (file: File) =>
+  storeLocalImage(file, { watermark: true });
 
 export const isLocalUploadStorageKey = (storageKey: string | null) =>
   Boolean(storageKey?.startsWith('uploads/'));

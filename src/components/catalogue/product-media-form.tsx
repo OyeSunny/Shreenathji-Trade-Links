@@ -48,7 +48,8 @@ export function ProductMediaForm({ productId }: { productId: string }) {
         <Form.Text>
           Upload a JPG, PNG, WebP, or AVIF image up to 10 MB. Uploaded files are
           stored with a private generated filename and become public only as
-          this product&apos;s image.
+          this product&apos;s image. A light “Shreenathji Trade Links” watermark
+          is applied automatically to product uploads only.
         </Form.Text>
         <Form.Control.Feedback type="invalid">
           {errorFor(state.fieldErrors, 'image')}
