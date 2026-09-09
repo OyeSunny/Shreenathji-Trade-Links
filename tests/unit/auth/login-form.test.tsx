@@ -41,8 +41,8 @@ describe('LoginForm', () => {
       screen.getByRole('link', { name: /forgot password/i }),
     ).toHaveAttribute('href', '/admin/forgot-password');
     expect(
-      screen.getByRole('link', { name: /create the initial owner account/i }),
-    ).toHaveAttribute('href', '/admin/first-time-setup');
+      screen.queryByRole('link', { name: /create the initial owner account/i }),
+    ).not.toBeInTheDocument();
 
     await user.type(screen.getByLabelText(/email/i), 'owner@example.com');
     await user.type(
@@ -61,6 +61,14 @@ describe('LoginForm', () => {
     expect(
       screen.getByRole('button', { name: /hide password/i }),
     ).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('only shows owner setup before an owner exists', () => {
+    render(<LoginForm canCreateInitialOwner />);
+
+    expect(
+      screen.getByRole('link', { name: /create the initial owner account/i }),
+    ).toHaveAttribute('href', '/admin/first-time-setup');
   });
 
   it('leaves two-factor navigation to the authenticator client', async () => {

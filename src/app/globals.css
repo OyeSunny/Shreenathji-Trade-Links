@@ -218,6 +218,9 @@ body {
 .owner-access__back:focus-visible {
   color: var(--stl-oxide);
 }
+.owner-access__mobile-header {
+  display: none;
+}
 .owner-access__card {
   margin: auto;
   max-width: 35rem;
@@ -385,6 +388,29 @@ body {
   .owner-access__entry {
     min-height: auto;
     order: -1;
+  }
+  .owner-access__entry > .owner-access__mobile-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+  .owner-access__entry > .owner-access__back--desktop,
+  .owner-access__manifesto > .owner-access__brand {
+    display: none;
+  }
+  .owner-access__mobile-header .owner-access__brand {
+    color: #14171a;
+  }
+  .owner-access__mobile-header .owner-access__brand small {
+    font-size: 0.58rem;
+  }
+  .owner-access__mobile-header .owner-access__monogram {
+    font-size: 0.66rem;
+    height: 2.35rem;
+    width: 2.35rem;
+  }
+  .owner-access__mobile-header .owner-access__back {
+    font-size: 0.62rem;
   }
   .owner-access__manifesto {
     border-bottom: 1px solid rgba(238, 235, 225, 0.15);

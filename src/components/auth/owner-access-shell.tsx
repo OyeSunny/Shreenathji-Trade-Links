@@ -8,6 +8,22 @@ type OwnerAccessShellProps = {
   title: string;
 };
 
+const OwnerAccessBrand = ({ className }: { className?: string }) => (
+  <Link
+    aria-label="Back to Shreenathji Trade Links homepage"
+    className={className}
+    href="/"
+  >
+    <span aria-hidden="true" className="owner-access__monogram">
+      STL
+    </span>
+    <span>
+      <strong>Shreenathji</strong>
+      <small>Trade Links</small>
+    </span>
+  </Link>
+);
+
 export function OwnerAccessShell({
   children,
   description,
@@ -19,19 +35,7 @@ export function OwnerAccessShell({
       <div aria-hidden="true" className="owner-access__grid" />
       <div className="owner-access__frame">
         <section className="owner-access__manifesto">
-          <Link
-            aria-label="Back to Shreenathji Trade Links homepage"
-            className="owner-access__brand"
-            href="/"
-          >
-            <span aria-hidden="true" className="owner-access__monogram">
-              STL
-            </span>
-            <span>
-              <strong>Shreenathji</strong>
-              <small>Trade Links</small>
-            </span>
-          </Link>
+          <OwnerAccessBrand className="owner-access__brand" />
 
           <div className="owner-access__manifesto-copy">
             <p className="owner-access__kicker">
@@ -67,7 +71,16 @@ export function OwnerAccessShell({
         </section>
 
         <section className="owner-access__entry">
-          <Link className="owner-access__back" href="/">
+          <div className="owner-access__mobile-header">
+            <OwnerAccessBrand className="owner-access__brand" />
+            <Link className="owner-access__back" href="/">
+              <i aria-hidden="true" className="bi bi-arrow-up-right" /> Site
+            </Link>
+          </div>
+          <Link
+            className="owner-access__back owner-access__back--desktop"
+            href="/"
+          >
             <i aria-hidden="true" className="bi bi-arrow-up-right" /> View
             public website
           </Link>

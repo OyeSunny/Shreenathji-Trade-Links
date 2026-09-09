@@ -10,7 +10,11 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { PasswordInput } from './password-input';
 
-export const LoginForm = () => {
+export const LoginForm = ({
+  canCreateInitialOwner = false,
+}: {
+  canCreateInitialOwner?: boolean;
+}) => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -99,11 +103,13 @@ export const LoginForm = () => {
       <p className="mb-0 mt-3 text-center">
         <Link href="/admin/forgot-password">Forgot password?</Link>
       </p>
-      <p className="mb-0 mt-2 text-center small">
-        <Link href="/admin/first-time-setup">
-          Create the initial owner account
-        </Link>
-      </p>
+      {canCreateInitialOwner ? (
+        <p className="mb-0 mt-2 text-center small">
+          <Link href="/admin/first-time-setup">
+            Create the initial owner account
+          </Link>
+        </p>
+      ) : null}
     </Form>
   );
 };
