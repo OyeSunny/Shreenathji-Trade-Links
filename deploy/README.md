@@ -1,5 +1,6 @@
 # Product video worker
 
-Install FFmpeg/FFprobe, apply Prisma migrations, then install and enable
-`systemd/shreenathji-product-video-worker.service`. The worker needs read/write
-access only to `var/media-processing` and `public/media/uploads`.
+Install FFmpeg/FFprobe once, then use
+`deploy-shreenathji-trade-links.sh` as `/usr/local/sbin/deploy-shreenathji-trade-links`.
+It applies migrations and refreshes the worker service on every release. The
+worker only writes to `var/media-processing` and `public/media/uploads`.
