@@ -219,5 +219,9 @@ async function importMaterials(directory: string) {
   console.log(JSON.stringify(result));
 }
 
-await importMaterials(materialsDirectory);
-await db.$disconnect();
+void importMaterials(materialsDirectory)
+  .catch((error: unknown) => {
+    console.error(error);
+    process.exitCode = 1;
+  })
+  .finally(() => db.$disconnect());
