@@ -20,7 +20,7 @@ if (!materialsDirectory) {
 const imports = [
   {
     folder: 'Anode Carbon Block \nPuarity  98',
-    name: 'Anode Carbon Block',
+    name: 'Anode Carbon Block – Purity 98',
     slug: 'anode-carbon-block',
     category: 'Carbon materials',
     categorySlug: 'carbon-materials',
@@ -32,25 +32,26 @@ const imports = [
   },
   {
     folder: 'Iron ore fine \nBlue dust\nFe 63',
-    name: 'Iron Ore Fines',
-    slug: 'iron-ore-fines',
+    name: 'Iron Ore Fine – Blue Dust – Fe 63',
+    slug: 'iron-ore-fine-blue-dust-fe-63',
     category: 'Iron & mill scale',
     categorySlug: 'iron-mill-scale',
     caption: 'Iron Ore Fine · Blue Dust · Fe 63',
-    summary: 'Iron ore fines for bulk industrial sourcing enquiries.',
-    grade: 'As per buyer requirement',
-    form: 'Fines',
+    summary: 'Blue dust iron ore fines for bulk industrial sourcing enquiries.',
+    grade: 'Fe 63',
+    form: 'Blue dust',
   },
   {
     folder: 'Iron ore fines\nSize o to 10\nFe 53 to 55',
-    name: 'Iron Ore Fines',
-    slug: 'iron-ore-fines',
+    name: 'Iron Ore Fines – Size 0–10 – Fe 53–55',
+    slug: 'iron-ore-fines-size-0-to-10-fe-53-to-55',
     category: 'Iron & mill scale',
     categorySlug: 'iron-mill-scale',
     caption: 'Iron Ore Fines · Size 0–10 · Fe 53–55',
-    summary: 'Iron ore fines for bulk industrial sourcing enquiries.',
-    grade: 'As per buyer requirement',
-    form: 'Fines',
+    summary:
+      'Iron ore fines sized 0–10 for bulk industrial sourcing enquiries.',
+    grade: 'Fe 53–55',
+    form: 'Fines, size 0–10',
   },
   {
     folder: 'Iron ore',
@@ -65,35 +66,35 @@ const imports = [
   },
   {
     folder: 'Mill scale \nFe 68+++',
-    name: 'Mill Scale',
-    slug: 'mill-scale',
+    name: 'Mill Scale – Fe 68+++',
+    slug: 'mill-scale-fe-68',
     category: 'Iron & mill scale',
     categorySlug: 'iron-mill-scale',
     caption: 'Mill Scale · Fe 68+++',
-    summary: 'Ferrous oxide scale for industrial material requirements.',
-    grade: 'As per buyer requirement',
-    form: 'Fines / scale',
+    summary: 'Mill scale Fe 68+++ for industrial material requirements.',
+    grade: 'Fe 68+++',
+    form: 'Mill scale',
   },
   {
     folder: 'Mill scale \nFe 69+++',
-    name: 'Mill Scale',
-    slug: 'mill-scale',
+    name: 'Mill Scale – Fe 69+++',
+    slug: 'mill-scale-fe-69',
     category: 'Iron & mill scale',
     categorySlug: 'iron-mill-scale',
     caption: 'Mill Scale · Fe 69+++',
-    summary: 'Ferrous oxide scale for industrial material requirements.',
-    grade: 'As per buyer requirement',
-    form: 'Fines / scale',
+    summary: 'Mill scale Fe 69+++ for industrial material requirements.',
+    grade: 'Fe 69+++',
+    form: 'Mill scale',
   },
   {
     folder: 'Iron ore Fine \nFe 55 to 57',
-    name: 'Iron Ore Fines',
-    slug: 'iron-ore-fines',
+    name: 'Iron Ore Fine – Fe 55–57',
+    slug: 'iron-ore-fine-fe-55-to-57',
     category: 'Iron & mill scale',
     categorySlug: 'iron-mill-scale',
     caption: 'Iron Ore Fine · Fe 55–57',
-    summary: 'Iron ore fines for bulk industrial sourcing enquiries.',
-    grade: 'As per buyer requirement',
+    summary: 'Iron ore fines Fe 55–57 for bulk industrial sourcing enquiries.',
+    grade: 'Fe 55–57',
     form: 'Fines',
   },
 ] as const;
@@ -101,7 +102,12 @@ const imports = [
 const importPrefix = 'desktop-materials-2026-09-11';
 
 async function importMaterials(directory: string) {
-  const result = { createdProducts: 0, importedImages: 0, skippedImages: 0 };
+  const result = {
+    createdProducts: 0,
+    importedImages: 0,
+    movedImages: 0,
+    skippedImages: 0,
+  };
 
   for (const entry of imports) {
     const category = await db.productCategory.upsert({
@@ -117,32 +123,42 @@ async function importMaterials(directory: string) {
       where: { slug: entry.slug },
       select: { id: true },
     });
-    const product =
-      existing ??
-      (await db.product.create({
-        data: {
-          categoryId: category.id,
-          name: entry.name,
-          slug: entry.slug,
-          summary: entry.summary,
-          description:
-            'Share the required grade, quantity, destination, and delivery timeline for a direct supply discussion.',
-          grade: entry.grade,
-          form: entry.form,
-          applications: ['Industrial sourcing'],
-          packaging: 'Bulk / as agreed',
-          priceVisibility: PriceVisibility.ASK_FOR_PRICE,
-          availability: ProductAvailability.AVAILABLE_ON_REQUEST,
-          status: PublicationStatus.PUBLISHED,
-          publishedAt: new Date(),
-          specifications: {
-            create: [
-              { label: 'Material', value: entry.name, sortOrder: 0 },
-              { label: 'Grade', value: entry.grade, sortOrder: 1 },
-            ],
+    const product = existing
+      ? await db.product.update({
+          where: { id: existing.id },
+          data: {
+            categoryId: category.id,
+            name: entry.name,
+            summary: entry.summary,
+            grade: entry.grade,
+            form: entry.form,
+            status: PublicationStatus.PUBLISHED,
           },
-        },
-      }));
+        })
+      : await db.product.create({
+          data: {
+            categoryId: category.id,
+            name: entry.name,
+            slug: entry.slug,
+            summary: entry.summary,
+            description:
+              'Share the required grade, quantity, destination, and delivery timeline for a direct supply discussion.',
+            grade: entry.grade,
+            form: entry.form,
+            applications: ['Industrial sourcing'],
+            packaging: 'Bulk / as agreed',
+            priceVisibility: PriceVisibility.ASK_FOR_PRICE,
+            availability: ProductAvailability.AVAILABLE_ON_REQUEST,
+            status: PublicationStatus.PUBLISHED,
+            publishedAt: new Date(),
+            specifications: {
+              create: [
+                { label: 'Material', value: entry.name, sortOrder: 0 },
+                { label: 'Grade', value: entry.grade, sortOrder: 1 },
+              ],
+            },
+          },
+        });
 
     if (!existing) result.createdProducts += 1;
 
@@ -162,6 +178,44 @@ async function importMaterials(directory: string) {
       });
 
       if (alreadyImported) {
+        const association = await db.productMedia.findFirst({
+          where: { mediaId: alreadyImported.id },
+          select: { productId: true },
+        });
+        if (association?.productId !== product.id) {
+          await db.$transaction(async (transaction) => {
+            const highestSortOrder = await transaction.productMedia.aggregate({
+              where: { productId: product.id },
+              _max: { sortOrder: true },
+            });
+            const hasPrimaryImage = await transaction.productMedia.findFirst({
+              where: { productId: product.id, isPrimary: true },
+              select: { mediaId: true },
+            });
+            if (association) {
+              await transaction.productMedia.delete({
+                where: {
+                  productId_mediaId: {
+                    productId: association.productId,
+                    mediaId: alreadyImported.id,
+                  },
+                },
+              });
+            }
+            await transaction.productMedia.create({
+              data: {
+                productId: product.id,
+                mediaId: alreadyImported.id,
+                sortOrder: (highestSortOrder._max.sortOrder ?? -1) + 1,
+                isPrimary: !hasPrimaryImage,
+                altText: `${entry.caption} product photograph`,
+                caption: entry.caption,
+              },
+            });
+          });
+          result.movedImages += 1;
+          continue;
+        }
         result.skippedImages += 1;
         continue;
       }
