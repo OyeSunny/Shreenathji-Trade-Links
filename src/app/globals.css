@@ -862,9 +862,9 @@ a:focus-visible {
 }
 .home-product-card__image,
 .home-product-card__placeholder {
-  aspect-ratio: 16 / 9;
   background: linear-gradient(135deg, #303940, #111315);
   display: block;
+  height: 100%;
   object-fit: cover;
   transition: transform 460ms var(--stl-ease-out);
   width: 100%;
@@ -886,6 +886,7 @@ a:focus-visible {
   display: none;
 }
 .home-product-card__media {
+  aspect-ratio: 16 / 9;
   display: block;
   overflow: hidden;
   position: relative;

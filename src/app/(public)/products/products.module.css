@@ -75,14 +75,15 @@
 
 .productImage,
 .productImagePlaceholder {
-  aspect-ratio: 16 / 10;
   background: linear-gradient(135deg, #303940, #111315);
   display: block;
+  height: 100%;
   object-fit: cover;
   width: 100%;
 }
 
 .productMedia {
+  aspect-ratio: 16 / 10;
   display: block;
   overflow: hidden;
   position: relative;
