@@ -82,21 +82,41 @@ export const BusinessIdentityForm = ({
           </Form.Group>
         </Col>
         <Col xs={12}>
-          <Form.Group controlId="company-address">
+          <Form.Group controlId="company-registered-address">
             <Form.Label>
-              Business address{' '}
+              Registered address{' '}
               <span className="text-secondary">(optional)</span>
             </Form.Label>
             <Form.Control
               as="textarea"
-              defaultValue={content.address}
-              isInvalid={Boolean(errorFor(state.fieldErrors, 'address'))}
+              defaultValue={content.registeredAddress}
+              isInvalid={Boolean(
+                errorFor(state.fieldErrors, 'registeredAddress'),
+              )}
               maxLength={500}
-              name="address"
+              name="registeredAddress"
               rows={2}
             />
             <Form.Control.Feedback type="invalid">
-              {errorFor(state.fieldErrors, 'address')}
+              {errorFor(state.fieldErrors, 'registeredAddress')}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+        <Col xs={12}>
+          <Form.Group controlId="company-office-address">
+            <Form.Label>
+              Office address <span className="text-secondary">(optional)</span>
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              defaultValue={content.officeAddress}
+              isInvalid={Boolean(errorFor(state.fieldErrors, 'officeAddress'))}
+              maxLength={500}
+              name="officeAddress"
+              rows={2}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errorFor(state.fieldErrors, 'officeAddress')}
             </Form.Control.Feedback>
           </Form.Group>
         </Col>

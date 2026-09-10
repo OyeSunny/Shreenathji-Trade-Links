@@ -7,6 +7,17 @@ const acceptedImageTypes = new Set([
   'image/avif',
 ]);
 
+const acceptedVideoExtensions = new Set([
+  'mp4',
+  'mov',
+  'webm',
+  'avi',
+  'mkv',
+  '3gp',
+]);
+
+export const MAX_VIDEO_BYTES = 250 * 1024 * 1024;
+
 const mimeTypeByExtension: Record<string, string> = {
   avif: 'image/avif',
   jpeg: 'image/jpeg',
@@ -113,6 +124,60 @@ export const parseAddProductMediaForm = (formData: FormData) => {
   return {
     success: true as const,
     data: { ...result.data, file, mimeType },
+  };
+};
+
+export const parseAddProductVideoForm = (formData: FormData) => {
+  const result = addProductMediaSchema.safeParse({
+    productId: getTextField(formData, 'productId'),
+    caption: getTextField(formData, 'caption'),
+    altText: getTextField(formData, 'altText'),
+  });
+  const video = formData.get('video');
+  const file = video instanceof File ? video : null;
+
+  if (!result.success) return result;
+
+  if (!file || file.size === 0) {
+    return {
+      success: false as const,
+      error: {
+        flatten: () => ({
+          fieldErrors: { video: ['Choose a video to upload.'] },
+        }),
+      },
+    };
+  }
+
+  const extension = file.name.split('.').at(-1)?.toLowerCase();
+
+  if (!extension || !acceptedVideoExtensions.has(extension)) {
+    return {
+      success: false as const,
+      error: {
+        flatten: () => ({
+          fieldErrors: {
+            video: ['Use an MP4, MOV, WebM, AVI, MKV, or 3GP video.'],
+          },
+        }),
+      },
+    };
+  }
+
+  if (file.size > MAX_VIDEO_BYTES) {
+    return {
+      success: false as const,
+      error: {
+        flatten: () => ({
+          fieldErrors: { video: ['Keep each video under 250 MB.'] },
+        }),
+      },
+    };
+  }
+
+  return {
+    success: true as const,
+    data: { ...result.data, extension, file },
   };
 };
 

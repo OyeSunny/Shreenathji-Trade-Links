@@ -21,6 +21,13 @@
   width: 100%;
 }
 
+.video {
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
 .watermark {
   background: rgb(17 19 21 / 28%);
   bottom: 1rem;
@@ -184,5 +191,31 @@
   .arrow,
   .indicator {
     transition: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .controls {
+    gap: 0.15rem;
+    max-width: calc(100% - 1.3rem);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .controls::-webkit-scrollbar {
+    display: none;
+  }
+
+  .arrow,
+  .pause,
+  .indicator {
+    flex: 0 0 2.75rem;
+    height: 2.75rem;
+    width: 2.75rem;
+  }
+
+  .indicators {
+    gap: 0.15rem;
   }
 }

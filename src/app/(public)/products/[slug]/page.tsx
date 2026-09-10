@@ -5,8 +5,8 @@ import Container from 'react-bootstrap/Container';
 import { ProductImageCarousel } from '@/components/catalogue/product-image-carousel';
 import { formatPublicProductPrice } from '@/features/catalogue/product-price';
 import {
-  getPublicImageUrl,
   getPublishedProductBySlug,
+  toPublicProductMedia,
 } from '@/features/catalogue/server/public-catalogue';
 
 import styles from '../products.module.css';
@@ -29,21 +29,17 @@ export default async function ProductDetailPage({
 
   const publicPrice = formatPublicProductPrice(product);
 
-  const productImages = product.media.reduce<
-    Array<{ alt: string; caption: string | null; src: string }>
-  >((images, productMedia) => {
-    const src = getPublicImageUrl(productMedia.media);
+  const productImages = product.media.flatMap((productMedia) => {
+    const media = toPublicProductMedia(productMedia);
+    if (!media) return [];
 
-    if (src) {
-      images.push({
-        src,
-        alt: productMedia.altText ?? productMedia.media.altText ?? product.name,
-        caption: productMedia.caption,
-      });
-    }
-
-    return images;
-  }, []);
+    return [
+      {
+        ...media,
+        alt: media.altText ?? product.name,
+      },
+    ];
+  });
   const details = [
     product.grade ? { label: 'Grade', value: product.grade } : null,
     product.form ? { label: 'Form', value: product.form } : null,

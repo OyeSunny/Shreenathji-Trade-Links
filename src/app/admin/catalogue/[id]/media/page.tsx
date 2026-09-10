@@ -5,7 +5,10 @@ import {
   setProductMediaSortOrder,
 } from '@/app/admin/catalogue/actions';
 import { AdminMediaImageViewer } from '@/components/admin/admin-media-image-viewer';
-import { ProductMediaForm } from '@/components/catalogue/product-media-form';
+import {
+  ProductMediaForm,
+  ProductVideoForm,
+} from '@/components/catalogue/product-media-form';
 import { requireOwnerPageSession } from '@/features/auth/server/session';
 import { db } from '@/lib/db';
 import Link from 'next/link';
@@ -45,7 +48,7 @@ export default async function ProductMediaPage({
     where: { id },
     include: {
       media: {
-        include: { media: true },
+        include: { media: { include: { processingJob: true } } },
         orderBy: [{ isPrimary: 'desc' }, { sortOrder: 'asc' }],
       },
     },
@@ -62,10 +65,10 @@ export default async function ProductMediaPage({
         <p className="mb-2 mt-3 small text-secondary text-uppercase">
           Product carousel
         </p>
-        <h1 className="display-6 fw-semibold mb-2">{product.name} images</h1>
+        <h1 className="display-6 fw-semibold mb-2">{product.name} media</h1>
         <p className="mb-0 text-secondary">
-          Add the material views buyers need, pick the card image, and set the
-          order used by the product carousel.
+          Add images and videos buyers need. Only images can be the product card
+          image; ready videos appear in the product gallery.
         </p>
       </section>
 
@@ -79,6 +82,14 @@ export default async function ProductMediaPage({
               <ProductMediaForm productId={product.id} />
             </CardBody>
           </Card>
+          <Card className="mt-4 shadow-sm">
+            <CardHeader className="bg-white border-bottom-0 py-3">
+              <span className="fw-semibold">Add a video</span>
+            </CardHeader>
+            <CardBody className="pt-0">
+              <ProductVideoForm productId={product.id} />
+            </CardBody>
+          </Card>
         </div>
 
         <div className="col-lg-7">
@@ -86,15 +97,15 @@ export default async function ProductMediaPage({
             <CardHeader className="bg-white border-bottom-0 d-flex justify-content-between py-3">
               <span className="fw-semibold">Carousel sequence</span>
               <span className="small text-secondary">
-                {product.media.length} image
+                {product.media.length} item
                 {product.media.length === 1 ? '' : 's'}
               </span>
             </CardHeader>
             <CardBody className="pt-0">
               {product.media.length === 0 ? (
                 <Alert className="mb-0" variant="light">
-                  No images yet. Add a project image to create the first public
-                  carousel slide.
+                  No media yet. Add a project image or video to create the first
+                  product gallery item.
                 </Alert>
               ) : (
                 <div className="d-grid gap-3">
@@ -102,6 +113,7 @@ export default async function ProductMediaPage({
                     const isPublic =
                       productMedia.media.rightsStatus === 'APPROVED' &&
                       productMedia.media.status === 'PUBLISHED';
+                    const isVideo = productMedia.media.kind === 'VIDEO';
 
                     return (
                       <article
@@ -109,7 +121,25 @@ export default async function ProductMediaPage({
                         key={productMedia.mediaId}
                       >
                         <div className="d-flex flex-column flex-sm-row gap-3">
-                          {productMedia.media.sourceUrl ? (
+                          {isVideo && productMedia.media.posterUrl ? (
+                            <video
+                              className="border flex-shrink-0 rounded-2"
+                              controls
+                              playsInline
+                              poster={productMedia.media.posterUrl}
+                              preload="none"
+                              style={{
+                                height: 108,
+                                objectFit: 'cover',
+                                width: 144,
+                              }}
+                            >
+                              <source
+                                src={productMedia.media.sourceUrl ?? undefined}
+                                type="video/mp4"
+                              />
+                            </video>
+                          ) : productMedia.media.sourceUrl ? (
                             <AdminMediaImageViewer
                               alt={
                                 productMedia.altText ??
@@ -123,7 +153,9 @@ export default async function ProductMediaPage({
                               className="align-items-center bg-light border d-flex flex-shrink-0 justify-content-center rounded-2 small text-secondary"
                               style={{ height: 108, width: 144 }}
                             >
-                              Image unavailable
+                              {isVideo
+                                ? 'Video processing'
+                                : 'Image unavailable'}
                             </div>
                           )}
                           <div className="flex-grow-1">
@@ -196,13 +228,39 @@ export default async function ProductMediaPage({
                               >
                                 {isPublic ? 'Public' : 'Private draft'}
                               </Badge>
+                              {isVideo ? (
+                                <Badge
+                                  bg={
+                                    productMedia.media.processingStatus ===
+                                    'FAILED'
+                                      ? 'danger'
+                                      : productMedia.media.processingStatus ===
+                                          'READY'
+                                        ? 'success'
+                                        : 'info'
+                                  }
+                                >
+                                  {productMedia.media.processingStatus ===
+                                  'READY'
+                                    ? 'Video ready'
+                                    : productMedia.media.processingStatus ===
+                                        'FAILED'
+                                      ? 'Video failed'
+                                      : 'Video processing'}
+                                </Badge>
+                              ) : null}
+                              {productMedia.media.processingError ? (
+                                <p className="mb-0 small text-danger">
+                                  {productMedia.media.processingError}
+                                </p>
+                              ) : null}
                             </div>
                           </div>
                         </div>
 
                         <div className="align-items-end d-flex flex-column flex-sm-row gap-2 justify-content-between">
                           <div className="d-flex flex-wrap gap-2">
-                            {!productMedia.isPrimary ? (
+                            {!isVideo && !productMedia.isPrimary ? (
                               <form action={setPrimaryProductMedia}>
                                 <input
                                   name="productId"

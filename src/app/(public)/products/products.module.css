@@ -329,6 +329,24 @@
   }
 }
 
+@media (max-width: 480px) {
+  .catalogueTitle,
+  .detailTitle {
+    font-size: clamp(2.35rem, 11.5vw, 3rem);
+    overflow-wrap: anywhere;
+  }
+
+  .catalogueLede,
+  .detailSummary {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .productName {
+    font-size: 1.38rem;
+  }
+}
+
 @media (min-width: 576px) {
   .productGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

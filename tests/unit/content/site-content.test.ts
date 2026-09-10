@@ -19,6 +19,14 @@ describe('website content settings', () => {
     formData.set('companyName', '  Shreenathji Trade Links  ');
     formData.set('city', ' Gandhidham, Gujarat ');
     formData.set('address', ' Plot 14, Industrial Estate ');
+    formData.set(
+      'registeredAddress',
+      ' Plot No. 231, Yogeshwar Nagar, Kidana, Gandhidham, Kachchh, Gujarat - 370205 ',
+    );
+    formData.set(
+      'officeAddress',
+      ' Shop No. 22, Plot No. 58, Sec 9/C, Mohan Market, Nr. Hotel Gokul, Gandhidham, Kachchh - 370201 ',
+    );
     formData.set('email', ' sales@example.com ');
     formData.set('phone', ' +91 98765 43210 ');
     formData.set('whatsApp', ' +91 98765 43210 ');
@@ -32,7 +40,26 @@ describe('website content settings', () => {
       companyName: 'Shreenathji Trade Links',
       email: 'sales@example.com',
       exportStatement: 'Export enquiries welcome.',
+      registeredAddress:
+        'Plot No. 231, Yogeshwar Nagar, Kidana, Gandhidham, Kachchh, Gujarat - 370205',
+      officeAddress:
+        'Shop No. 22, Plot No. 58, Sec 9/C, Mohan Market, Nr. Hotel Gokul, Gandhidham, Kachchh - 370201',
     });
+  });
+
+  it('keeps new address locations when loading older saved company details', () => {
+    const content = parseBusinessIdentitySetting({
+      companyName: 'Shreenathji Trade Links',
+      city: 'Gandhidham, Gujarat',
+      address: 'Legacy address',
+      email: '',
+      phone: '',
+      whatsApp: '',
+      exportStatement: '',
+    });
+
+    expect(content.registeredAddress).toContain('Yogeshwar Nagar');
+    expect(content.officeAddress).toContain('Mohan Market');
   });
 
   it('rejects an invalid business email address', () => {

@@ -27,10 +27,17 @@ const optionalEmail = z
     'Enter a valid email address.',
   );
 
+const defaultRegisteredAddress =
+  'Plot No. 231, Yogeshwar Nagar, Kidana, Gandhidham, Kachchh, Gujarat - 370205';
+const defaultOfficeAddress =
+  'Shop No. 22, Plot No. 58, Sec 9/C, Mohan Market, Nr. Hotel Gokul, Gandhidham, Kachchh - 370201';
+
 export const businessIdentitySchema = z.object({
   companyName: requiredText(2, 140, 'Enter the company name.'),
   city: requiredText(2, 140, 'Enter the city and state.'),
   address: optionalText(500),
+  registeredAddress: optionalText(500).default(defaultRegisteredAddress),
+  officeAddress: optionalText(500).default(defaultOfficeAddress),
   email: optionalEmail,
   phone: optionalText(40),
   whatsApp: optionalText(40),
@@ -107,6 +114,8 @@ export const defaultBusinessIdentity: BusinessIdentity = {
   companyName: 'Shreenathji Trade Links',
   city: 'Gandhidham, Gujarat, India',
   address: '',
+  registeredAddress: defaultRegisteredAddress,
+  officeAddress: defaultOfficeAddress,
   email: '',
   phone: '',
   whatsApp: '',
@@ -234,6 +243,8 @@ export const parseBusinessIdentityForm = (formData: FormData) =>
     companyName: getTextField(formData, 'companyName'),
     city: getTextField(formData, 'city'),
     address: getTextField(formData, 'address'),
+    registeredAddress: getTextField(formData, 'registeredAddress'),
+    officeAddress: getTextField(formData, 'officeAddress'),
     email: getTextField(formData, 'email'),
     phone: getTextField(formData, 'phone'),
     whatsApp: getTextField(formData, 'whatsApp'),

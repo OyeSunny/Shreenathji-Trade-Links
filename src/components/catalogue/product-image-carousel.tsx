@@ -12,12 +12,23 @@ export const PRODUCT_IMAGE_CAROUSEL_INTERVAL = 5500;
 export type ProductCarouselImage = {
   alt: string;
   caption?: string | null;
+  kind?: 'IMAGE';
   src: string;
 };
 
+export type ProductCarouselVideo = {
+  alt: string;
+  caption?: string | null;
+  kind: 'VIDEO';
+  posterUrl: string;
+  src: string;
+};
+
+export type ProductCarouselMedia = ProductCarouselImage | ProductCarouselVideo;
+
 type ProductImageCarouselProps = {
   className?: string;
-  images: ProductCarouselImage[];
+  images: ProductCarouselMedia[];
 };
 
 function joinClassNames(...classNames: Array<string | undefined>) {
@@ -81,16 +92,31 @@ export function ProductImageCarousel({
       <div
         className={joinClassNames(styles.root, styles.singleRoot, className)}
       >
-        <ManagedImage
-          alt={image.alt}
-          className={styles.image}
-          priority
-          sizes="(max-width: 991px) 100vw, 58vw"
-          src={image.src}
-        />
-        <span aria-hidden="true" className={styles.watermark}>
-          Shreenathji Trade Links
-        </span>
+        {image.kind === 'VIDEO' ? (
+          <video
+            aria-label={image.alt}
+            className={styles.video}
+            controls
+            playsInline
+            poster={image.posterUrl}
+            preload="none"
+          >
+            <source src={image.src} type="video/mp4" />
+          </video>
+        ) : (
+          <>
+            <ManagedImage
+              alt={image.alt}
+              className={styles.image}
+              priority
+              sizes="(max-width: 991px) 100vw, 58vw"
+              src={image.src}
+            />
+            <span aria-hidden="true" className={styles.watermark}>
+              Shreenathji Trade Links
+            </span>
+          </>
+        )}
         <p aria-atomic="true" className={styles.caption}>
           {activeCaption}
         </p>
@@ -133,16 +159,31 @@ export function ProductImageCarousel({
       >
         {images.map((image) => (
           <CarouselItem key={image.src}>
-            <ManagedImage
-              alt={image.alt}
-              className={styles.image}
-              priority={selectedIndex === 0 && image === images[0]}
-              sizes="(max-width: 991px) 100vw, 58vw"
-              src={image.src}
-            />
-            <span aria-hidden="true" className={styles.watermark}>
-              Shreenathji Trade Links
-            </span>
+            {image.kind === 'VIDEO' ? (
+              <video
+                aria-label={image.alt}
+                className={styles.video}
+                controls
+                playsInline
+                poster={image.posterUrl}
+                preload="none"
+              >
+                <source src={image.src} type="video/mp4" />
+              </video>
+            ) : (
+              <>
+                <ManagedImage
+                  alt={image.alt}
+                  className={styles.image}
+                  priority={selectedIndex === 0 && image === images[0]}
+                  sizes="(max-width: 991px) 100vw, 58vw"
+                  src={image.src}
+                />
+                <span aria-hidden="true" className={styles.watermark}>
+                  Shreenathji Trade Links
+                </span>
+              </>
+            )}
           </CarouselItem>
         ))}
       </Carousel>

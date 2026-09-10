@@ -8,6 +8,7 @@ import {
 } from '@/features/catalogue/product-draft-input';
 import {
   parseAddProductMediaForm,
+  parseAddProductVideoForm,
   parseProductMediaCaptionForm,
   parseProductMediaReferenceForm,
   parseProductMediaSortOrderForm,
@@ -18,6 +19,13 @@ import {
   storeLocalProductImage,
 } from '@/features/catalogue/server/local-image-upload';
 import {
+  InvalidUploadedVideoError,
+  removePrivateVideoSource,
+  storePrivateVideoSource,
+} from '@/features/catalogue/server/local-video-upload';
+import {
+  MediaKind,
+  MediaProcessingStatus,
   MediaRightsStatus,
   MediaSource,
   Prisma,
@@ -480,6 +488,94 @@ export const addProductMedia = async (
   };
 };
 
+export const addProductVideo = async (
+  _previousState: ProductMediaFormState,
+  formData: FormData,
+): Promise<ProductMediaFormState> => {
+  await requireOwnerPageSession();
+  const result = parseAddProductVideoForm(formData);
+
+  if (!result.success) {
+    return {
+      fieldErrors: result.error.flatten().fieldErrors,
+      message: 'Review the video details and try again.',
+      status: 'error',
+    };
+  }
+
+  const product = await getProductForMediaAction(result.data.productId);
+  if (!product) {
+    return {
+      message: 'This product is no longer available. Return to the catalogue.',
+      status: 'error',
+    };
+  }
+
+  let source: Awaited<ReturnType<typeof storePrivateVideoSource>>;
+  try {
+    source = await storePrivateVideoSource(result.data.file);
+  } catch (error) {
+    return {
+      message:
+        error instanceof InvalidUploadedVideoError
+          ? 'That file is not a supported video.'
+          : 'We could not store this video. Please try again.',
+      status: 'error',
+    };
+  }
+
+  try {
+    await db.$transaction(async (transaction) => {
+      const highestSortOrder = await transaction.productMedia.aggregate({
+        where: { productId: product.id },
+        _max: { sortOrder: true },
+      });
+      const media = await transaction.mediaAsset.create({
+        data: {
+          kind: MediaKind.VIDEO,
+          fileName: result.data.file.name,
+          mimeType: `video/${result.data.extension}`,
+          bytes: result.data.file.size,
+          altText: result.data.altText,
+          source: MediaSource.PROJECT_CREATED,
+          sourceName: 'Owner upload',
+          rightsStatus: MediaRightsStatus.APPROVED,
+          processingStatus: MediaProcessingStatus.PENDING,
+          status: PublicationStatus.DRAFT,
+        },
+      });
+
+      await transaction.productMedia.create({
+        data: {
+          productId: product.id,
+          mediaId: media.id,
+          sortOrder: (highestSortOrder._max.sortOrder ?? -1) + 1,
+          altText: result.data.altText,
+          caption: result.data.caption,
+        },
+      });
+      await transaction.mediaProcessingJob.create({
+        data: {
+          mediaId: media.id,
+          sourceKey: source.sourceKey,
+        },
+      });
+    });
+  } catch {
+    await removePrivateVideoSource(source.sourceKey);
+    return {
+      message: 'We could not queue this video. Please try again.',
+      status: 'error',
+    };
+  }
+
+  revalidateProductMediaPaths(product);
+  return {
+    message: 'Video uploaded. It will appear after processing finishes.',
+    status: 'success',
+  };
+};
+
 export const setProductMediaCaption = async (formData: FormData) => {
   await requireOwnerPageSession();
 
@@ -516,9 +612,9 @@ export const setPrimaryProductMedia = async (formData: FormData) => {
         mediaId: result.data.mediaId,
       },
     },
-    select: { mediaId: true },
+    select: { mediaId: true, media: { select: { kind: true } } },
   });
-  if (!association) return;
+  if (!association || association.media.kind !== MediaKind.IMAGE) return;
 
   await db.$transaction([
     db.productMedia.updateMany({
@@ -577,7 +673,16 @@ export const removeProductMedia = async (formData: FormData) => {
           mediaId: result.data.mediaId,
         },
       },
-      select: { mediaId: true, media: { select: { storageKey: true } } },
+      select: {
+        mediaId: true,
+        media: {
+          select: {
+            posterStorageKey: true,
+            processingJob: { select: { sourceKey: true } },
+            storageKey: true,
+          },
+        },
+      },
     });
     if (!association) return null;
 
@@ -599,11 +704,19 @@ export const removeProductMedia = async (formData: FormData) => {
       });
     }
 
-    return association.media.storageKey;
+    return {
+      posterStorageKey: association.media.posterStorageKey,
+      sourceKey: association.media.processingJob?.sourceKey ?? null,
+      storageKey: association.media.storageKey,
+    };
   });
 
   if (removed !== null) {
-    await removeLocalUpload(removed);
+    await Promise.all([
+      removeLocalUpload(removed.storageKey),
+      removeLocalUpload(removed.posterStorageKey),
+      removePrivateVideoSource(removed.sourceKey),
+    ]);
     revalidateProductMediaPaths(product);
   }
 };

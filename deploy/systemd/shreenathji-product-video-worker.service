@@ -1,0 +1,23 @@
+[Unit]
+Description=Shreenathji Trade Links product video worker
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=shreenathji
+Group=shreenathji
+WorkingDirectory=/var/www/shreenathji-trade-links
+Environment=NODE_ENV=production
+EnvironmentFile=/var/www/shreenathji-trade-links/.env
+ExecStart=/usr/bin/pnpm run catalogue:process-videos
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/var/www/shreenathji-trade-links/public/media/uploads /var/www/shreenathji-trade-links/var/media-processing
+
+[Install]
+WantedBy=multi-user.target

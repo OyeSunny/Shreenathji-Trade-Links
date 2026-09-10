@@ -169,6 +169,13 @@ enum MediaRightsStatus {
   RESTRICTED
 }
 
+enum MediaProcessingStatus {
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+}
+
 enum ProductAvailability {
   IN_STOCK
   LIMITED_STOCK
@@ -203,10 +210,12 @@ model SiteSetting {
 }
 
 model MediaAsset {
-  id                  String            @id @default(cuid())
+  id                  String                 @id @default(cuid())
   kind                MediaKind
-  storageKey          String?           @unique
+  storageKey          String?                @unique
   sourceUrl           String?
+  posterStorageKey    String?                @unique
+  posterUrl           String?
   fileName            String
   mimeType            String
   bytes               Int?
@@ -217,16 +226,35 @@ model MediaAsset {
   source              MediaSource
   sourceName          String?
   sourceReferenceUrl  String?
-  rightsStatus        MediaRightsStatus @default(PENDING_VERIFICATION)
-  attributionRequired Boolean           @default(false)
+  rightsStatus        MediaRightsStatus      @default(PENDING_VERIFICATION)
+  attributionRequired Boolean                @default(false)
   attributionText     String?
-  status              PublicationStatus @default(DRAFT)
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
+  status              PublicationStatus      @default(DRAFT)
+  processingStatus    MediaProcessingStatus?
+  processingError     String?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
   productMedia        ProductMedia[]
+  processingJob       MediaProcessingJob?
 
   @@index([kind, status])
   @@index([rightsStatus, status])
+}
+
+model MediaProcessingJob {
+  id         String                @id @default(cuid())
+  mediaId    String                @unique
+  media      MediaAsset            @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  status     MediaProcessingStatus @default(PENDING)
+  sourceKey  String                @unique
+  attempts   Int                   @default(0)
+  startedAt  DateTime?
+  finishedAt DateTime?
+  error      String?
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+
+  @@index([status, createdAt])
 }
 
 model ProductCategory {

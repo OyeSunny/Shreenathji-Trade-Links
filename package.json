@@ -64,6 +64,7 @@
     "prisma:validate": "prisma validate",
     "owner:bootstrap": "NODE_OPTIONS=--conditions=react-server tsx scripts/bootstrap-owner.ts",
     "catalogue:seed": "NODE_OPTIONS=--conditions=react-server tsx scripts/seed-catalogue.ts",
+    "catalogue:process-videos": "NODE_OPTIONS=--conditions=react-server tsx scripts/process-product-videos.ts",
     "pretypecheck": "pnpm prisma:generate",
     "typecheck": "tsc --noEmit",
     "format:check": "prettier --check .",

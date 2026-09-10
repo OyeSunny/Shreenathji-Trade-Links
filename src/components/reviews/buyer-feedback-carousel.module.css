@@ -256,6 +256,13 @@
   }
 }
 
+@media (max-width: 480px) {
+  .button {
+    height: 2.75rem;
+    width: 2.75rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .review,
   .button {

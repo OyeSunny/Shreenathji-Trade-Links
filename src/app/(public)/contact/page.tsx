@@ -70,15 +70,28 @@ export default async function ContactPage() {
               ) : null}
             </div>
             <div className="col-lg-4 contact-page__location">
-              <p className="section-label">Location</p>
+              <p className="section-label">Locations</p>
               <p className="contact-page__location-title">
                 {businessIdentity.city}
               </p>
-              {businessIdentity.address ? (
-                <p>{businessIdentity.address}</p>
-              ) : (
-                <p>India</p>
-              )}
+              {businessIdentity.registeredAddress ? (
+                <div className="mb-3">
+                  <p className="mb-1 small text-uppercase">
+                    Registered address
+                  </p>
+                  <p className="mb-0">{businessIdentity.registeredAddress}</p>
+                </div>
+              ) : null}
+              {businessIdentity.officeAddress ? (
+                <div className="mb-3">
+                  <p className="mb-1 small text-uppercase">Office address</p>
+                  <p className="mb-0">{businessIdentity.officeAddress}</p>
+                </div>
+              ) : null}
+              {!businessIdentity.registeredAddress &&
+              !businessIdentity.officeAddress ? (
+                <p>{businessIdentity.address || 'India'}</p>
+              ) : null}
               <div className="contact-page__coordinates">
                 <span>Domestic</span>
                 <span>Export</span>

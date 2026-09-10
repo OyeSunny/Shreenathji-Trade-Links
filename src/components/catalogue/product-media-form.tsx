@@ -2,6 +2,7 @@
 
 import {
   addProductMedia,
+  addProductVideo,
   type ProductMediaFormState,
 } from '@/app/admin/catalogue/actions';
 import { useActionState } from 'react';
@@ -95,5 +96,89 @@ export function ProductMediaForm({ productId }: { productId: string }) {
         {isPending ? 'Adding image…' : 'Add carousel image'}
       </Button>
     </form>
+  );
+}
+
+export function ProductVideoForm({ productId }: { productId: string }) {
+  const [state, formAction, isPending] = useActionState(
+    addProductVideo,
+    initialProductMediaFormState,
+  );
+
+  return (
+    <form action={formAction} encType="multipart/form-data" noValidate>
+      <input name="productId" type="hidden" value={productId} />
+      <FormNotice state={state} />
+      <Form.Group className="mb-3" controlId="product-video-file">
+        <Form.Label>Choose product video</Form.Label>
+        <Form.Control
+          accept="video/mp4,video/quicktime,video/webm,video/x-msvideo,video/x-matroska,video/3gpp,.mp4,.mov,.webm,.avi,.mkv,.3gp"
+          isInvalid={Boolean(errorFor(state.fieldErrors, 'video'))}
+          name="video"
+          required
+          type="file"
+        />
+        <Form.Text>
+          Upload MP4, MOV, WebM, AVI, MKV, or 3GP up to 250 MB. We convert it to
+          iPhone-friendly MP4 and make a poster image automatically.
+        </Form.Text>
+        <Form.Control.Feedback type="invalid">
+          {errorFor(state.fieldErrors, 'video')}
+        </Form.Control.Feedback>
+      </Form.Group>
+      <MediaTextFields fieldErrors={state.fieldErrors} />
+      <Button disabled={isPending} type="submit">
+        {isPending ? 'Adding video…' : 'Add product video'}
+      </Button>
+    </form>
+  );
+}
+
+function FormNotice({ state }: { state: ProductMediaFormState }) {
+  return state.message ? (
+    <Alert
+      className="mb-3"
+      role="alert"
+      variant={state.status === 'success' ? 'success' : 'danger'}
+    >
+      {state.message}
+    </Alert>
+  ) : null;
+}
+
+function MediaTextFields({
+  fieldErrors,
+}: {
+  fieldErrors?: Record<string, string[] | undefined>;
+}) {
+  return (
+    <>
+      <Form.Group className="mb-4" controlId="product-media-caption">
+        <Form.Label>Variant title shown to buyers</Form.Label>
+        <Form.Control
+          isInvalid={Boolean(errorFor(fieldErrors, 'caption'))}
+          maxLength={100}
+          name="caption"
+          placeholder="e.g. Mill Scale Fe 70"
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          {errorFor(fieldErrors, 'caption')}
+        </Form.Control.Feedback>
+      </Form.Group>
+      <Form.Group className="mb-4" controlId="product-media-alt-text">
+        <Form.Label>Media description</Form.Label>
+        <Form.Control
+          isInvalid={Boolean(errorFor(fieldErrors, 'altText'))}
+          maxLength={220}
+          name="altText"
+          placeholder="e.g. Mill scale material video in a bulk yard"
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          {errorFor(fieldErrors, 'altText')}
+        </Form.Control.Feedback>
+      </Form.Group>
+    </>
   );
 }

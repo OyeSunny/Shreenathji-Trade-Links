@@ -30,6 +30,31 @@ describe('ProductImageCarousel', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
+  it('renders a ready product video only on buyer request', () => {
+    render(
+      <ProductImageCarousel
+        images={[
+          {
+            alt: 'Mill scale Fe 70 loading demonstration',
+            caption: 'Mill Scale Fe 70',
+            kind: 'VIDEO',
+            posterUrl: '/media/uploads/mill-scale-poster.webp',
+            src: '/media/uploads/mill-scale.mp4',
+          },
+        ]}
+      />,
+    );
+
+    const video = screen.getByLabelText(/mill scale fe 70 loading/i);
+    expect(video).toHaveAttribute('controls');
+    expect(video).toHaveAttribute('playsinline');
+    expect(video).toHaveAttribute('preload', 'none');
+    expect(video).toHaveAttribute(
+      'poster',
+      '/media/uploads/mill-scale-poster.webp',
+    );
+  });
+
   it('lets buyers switch product images manually without losing their selection', () => {
     vi.useFakeTimers();
     render(<ProductImageCarousel images={images} />);

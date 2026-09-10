@@ -1,5 +1,6 @@
 import {
   MediaKind,
+  MediaProcessingStatus,
   MediaRightsStatus,
   Prisma,
   PublicationStatus,
@@ -15,6 +16,32 @@ const publicImageWhere = {
       status: PublicationStatus.PUBLISHED,
     },
   },
+} satisfies Prisma.ProductMediaWhereInput;
+
+export const publicProductMediaWhere = {
+  OR: [
+    {
+      media: {
+        is: {
+          kind: MediaKind.IMAGE,
+          rightsStatus: MediaRightsStatus.APPROVED,
+          status: PublicationStatus.PUBLISHED,
+        },
+      },
+    },
+    {
+      media: {
+        is: {
+          kind: MediaKind.VIDEO,
+          rightsStatus: MediaRightsStatus.APPROVED,
+          status: PublicationStatus.PUBLISHED,
+          processingStatus: MediaProcessingStatus.READY,
+          sourceUrl: { not: null },
+          posterUrl: { not: null },
+        },
+      },
+    },
+  ],
 } satisfies Prisma.ProductMediaWhereInput;
 
 const productCardInclude = {
@@ -59,11 +86,104 @@ export async function getPublishedProductBySlug(slug: string) {
     },
     include: {
       ...productCardInclude,
+      media: {
+        where: publicProductMediaWhere,
+        orderBy: [{ isPrimary: 'desc' }, { sortOrder: 'asc' }],
+        include: {
+          media: {
+            select: {
+              altText: true,
+              kind: true,
+              posterUrl: true,
+              processingStatus: true,
+              rightsStatus: true,
+              sourceUrl: true,
+              status: true,
+              storageKey: true,
+            },
+          },
+        },
+      },
       specifications: {
         orderBy: [{ sortOrder: 'asc' }, { label: 'asc' }],
       },
     },
   });
+}
+
+type PublicProductMediaInput = {
+  altText: string | null;
+  caption: string | null;
+  media: {
+    kind: MediaKind;
+    altText?: string | null;
+    processingStatus: MediaProcessingStatus | null;
+    rightsStatus: MediaRightsStatus;
+    sourceUrl: string | null;
+    posterUrl: string | null;
+    status: PublicationStatus;
+    storageKey: string | null;
+  };
+};
+
+export type PublicProductMedia =
+  | {
+      kind: 'IMAGE';
+      src: string;
+      altText: string | null;
+      caption: string | null;
+    }
+  | {
+      kind: 'VIDEO';
+      src: string;
+      posterUrl: string;
+      altText: string | null;
+      caption: string | null;
+    };
+
+export function toPublicProductMedia(
+  productMedia: PublicProductMediaInput,
+): PublicProductMedia | null {
+  const { media } = productMedia;
+  const src = getPublicImageUrl(media);
+
+  if (
+    media.kind === MediaKind.IMAGE &&
+    media.rightsStatus === MediaRightsStatus.APPROVED &&
+    media.status === PublicationStatus.PUBLISHED &&
+    src
+  ) {
+    return {
+      kind: 'IMAGE',
+      src,
+      altText: productMedia.altText ?? media.altText ?? null,
+      caption: productMedia.caption,
+    };
+  }
+
+  const posterUrl = getPublicImageUrl({
+    sourceUrl: media.posterUrl,
+    storageKey: null,
+  });
+
+  if (
+    media.kind === MediaKind.VIDEO &&
+    media.processingStatus === MediaProcessingStatus.READY &&
+    media.rightsStatus === MediaRightsStatus.APPROVED &&
+    media.status === PublicationStatus.PUBLISHED &&
+    src &&
+    posterUrl
+  ) {
+    return {
+      kind: 'VIDEO',
+      src,
+      posterUrl,
+      altText: productMedia.altText ?? media.altText ?? null,
+      caption: productMedia.caption,
+    };
+  }
+
+  return null;
 }
 
 /**

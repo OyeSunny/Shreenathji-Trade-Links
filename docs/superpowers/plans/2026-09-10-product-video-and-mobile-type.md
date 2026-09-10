@@ -162,7 +162,7 @@ export const parseAddProductVideoForm = (formData: FormData) => {
 };
 ```
 
-Set `experimental.serverActions.bodySizeLimit` to `'260mb'` in `next.config.ts`; this admits the bounded form but leaves a small protocol margin. Do not change image limits.
+Set `experimental.serverActions.bodySizeLimit` to `'270mb'` in `next.config.ts`; this admits a 250 MiB video plus multipart form metadata. Do not change image limits.
 
 - [ ] **Step 4: Implement private source storage**
 

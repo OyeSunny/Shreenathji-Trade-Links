@@ -2209,11 +2209,93 @@ a:focus-visible {
     font-size: 1.5rem;
   }
 }
+
+@media (max-width: 480px) {
+  .hero-section .carousel-indicators [data-bs-target] {
+    height: 2.75rem;
+    width: 2.75rem;
+  }
+  .hero-section .carousel-indicators [data-bs-target]::after {
+    left: 0.325rem;
+    right: 0.325rem;
+  }
+  .public-navigation__toggle {
+    height: 2.75rem;
+    width: 2.75rem;
+  }
+}
 @media (min-width: 576px) and (max-width: 991.98px) {
   .hero-slide__index {
     margin-top: 2.5rem;
   }
 }
+
+/* Public phone type: compact enough for 320px, never smaller than readable. */
+@media (max-width: 480px) {
+  .public-header .container {
+    padding-bottom: 0.85rem !important;
+    padding-top: 0.85rem !important;
+  }
+  .brand-mark {
+    gap: 0.5rem;
+  }
+  .brand-mark strong {
+    font-size: 0.88rem;
+  }
+  .brand-mark small {
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+  }
+  .brand-mark__monogram {
+    font-size: 0.68rem;
+    height: 2.1rem;
+    width: 2.1rem;
+  }
+  .hero-section h1,
+  .hero-section h2,
+  .page-hero__title {
+    font-size: clamp(2.35rem, 11.5vw, 3rem);
+    overflow-wrap: anywhere;
+  }
+  .hero-section__lede,
+  .page-hero__lede,
+  .company-page__approach > p:not(.section-label),
+  .contact-page__enquiry > p:not(.section-label) {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+  .enquiry-process h2,
+  .dark-band h2,
+  .company-page__approach h2,
+  .contact-page__enquiry h2,
+  .quote-layout__brief h2 {
+    font-size: clamp(1.85rem, 9vw, 2.35rem);
+  }
+  .public-header ~ main .fs-5 {
+    font-size: 1rem !important;
+    line-height: 1.55;
+  }
+  .home-product-card__name {
+    font-size: 1.38rem;
+  }
+  .process-steps h3 {
+    font-size: 1.25rem;
+  }
+  .quote-form .form-control,
+  .quote-form .form-select {
+    font-size: 1rem;
+  }
+  .public-header ~ main .btn:not(.btn-lg),
+  .quote-form .btn {
+    font-size: 0.9rem;
+    min-height: 2.75rem;
+    padding: 0.55rem 0.8rem;
+  }
+  .public-footer {
+    font-size: 0.9rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

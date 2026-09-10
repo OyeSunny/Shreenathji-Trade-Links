@@ -187,6 +187,21 @@
   }
 }
 
+@media (max-width: 480px) {
+  .title {
+    font-size: clamp(2.35rem, 11.5vw, 3rem);
+    overflow-wrap: anywhere;
+  }
+
+  .lede {
+    font-size: 1rem;
+  }
+
+  .offerName {
+    font-size: 1.38rem;
+  }
+}
+
 @media (min-width: 576px) {
   .offerGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
