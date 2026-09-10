@@ -34,7 +34,21 @@
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.1em;
+  overflow-wrap: anywhere;
   text-transform: uppercase;
+}
+
+.productGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.catalogueList {
+  min-width: 0;
+}
+
+.productGridItem {
+  min-width: 0;
 }
 
 .productCard {
@@ -45,6 +59,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 0;
+  overflow: hidden;
   text-decoration: none;
   transition:
     box-shadow 0.2s ease,
@@ -102,6 +118,7 @@
   flex: 1;
   grid-template-rows: auto auto minmax(5.25rem, 1fr) auto auto;
   padding: 1.35rem;
+  min-width: 0;
 }
 
 .productName {
@@ -111,11 +128,13 @@
   letter-spacing: -0.035em;
   line-height: 1.04;
   margin: 0.7rem 0;
+  overflow-wrap: anywhere;
 }
 
 .productSummary {
   color: #5b6872;
   line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .productPrice {
@@ -144,6 +163,7 @@
   font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1.05;
+  overflow-wrap: anywhere;
 }
 
 .cardArrow {
@@ -272,6 +292,25 @@
 }
 
 @media (max-width: 575.98px) {
+  .catalogueHero {
+    padding-bottom: 2.5rem !important;
+    padding-top: 2.5rem !important;
+  }
+
+  .catalogueLede {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .productGrid {
+    gap: 1rem;
+  }
+
+  .catalogueList {
+    padding-bottom: 2.5rem !important;
+    padding-top: 2.5rem !important;
+  }
+
   .productCardBody {
     padding: 1.15rem;
   }
@@ -280,8 +319,24 @@
     font-size: 1.5rem;
   }
 
+  .detailImage {
+    max-height: min(60svh, 24rem);
+  }
+
   .specList > div {
     grid-template-columns: 1fr;
     gap: 0.25rem;
+  }
+}
+
+@media (min-width: 576px) {
+  .productGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .productGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

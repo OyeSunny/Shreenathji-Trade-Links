@@ -4,6 +4,7 @@ import CarouselItem from 'react-bootstrap/CarouselItem';
 import Container from 'react-bootstrap/Container';
 
 import { SectionReveal } from '@/components/layout/section-reveal';
+import { ManagedImage } from '@/components/media/managed-image';
 import { BuyerFeedbackCarousel } from '@/components/reviews/buyer-feedback-carousel';
 import { formatPublicProductPrice } from '@/features/catalogue/product-price';
 import {
@@ -32,10 +33,11 @@ export default async function HomePage() {
 
             return (
               <CarouselItem key={`${slide.imageSrc}-${index}`}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <ManagedImage
                   alt={slide.imageAlt}
                   className="hero-slide__image"
+                  priority={index === 0}
+                  sizes="100vw"
                   src={slide.imageSrc}
                 />
                 <div className="hero-slide__veil" aria-hidden="true" />
@@ -45,7 +47,7 @@ export default async function HomePage() {
                     {slide.title}
                   </Heading>
                   <p className="hero-section__lede">{slide.lede}</p>
-                  <div className="d-flex flex-wrap gap-3">
+                  <div className="hero-slide__actions d-flex flex-wrap gap-3">
                     <Link
                       className="btn btn-primary btn-lg"
                       href={slide.primaryHref}
@@ -118,76 +120,89 @@ export default async function HomePage() {
               </Link>
             </div>
             {products.length > 0 ? (
-              <div className="row g-4">
-                {products.map((product) => {
-                  const primaryImage = product.media[0];
-                  const imageUrl = getPublicImageUrl(
-                    primaryImage?.media ?? null,
-                  );
-                  const publicPrice = formatPublicProductPrice(product);
+              <>
+                <div
+                  aria-label="Featured materials"
+                  className="home-product-rail row g-4"
+                  role="list"
+                >
+                  {products.map((product) => {
+                    const primaryImage = product.media[0];
+                    const imageUrl = getPublicImageUrl(
+                      primaryImage?.media ?? null,
+                    );
+                    const publicPrice = formatPublicProductPrice(product);
 
-                  return (
-                    <div className="col-md-6 col-xl-4" key={product.id}>
-                      <Link
-                        aria-label={`View ${product.name}`}
-                        className="home-product-card"
-                        href={`/products/${product.slug}`}
+                    return (
+                      <div
+                        className="col-md-6 col-xl-4"
+                        key={product.id}
+                        role="listitem"
                       >
-                        {imageUrl ? (
-                          <span className="home-product-card__media">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              alt={
-                                primaryImage?.altText ??
-                                primaryImage?.media.altText ??
-                                product.name
-                              }
-                              className="home-product-card__image"
-                              src={imageUrl}
-                            />
+                        <Link
+                          aria-label={`View ${product.name}`}
+                          className="home-product-card"
+                          href={`/products/${product.slug}`}
+                        >
+                          {imageUrl ? (
+                            <span className="home-product-card__media">
+                              <ManagedImage
+                                alt={
+                                  primaryImage?.altText ??
+                                  primaryImage?.media.altText ??
+                                  product.name
+                                }
+                                className="home-product-card__image"
+                                sizes="(max-width: 575px) 86vw, (max-width: 991px) 50vw, 33vw"
+                                src={imageUrl}
+                              />
+                              <span
+                                aria-hidden="true"
+                                className="home-product-card__watermark"
+                              >
+                                Shreenathji Trade Links
+                              </span>
+                            </span>
+                          ) : (
                             <span
-                              aria-hidden="true"
-                              className="home-product-card__watermark"
+                              aria-label={`${product.name} image pending`}
+                              className="home-product-card__placeholder"
+                              role="img"
                             >
-                              Shreenathji Trade Links
+                              STL
+                            </span>
+                          )}
+                          <span className="home-product-card__body">
+                            <span className="home-product-card__category">
+                              {product.category.name}
+                            </span>
+                            <span className="home-product-card__name">
+                              {product.name}
+                            </span>
+                            <span className="home-product-card__summary">
+                              {product.summary}
+                            </span>
+                            <span className="home-product-card__price">
+                              <span className="home-product-card__price-label">
+                                {publicPrice ? 'Indicative price' : 'Pricing'}
+                              </span>
+                              <span className="home-product-card__price-value">
+                                {publicPrice ?? 'Price on request'}
+                              </span>
+                            </span>
+                            <span className="home-product-card__link">
+                              View material <span aria-hidden="true">→</span>
                             </span>
                           </span>
-                        ) : (
-                          <span
-                            aria-label={`${product.name} image pending`}
-                            className="home-product-card__placeholder"
-                            role="img"
-                          >
-                            STL
-                          </span>
-                        )}
-                        <span className="home-product-card__body">
-                          <span className="home-product-card__category">
-                            {product.category.name}
-                          </span>
-                          <span className="home-product-card__name">
-                            {product.name}
-                          </span>
-                          <span className="home-product-card__summary">
-                            {product.summary}
-                          </span>
-                          <span className="home-product-card__price">
-                            <span className="home-product-card__price-label">
-                              {publicPrice ? 'Indicative price' : 'Pricing'}
-                            </span>
-                            <span className="home-product-card__price-value">
-                              {publicPrice ?? 'Price on request'}
-                            </span>
-                          </span>
-                          <span className="home-product-card__link">
-                            View material <span aria-hidden="true">→</span>
-                          </span>
-                        </span>
-                      </Link>
-                    </div>
-                  );
-                })}
-              </div>
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p aria-hidden="true" className="home-product-rail__hint">
+                  Swipe to explore <span>→</span>
+                </p>
+              </>
             ) : (
               <div className="catalogue-empty-state">
                 <p className="section-label">Catalogue being prepared</p>

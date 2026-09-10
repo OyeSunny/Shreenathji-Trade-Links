@@ -443,7 +443,7 @@ export const addProductMedia = async (
           storageKey: upload.storageKey,
           sourceUrl: upload.publicUrl,
           fileName: upload.fileName,
-          mimeType: result.data.mimeType,
+          mimeType: upload.mimeType,
           altText: result.data.altText,
           source: MediaSource.PROJECT_CREATED,
           sourceName: 'Owner upload',

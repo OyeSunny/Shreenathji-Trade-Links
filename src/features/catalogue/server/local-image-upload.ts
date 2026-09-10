@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import 'server-only';
+import sharp from 'sharp';
 import { watermarkProductImage } from './product-image-watermark';
 
 const uploadDirectory = join(process.cwd(), 'public', 'media', 'uploads');
@@ -52,6 +53,21 @@ const hasValidImageSignature = (bytes: Uint8Array, mimeType: string) => {
 
 export class InvalidUploadedImageError extends Error {}
 
+const encodeImageAsWebp = (buffer: Buffer) =>
+  sharp(buffer, {
+    failOn: 'error',
+    limitInputPixels: 64_000_000,
+  })
+    .rotate()
+    .webp({ effort: 4, quality: 78 })
+    .toBuffer();
+
+const getWebpDisplayName = (fileName: string) => {
+  const baseName = fileName.replace(/\.[^.]+$/, '').slice(0, 175);
+
+  return `${baseName || 'product-image'}.webp`;
+};
+
 export async function storeLocalImage(
   file: File,
   { watermark = false }: { watermark?: boolean } = {},
@@ -69,26 +85,27 @@ export async function storeLocalImage(
     );
   }
 
-  let storedBuffer: Uint8Array = buffer;
+  let storedBuffer: Uint8Array;
 
-  if (watermark) {
-    try {
-      storedBuffer = await watermarkProductImage(buffer);
-    } catch {
-      throw new InvalidUploadedImageError(
-        'The uploaded image could not be processed safely.',
-      );
-    }
+  try {
+    storedBuffer = watermark
+      ? await watermarkProductImage(buffer)
+      : await encodeImageAsWebp(buffer);
+  } catch {
+    throw new InvalidUploadedImageError(
+      'The uploaded image could not be processed safely.',
+    );
   }
 
   await mkdir(uploadDirectory, { recursive: true });
-  const fileName = `${randomUUID()}${extension}`;
+  const fileName = `${randomUUID()}.webp`;
   await writeFile(join(uploadDirectory, fileName), storedBuffer, {
     flag: 'wx',
   });
 
   return {
-    fileName: file.name.slice(0, 180) || `product-image${extension}`,
+    fileName: getWebpDisplayName(file.name),
+    mimeType: 'image/webp' as const,
     publicUrl: `/media/uploads/${fileName}`,
     storageKey: `uploads/${fileName}`,
   };

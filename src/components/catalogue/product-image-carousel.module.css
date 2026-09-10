@@ -41,15 +41,20 @@
   border-left: 3px solid #ff5a1f;
   bottom: 1rem;
   color: #f8f9fa;
+  display: -webkit-box;
   font-size: clamp(0.72rem, 1.6vw, 0.9rem);
   font-weight: 700;
   left: 1rem;
   letter-spacing: 0.035em;
   margin: 0;
   max-width: min(72%, 29rem);
+  min-height: 2.8rem;
+  overflow: hidden;
   padding: 0.58rem 0.75rem;
   position: absolute;
   text-transform: uppercase;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   z-index: 3;
 }
 
@@ -71,11 +76,12 @@
     font-size: 0.67rem;
     left: 0.65rem;
     max-width: calc(100% - 1.3rem);
+    min-height: 2.45rem;
     padding: 0.45rem 0.55rem;
   }
 
   .controls {
-    bottom: 3.5rem;
+    bottom: 3.9rem;
     left: 0.65rem;
   }
 
@@ -87,7 +93,8 @@
 }
 
 .arrow,
-.indicator {
+.indicator,
+.pause {
   appearance: none;
   border: 0;
   cursor: pointer;
@@ -107,42 +114,68 @@
   width: 2rem;
 }
 
+.pause {
+  align-items: center;
+  background: transparent;
+  color: #f8f9fa;
+  display: inline-flex;
+  font-size: 0.82rem;
+  height: 2rem;
+  justify-content: center;
+  transition: background-color 160ms ease;
+  width: 2rem;
+}
+
 .indicators {
   display: flex;
   gap: 0.38rem;
 }
 
 .indicator {
-  background: rgb(248 249 250 / 45%);
-  height: 0.22rem;
+  align-items: center;
+  background: transparent;
+  display: inline-flex;
+  height: 1.5rem;
+  justify-content: center;
   padding: 0;
-  transition:
-    background-color 160ms ease,
-    transform 160ms ease;
-  width: 1.45rem;
+  width: 1.5rem;
 }
 
-.indicator[aria-current='true'] {
+.indicator::after {
   background: #ff5a1f;
+  content: '';
+  height: 0.22rem;
+  opacity: 0.45;
+  transition:
+    background-color 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
+  width: 1.12rem;
+}
+
+.indicator[aria-current='true']::after {
+  opacity: 1;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .arrow:hover {
+  .arrow:hover,
+  .pause:hover {
     background: rgb(248 249 250 / 13%);
   }
 
-  .indicator:hover {
-    background: rgb(248 249 250 / 78%);
+  .indicator:hover::after {
+    opacity: 0.78;
   }
 }
 
 .arrow:active,
-.indicator:active {
+.indicator:active::after {
   transform: scale(0.97);
 }
 
 .arrow:focus-visible,
-.indicator:focus-visible {
+.indicator:focus-visible,
+.pause:focus-visible {
   outline: 2px solid #f8f9fa;
   outline-offset: 2px;
 }

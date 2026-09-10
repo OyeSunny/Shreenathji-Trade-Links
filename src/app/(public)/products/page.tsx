@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
 
+import { ManagedImage } from '@/components/media/managed-image';
 import { formatPublicProductPrice } from '@/features/catalogue/product-price';
 import {
   getPublicImageUrl,
@@ -28,7 +29,10 @@ export default async function ProductsPage() {
         </Container>
       </section>
 
-      <section className="py-5 py-lg-6" aria-labelledby="product-list-heading">
+      <section
+        aria-labelledby="product-list-heading"
+        className={`${styles.catalogueList} py-5 py-lg-6`}
+      >
         <Container>
           <div className="align-items-sm-end d-flex flex-column flex-sm-row gap-2 gap-sm-4 justify-content-between mb-4 mb-lg-5">
             <div>
@@ -58,14 +62,14 @@ export default async function ProductsPage() {
               </Link>
             </div>
           ) : (
-            <div className="row g-4">
+            <div className={styles.productGrid}>
               {products.map((product) => {
                 const image = product.media[0];
                 const imageUrl = getPublicImageUrl(image?.media ?? null);
                 const publicPrice = formatPublicProductPrice(product);
 
                 return (
-                  <div className="col-md-6 col-xl-4" key={product.id}>
+                  <div className={styles.productGridItem} key={product.id}>
                     <Link
                       aria-label={`View ${product.name}`}
                       className={styles.productCard}
@@ -73,16 +77,14 @@ export default async function ProductsPage() {
                     >
                       {imageUrl ? (
                         <span className={styles.productMedia}>
-                          {/* This is a CMS-managed public image URL. Its media record is
-                              constrained to PUBLISHED + APPROVED in the database query. */}
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
+                          <ManagedImage
                             alt={
                               image?.altText ??
                               image.media.altText ??
                               product.name
                             }
                             className={styles.productImage}
+                            sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 33vw"
                             src={imageUrl}
                           />
                           <span aria-hidden="true" className={styles.watermark}>

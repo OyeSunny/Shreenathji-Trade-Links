@@ -23,7 +23,13 @@ export const createProductImageWatermark = ({
 };
 
 export async function watermarkProductImage(buffer: Buffer) {
-  const image = sharp(buffer, {
+  const normalized = await sharp(buffer, {
+    failOn: 'error',
+    limitInputPixels: 64_000_000,
+  })
+    .rotate()
+    .toBuffer();
+  const image = sharp(normalized, {
     failOn: 'error',
     limitInputPixels: 64_000_000,
   });
@@ -42,5 +48,6 @@ export async function watermarkProductImage(buffer: Buffer) {
         }),
       },
     ])
+    .webp({ effort: 4, quality: 78 })
     .toBuffer();
 }

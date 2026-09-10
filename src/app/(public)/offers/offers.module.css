@@ -29,6 +29,19 @@
   max-width: 39rem;
 }
 
+.offerGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.offerList {
+  min-width: 0;
+}
+
+.offerGridItem {
+  min-width: 0;
+}
+
 .offerCard {
   background: #fff;
   border: 1px solid #d7d1c6;
@@ -36,6 +49,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 0;
+  overflow: hidden;
   text-decoration: none;
   transition:
     box-shadow 180ms ease,
@@ -73,6 +88,7 @@
   flex: 1;
   flex-direction: column;
   padding: 1.4rem;
+  min-width: 0;
 }
 
 .productLine {
@@ -81,6 +97,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .offerName {
@@ -89,12 +106,14 @@
   letter-spacing: -0.035em;
   line-height: 1;
   margin: 0.55rem 0 0.85rem;
+  overflow-wrap: anywhere;
 }
 
 .summary {
   color: #555d63;
   line-height: 1.6;
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .cardAction {
@@ -115,12 +134,67 @@
   letter-spacing: -0.035em;
 }
 
+.detailImage {
+  aspect-ratio: 16 / 10;
+  display: block;
+  max-height: 32rem;
+  object-fit: cover;
+  width: 100%;
+}
+
 @media (max-width: 575.98px) {
+  .hero {
+    padding-bottom: 2.5rem !important;
+    padding-top: 2.5rem !important;
+  }
+
+  .lede {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .offerGrid {
+    grid-auto-columns: minmax(16rem, 86vw);
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding-bottom: 0.5rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+
+  .offerList {
+    padding-bottom: 2.5rem !important;
+    padding-top: 2.5rem !important;
+  }
+
+  .offerGridItem {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
   .offerCardBody {
     padding: 1.15rem;
   }
 
   .offerName {
     font-size: 1.5rem;
+  }
+
+  .detailImage {
+    max-height: min(60svh, 24rem);
+  }
+}
+
+@media (min-width: 576px) {
+  .offerGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .offerGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

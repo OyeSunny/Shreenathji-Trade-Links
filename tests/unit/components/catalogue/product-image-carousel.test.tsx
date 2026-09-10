@@ -16,6 +16,7 @@ const images = [
 describe('ProductImageCarousel', () => {
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllGlobals();
   });
 
   it('renders a plain image when there is exactly one product image', () => {
@@ -23,13 +24,13 @@ describe('ProductImageCarousel', () => {
 
     expect(
       screen.getByRole('img', { name: /mill scale in a bulk yard/i }),
-    ).toHaveAttribute('src', images[0].src);
+    ).toHaveAttribute('src', expect.stringContaining('mill-scale-a.png'));
     expect(screen.getByText('Shreenathji Trade Links')).toBeInTheDocument();
     expect(screen.getByText('Mill Scale Fe 70')).toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('lets buyers switch product images manually and advances automatically', () => {
+  it('lets buyers switch product images manually without losing their selection', () => {
     vi.useFakeTimers();
     render(<ProductImageCarousel images={images} />);
 
@@ -51,7 +52,70 @@ describe('ProductImageCarousel', () => {
       vi.advanceTimersByTime(5500);
     });
     expect(
+      screen.getByRole('button', { name: 'Show image 1' }),
+    ).toHaveAttribute('aria-current', 'true');
+  });
+
+  it('keeps the current image title in a live caption region', () => {
+    render(<ProductImageCarousel images={images} />);
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Next image' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('Image 2 of 3');
+  });
+
+  it('pauses automatic rotation after a buyer navigates manually and can resume it', () => {
+    vi.useFakeTimers();
+    render(<ProductImageCarousel images={images} />);
+
+    expect(
+      screen.getByRole('button', { name: 'Pause automatic image rotation' }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Next image' }));
+    expect(
+      screen.getByRole('button', { name: 'Resume automatic image rotation' }),
+    ).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(5500);
+    });
+    expect(
       screen.getByRole('button', { name: 'Show image 2' }),
+    ).toHaveAttribute('aria-current', 'true');
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Resume automatic image rotation' }),
+    );
+    act(() => {
+      vi.advanceTimersByTime(5500);
+    });
+    expect(
+      screen.getByRole('button', { name: 'Show image 3' }),
+    ).toHaveAttribute('aria-current', 'true');
+  });
+
+  it('does not auto-advance when reduced motion is requested', () => {
+    vi.useFakeTimers();
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockReturnValue({
+        addEventListener: vi.fn(),
+        matches: true,
+        removeEventListener: vi.fn(),
+      }),
+    );
+
+    render(<ProductImageCarousel images={images} />);
+
+    act(() => {
+      vi.advanceTimersByTime(5500);
+    });
+
+    expect(
+      screen.getByRole('button', { name: 'Show image 1' }),
     ).toHaveAttribute('aria-current', 'true');
   });
 });

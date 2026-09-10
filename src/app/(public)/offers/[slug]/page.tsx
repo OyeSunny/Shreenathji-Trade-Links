@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Container from 'react-bootstrap/Container';
 
+import { ManagedImage } from '@/components/media/managed-image';
 import styles from '../offers.module.css';
 
 type OfferDetailPageProps = {
@@ -48,13 +49,12 @@ export default async function OfferDetailPage({
           <div className="row g-5">
             <div className="col-lg-7">
               {imageUrl ? (
-                // This is an owner-managed approved public media URL.
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <ManagedImage
                   alt={
                     image?.altText ?? image?.media.altText ?? offer.product.name
                   }
-                  className="img-fluid w-100"
+                  className={styles.detailImage}
+                  sizes="(max-width: 991px) 100vw, 58vw"
                   src={imageUrl}
                 />
               ) : (

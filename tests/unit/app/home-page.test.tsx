@@ -75,4 +75,16 @@ describe('HomePage', () => {
       screen.getByRole('link', { name: /view mill scale/i }),
     ).toHaveAttribute('href', '/products/mill-scale');
   });
+
+  it('groups featured materials into the mobile scroll rail', async () => {
+    render(await HomePage());
+
+    expect(
+      screen.getByRole('list', { name: /featured materials/i }),
+    ).toHaveClass('home-product-rail');
+    expect(screen.getByText(/swipe to explore/i)).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    );
+  });
 });

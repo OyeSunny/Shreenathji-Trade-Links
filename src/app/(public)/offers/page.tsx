@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
 
+import { ManagedImage } from '@/components/media/managed-image';
 import { getPublicImageUrl } from '@/features/catalogue/server/public-catalogue';
 import { getPublishedOffers } from '@/features/offers/server/public-offers';
 
@@ -25,7 +26,10 @@ export default async function OffersPage() {
         </Container>
       </section>
 
-      <section className="py-5 py-lg-6" aria-labelledby="offers-list-heading">
+      <section
+        aria-labelledby="offers-list-heading"
+        className={`${styles.offerList} py-5 py-lg-6`}
+      >
         <Container>
           <div className="align-items-sm-end d-flex flex-column flex-sm-row gap-2 gap-sm-4 justify-content-between mb-4 mb-lg-5">
             <div>
@@ -54,27 +58,26 @@ export default async function OffersPage() {
               </Link>
             </div>
           ) : (
-            <div className="row g-4">
+            <div className={styles.offerGrid}>
               {offers.map((offer) => {
                 const image = offer.product.media[0];
                 const imageUrl = getPublicImageUrl(image?.media ?? null);
 
                 return (
-                  <div className="col-md-6 col-xl-4" key={offer.id}>
+                  <div className={styles.offerGridItem} key={offer.id}>
                     <Link
                       className={styles.offerCard}
                       href={`/offers/${offer.slug}`}
                     >
                       {imageUrl ? (
-                        // The media relation is constrained to approved, published images.
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <ManagedImage
                           alt={
                             image?.altText ??
                             image?.media.altText ??
                             offer.product.name
                           }
                           className={styles.offerImage}
+                          sizes="(max-width: 575px) 86vw, (max-width: 991px) 50vw, 33vw"
                           src={imageUrl}
                         />
                       ) : (
