@@ -30,44 +30,49 @@ export default async function PublicLayout({
       </header>
       {children}
       <ContactCapturePopup />
-      <footer className="public-footer py-5">
-        <Container>
-          <div className="row g-4">
-            <div className="col-md-4">
-              <p className="mb-1 text-uppercase small">
-                Shreenathji Trade Links
-              </p>
-              <p className="mb-0 text-white-50">
-                Industrial raw materials for domestic and export enquiries.
-              </p>
+      <footer className="public-footer">
+        <Container className="public-footer__inner">
+          <div className="public-footer__top">
+            <div className="public-footer__intro">
+              <CompanyLogo className="public-footer__logo" />
+              <div>
+                <p className="public-footer__company">
+                  Shreenathji Trade Links
+                </p>
+                <p className="public-footer__statement">
+                  Industrial raw materials for domestic and export enquiries.
+                </p>
+              </div>
             </div>
-            <div className="col-md-5 text-white-50">
+            <nav
+              aria-label="Footer navigation"
+              className="public-footer__links"
+            >
+              <Link href="/products">Products</Link>
+              <Link href="/offers">Offers</Link>
+              <Link href="/about">Company</Link>
+              <Link href="/contact">Contact</Link>
+              <Link href="/privacy">Privacy</Link>
+            </nav>
+          </div>
+          {(businessIdentity.registeredAddress ||
+            businessIdentity.officeAddress) && (
+            <div className="public-footer__addresses">
               {businessIdentity.registeredAddress ? (
-                <address className="mb-3">
-                  <span className="d-block small text-uppercase text-white">
-                    Registered address
-                  </span>
-                  {businessIdentity.registeredAddress}
+                <address className="public-footer__address">
+                  <span>Registered address</span>
+                  <p>{businessIdentity.registeredAddress}</p>
                 </address>
               ) : null}
               {businessIdentity.officeAddress ? (
-                <address className="mb-0">
-                  <span className="d-block small text-uppercase text-white">
-                    Office address
-                  </span>
-                  {businessIdentity.officeAddress}
+                <address className="public-footer__address">
+                  <span>Office address</span>
+                  <p>{businessIdentity.officeAddress}</p>
                 </address>
               ) : null}
             </div>
-            <div className="col-md-3 text-md-end">
-              <p className="mb-0 text-white-50">
-                {businessIdentity.city} ·{' '}
-                <Link className="text-white-50" href="/privacy">
-                  Privacy
-                </Link>
-              </p>
-            </div>
-          </div>
+          )}
+          <p className="public-footer__location">{businessIdentity.city}</p>
         </Container>
       </footer>
     </>

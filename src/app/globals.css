@@ -1004,6 +1004,97 @@ a:focus-visible {
   background: #111315;
   color: #f8f9fa;
 }
+.public-footer {
+  border-top: 1px solid rgba(241, 244, 246, 0.18);
+}
+.public-footer__inner {
+  padding-bottom: clamp(1.4rem, 3vw, 2.5rem);
+  padding-top: clamp(2.5rem, 5vw, 4.5rem);
+}
+.public-footer__top {
+  align-items: start;
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+}
+.public-footer__intro {
+  align-items: start;
+  display: flex;
+  gap: 0.85rem;
+  max-width: 29rem;
+}
+.public-footer__logo {
+  flex: 0 0 auto;
+  height: 2.5rem;
+  object-fit: contain;
+  width: 2.5rem;
+}
+.public-footer__company,
+.public-footer__statement,
+.public-footer__location,
+.public-footer__address p {
+  margin: 0;
+}
+.public-footer__company,
+.public-footer__address > span {
+  color: #f8f9fa;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.public-footer__statement,
+.public-footer__location,
+.public-footer__address p {
+  color: #aeb8c0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.public-footer__statement {
+  margin-top: 0.35rem;
+}
+.public-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1.25rem;
+  justify-content: flex-end;
+  max-width: 29rem;
+}
+.public-footer__links a {
+  color: #d5dce0;
+  font-size: 0.84rem;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.35em;
+}
+.public-footer__links a:hover,
+.public-footer__links a:focus-visible {
+  color: var(--stl-oxide);
+  text-decoration-color: currentColor;
+}
+.public-footer__addresses {
+  border-bottom: 1px solid rgba(241, 244, 246, 0.13);
+  border-top: 1px solid rgba(241, 244, 246, 0.13);
+  display: grid;
+  gap: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+.public-footer__address {
+  margin: 0;
+  padding: 1.35rem 1.5rem 1.45rem 0;
+}
+.public-footer__address + .public-footer__address {
+  border-left: 1px solid rgba(241, 244, 246, 0.13);
+  padding-left: 1.5rem;
+}
+.public-footer__address p {
+  margin-top: 0.45rem;
+  max-width: 42rem;
+}
+.public-footer__location {
+  margin-top: 1rem;
+}
 .public-footer address,
 .company-page__markets address {
   font-style: normal;
@@ -1248,8 +1339,86 @@ a:focus-visible {
   font-size: 0.78rem;
   line-height: 1.4;
 }
-.public-footer {
-  border-top: 1px solid rgba(241, 244, 246, 0.18);
+.privacy-page {
+  background: var(--stl-paper);
+}
+.privacy-page__hero {
+  border-bottom: 1px solid rgba(17, 19, 21, 0.2);
+  padding: clamp(3.4rem, 8vw, 7.5rem) 0 clamp(2.8rem, 6vw, 5rem);
+}
+.privacy-page__hero-grid {
+  align-items: end;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1.3fr) minmax(16rem, 0.7fr);
+}
+.privacy-page__hero h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.8rem, 6vw, 5.6rem);
+  letter-spacing: -0.065em;
+  line-height: 0.94;
+  margin: 0;
+  max-width: 10ch;
+}
+.privacy-page__hero-grid > p {
+  color: #53626b;
+  font-size: 1.08rem;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 30rem;
+}
+.privacy-page__content {
+  padding: clamp(3rem, 7vw, 6.5rem) 0;
+}
+.privacy-page__grid {
+  display: grid;
+  gap: clamp(2.5rem, 7vw, 7rem);
+  grid-template-columns: minmax(13rem, 0.55fr) minmax(0, 1.45fr);
+}
+.privacy-page__summary {
+  border-top: 2px solid var(--stl-oxide);
+  padding-top: 1rem;
+}
+.privacy-page__summary > span,
+.privacy-page__details > article > span {
+  color: var(--stl-oxide);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.privacy-page__summary strong {
+  display: block;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.65rem;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin-top: 1rem;
+}
+.privacy-page__summary p {
+  color: #53626b;
+  line-height: 1.6;
+  margin: 0.85rem 0 0;
+}
+.privacy-page__details {
+  border-top: 1px solid rgba(17, 19, 21, 0.2);
+}
+.privacy-page__details article {
+  border-bottom: 1px solid rgba(17, 19, 21, 0.2);
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  padding: 1.5rem 0;
+}
+.privacy-page__details h2 {
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  margin: 0 0 0.45rem;
+}
+.privacy-page__details p {
+  color: #53626b;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 48rem;
 }
 
 /* Owner workspace: uses the same graphite, paper, and oxide vocabulary as the public site. */
@@ -2197,6 +2366,20 @@ a:focus-visible {
   .home-product-card__name {
     font-size: 1.5rem;
   }
+  .public-footer__top {
+    align-items: start;
+    flex-direction: column;
+  }
+  .public-footer__links {
+    justify-content: flex-start;
+  }
+  .privacy-page__hero-grid,
+  .privacy-page__grid {
+    grid-template-columns: 1fr;
+  }
+  .privacy-page__hero h1 {
+    max-width: 12ch;
+  }
 }
 
 @media (max-width: 480px) {
@@ -2281,6 +2464,24 @@ a:focus-visible {
   }
   .public-footer {
     font-size: 0.9rem;
+  }
+  .public-footer__addresses {
+    grid-template-columns: 1fr;
+  }
+  .public-footer__address {
+    padding: 1.2rem 0;
+  }
+  .public-footer__address + .public-footer__address {
+    border-left: 0;
+    border-top: 1px solid rgba(241, 244, 246, 0.13);
+    padding-left: 0;
+  }
+  .privacy-page__hero h1 {
+    font-size: clamp(2.35rem, 11.5vw, 3rem);
+  }
+  .privacy-page__details article {
+    gap: 0.75rem;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
   }
 }
 
