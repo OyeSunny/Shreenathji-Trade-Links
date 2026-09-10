@@ -37,11 +37,13 @@ Industrial pocket catalogue: dense content rhythm, fixed visual frames, and purp
 
 ## Performance rules
 
+- Every new owner-uploaded public image, regardless of accepted source type (JPEG, PNG, WebP, or AVIF), is processed server-side into WebP before storage. The source upload is not retained. Use Sharp with `quality: 78` and remove metadata to reduce file size and protect privacy.
+- Product media keeps watermark processing before WebP output. Hero images do not receive product watermarks.
 - Use Next `Image` for website-owned public media, with explicit `sizes`, fixed aspect-ratio containers, `quality={75}`, and responsive output. Avoid hand-written raw `<img>` for homepage, catalogue, and offer card images.
 - Use `priority` only for visible first hero media. All other hero slides and card images use native lazy loading.
 - Preserve product-media watermark and dynamic owner uploads. Remote/owner-uploaded URLs pass through existing public media URL validation; no image URL is trusted before current approval/publication checks.
 - Do not add a new image CDN or paid dependency. Next image optimisation supplies responsive derivatives on the existing VPS.
-- Keep original uploaded file for owner zoom and future reprocessing; public list pages request suitable derivatives.
+- Owner zoom and public pages use the stored WebP image; source originals are not retained on the server.
 
 ## Scope
 
