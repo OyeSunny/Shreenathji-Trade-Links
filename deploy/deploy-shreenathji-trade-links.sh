@@ -23,8 +23,11 @@ pnpm build
 install -d -o shreenathji -g shreenathji -m 0755 "$APP_DIR/public/media/uploads"
 install -d -o shreenathji -g shreenathji -m 0700 "$APP_DIR/var/media-processing/sources"
 install -m 0644 "$APP_DIR/deploy/systemd/shreenathji-product-video-worker.service" /etc/systemd/system/shreenathji-product-video-worker.service
+install -m 0644 "$APP_DIR/deploy/nginx/shreenathji-trade-links.conf" /etc/nginx/sites-available/shreenathji-trade-links
+nginx -t
 systemctl daemon-reload
 systemctl enable shreenathji-product-video-worker
+systemctl reload nginx
 systemctl restart shreenathji-trade-links shreenathji-product-video-worker
 
 for attempt in $(seq 1 30); do
