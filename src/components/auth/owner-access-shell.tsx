@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { CompanyLogo } from '@/components/layout/company-logo';
+
 type OwnerAccessShellProps = {
   children: ReactNode;
   description: string;
@@ -14,9 +16,7 @@ const OwnerAccessBrand = ({ className }: { className?: string }) => (
     className={className}
     href="/"
   >
-    <span aria-hidden="true" className="owner-access__monogram">
-      STL
-    </span>
+    <CompanyLogo className="owner-access__logo" />
     <span>
       <strong>Shreenathji</strong>
       <small>Trade Links</small>

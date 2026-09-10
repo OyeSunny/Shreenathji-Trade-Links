@@ -94,16 +94,10 @@ body {
   margin-top: 0.3rem;
   text-transform: uppercase;
 }
-.owner-access__monogram {
-  align-items: center;
-  border: 1px solid var(--stl-oxide);
-  color: var(--stl-oxide);
-  display: inline-flex;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 0.75rem;
+.owner-access__logo {
+  display: block;
   height: 2.65rem;
-  justify-content: center;
-  letter-spacing: 0.12em;
+  object-fit: contain;
   width: 2.65rem;
 }
 .owner-access__manifesto-copy {
@@ -404,8 +398,7 @@ body {
   .owner-access__mobile-header .owner-access__brand small {
     font-size: 0.58rem;
   }
-  .owner-access__mobile-header .owner-access__monogram {
-    font-size: 0.66rem;
+  .owner-access__mobile-header .owner-access__logo {
     height: 2.35rem;
     width: 2.35rem;
   }
@@ -562,16 +555,10 @@ body {
   margin-top: 0.22rem;
   text-transform: uppercase;
 }
-.brand-mark__monogram {
-  align-items: center;
-  border: 1px solid var(--stl-oxide);
-  color: var(--stl-oxide);
-  display: inline-flex;
-  font-family: Georgia, serif;
-  font-size: 0.78rem;
+.brand-mark__logo {
+  display: block;
   height: 2.3rem;
-  justify-content: center;
-  letter-spacing: 0.09em;
+  object-fit: contain;
   width: 2.3rem;
 }
 
@@ -1310,16 +1297,10 @@ a:focus-visible {
   margin-top: 0.22rem;
   text-transform: uppercase;
 }
-.admin-brand__mark {
-  align-items: center;
-  border: 1px solid var(--stl-oxide);
-  color: var(--stl-oxide);
-  display: inline-flex;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 0.7rem;
+.admin-brand__logo {
+  display: block;
   height: 2.45rem;
-  justify-content: center;
-  letter-spacing: 0.08em;
+  object-fit: contain;
   width: 2.45rem;
 }
 .admin-navigation {
@@ -2254,8 +2235,7 @@ a:focus-visible {
     font-size: 0.58rem;
     letter-spacing: 0.14em;
   }
-  .brand-mark__monogram {
-    font-size: 0.68rem;
+  .brand-mark__logo {
     height: 2.1rem;
     width: 2.1rem;
   }

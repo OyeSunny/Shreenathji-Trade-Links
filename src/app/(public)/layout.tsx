@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import Container from 'react-bootstrap/Container';
 
 import { UmamiTracker } from '@/components/analytics/umami-tracker';
+import { CompanyLogo } from '@/components/layout/company-logo';
 import { PublicNavigation } from '@/components/layout/public-navigation';
 import { ContactCapturePopup } from '@/components/leads/contact-capture-popup';
 import { getWebsiteContent } from '@/features/content/server/site-content';
@@ -18,7 +19,7 @@ export default async function PublicLayout({
       <header className="public-header">
         <Container className="align-items-center d-flex justify-content-between py-3">
           <Link className="brand-mark text-decoration-none" href="/">
-            <span className="brand-mark__monogram">STL</span>
+            <CompanyLogo className="brand-mark__logo" />
             <span>
               <strong>Shreenathji</strong>
               <small>Trade Links</small>

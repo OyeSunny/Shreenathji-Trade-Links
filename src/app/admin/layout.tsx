@@ -1,6 +1,7 @@
 import { AdminNavigation } from '@/components/admin/admin-navigation';
 import { AdminUnsavedChangesGuard } from '@/components/admin/admin-unsaved-changes-guard';
 import { SignOutButton } from '@/components/auth/sign-out-button';
+import { CompanyLogo } from '@/components/layout/company-logo';
 import { getOwnerSecurityState } from '@/features/auth/server/owner-security';
 import { requireOwnerPageSession } from '@/features/auth/server/session';
 import Link from 'next/link';
@@ -26,7 +27,7 @@ export default async function AdminLayout({
           className="admin-brand"
           href="/admin"
         >
-          <span className="admin-brand__mark">STL</span>
+          <CompanyLogo className="admin-brand__logo" />
           <span>
             <strong>Shreenathji</strong>
             <small>Trade Links</small>
