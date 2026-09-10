@@ -22,6 +22,7 @@ export type WebsiteContentFormState = {
 };
 
 const revalidateWebsiteContentPaths = () => {
+  revalidatePath('/', 'layout');
   revalidatePath('/');
   revalidatePath('/about');
   revalidatePath('/contact');

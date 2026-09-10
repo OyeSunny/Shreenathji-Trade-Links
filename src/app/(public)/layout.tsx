@@ -5,10 +5,13 @@ import Container from 'react-bootstrap/Container';
 import { UmamiTracker } from '@/components/analytics/umami-tracker';
 import { PublicNavigation } from '@/components/layout/public-navigation';
 import { ContactCapturePopup } from '@/components/leads/contact-capture-popup';
+import { getWebsiteContent } from '@/features/content/server/site-content';
 
-export default function PublicLayout({
+export default async function PublicLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
+  const { businessIdentity } = await getWebsiteContent();
+
   return (
     <>
       <UmamiTracker websiteId={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID} />
@@ -27,19 +30,43 @@ export default function PublicLayout({
       {children}
       <ContactCapturePopup />
       <footer className="public-footer py-5">
-        <Container className="d-md-flex justify-content-between">
-          <div>
-            <p className="mb-1 text-uppercase small">Shreenathji Trade Links</p>
-            <p className="mb-0 text-white-50">
-              Industrial raw materials for domestic and export enquiries.
-            </p>
+        <Container>
+          <div className="row g-4">
+            <div className="col-md-4">
+              <p className="mb-1 text-uppercase small">
+                Shreenathji Trade Links
+              </p>
+              <p className="mb-0 text-white-50">
+                Industrial raw materials for domestic and export enquiries.
+              </p>
+            </div>
+            <div className="col-md-5 text-white-50">
+              {businessIdentity.registeredAddress ? (
+                <address className="mb-3">
+                  <span className="d-block small text-uppercase text-white">
+                    Registered address
+                  </span>
+                  {businessIdentity.registeredAddress}
+                </address>
+              ) : null}
+              {businessIdentity.officeAddress ? (
+                <address className="mb-0">
+                  <span className="d-block small text-uppercase text-white">
+                    Office address
+                  </span>
+                  {businessIdentity.officeAddress}
+                </address>
+              ) : null}
+            </div>
+            <div className="col-md-3 text-md-end">
+              <p className="mb-0 text-white-50">
+                {businessIdentity.city} ·{' '}
+                <Link className="text-white-50" href="/privacy">
+                  Privacy
+                </Link>
+              </p>
+            </div>
           </div>
-          <p className="mb-0 mt-3 mt-md-0 text-white-50">
-            Gandhidham, Gujarat, India ·{' '}
-            <Link className="text-white-50" href="/privacy">
-              Privacy
-            </Link>
-          </p>
         </Container>
       </footer>
     </>

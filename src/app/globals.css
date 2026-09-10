@@ -1017,6 +1017,11 @@ a:focus-visible {
   background: #111315;
   color: #f8f9fa;
 }
+.public-footer address,
+.company-page__markets address {
+  font-style: normal;
+  line-height: 1.55;
+}
 .dark-band .text-warning {
   color: var(--stl-oxide) !important;
 }
